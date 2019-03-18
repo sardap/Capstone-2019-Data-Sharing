@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 
 namespace c__helloworld
 {
-    class Program
+    class HelloWorld
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("yeet");
+            Console.WriteLine("YEET");
         }
     }
 }
