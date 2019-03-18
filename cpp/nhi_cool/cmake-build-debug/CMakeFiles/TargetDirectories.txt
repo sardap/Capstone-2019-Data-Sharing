@@ -1,3 +1,0 @@
-D:/Libraries/Repos/Capstone-2019-Data-Sharing/cpp/nhi_cool/cmake-build-debug/CMakeFiles/nhi_cool.dir
-D:/Libraries/Repos/Capstone-2019-Data-Sharing/cpp/nhi_cool/cmake-build-debug/CMakeFiles/edit_cache.dir
-D:/Libraries/Repos/Capstone-2019-Data-Sharing/cpp/nhi_cool/cmake-build-debug/CMakeFiles/rebuild_cache.dir
