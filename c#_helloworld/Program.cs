@@ -1,4 +1,4 @@
-﻿using System;
+ing System;
 
 namespace c__helloworld
 {
@@ -6,7 +6,7 @@ namespace c__helloworld
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("YEET");
         }
     }
 }
