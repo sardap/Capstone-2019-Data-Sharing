@@ -1,4 +1,4 @@
-ing System;
+using System;
 
 namespace c__helloworld
 {
