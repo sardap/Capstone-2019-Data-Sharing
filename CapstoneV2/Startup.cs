@@ -36,10 +36,12 @@ namespace CapstoneV2
 			});
 
 			var connectionString = "DefaultConnection";
-			if (env.)
+			
+			// TODO: Change the connection string to AWS DB if deployed, but keep default for development 
+
 			services.AddDbContext<ApplicationDbContext>(options =>
 				options.UseSqlServer(
-					Configuration.GetConnectionString("DefaultConnection")));
+					Configuration.GetConnectionString(connectionString)));
 			services.AddDefaultIdentity<IdentityUser>()
 				.AddDefaultUI(UIFramework.Bootstrap4)
 				.AddEntityFrameworkStores<ApplicationDbContext>();
