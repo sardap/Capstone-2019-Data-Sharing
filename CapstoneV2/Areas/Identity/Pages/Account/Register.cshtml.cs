@@ -20,14 +20,14 @@ namespace CapstoneV2.Areas.Identity.Pages.Account
 	[AllowAnonymous]
 	public class RegisterModel : PageModel
 	{
-		private readonly SignInManager<IdentityUser> _signInManager;
-		private readonly UserManager<IdentityUser> _userManager;
+		private readonly SignInManager<ApplicationUser> _signInManager;
+		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly ILogger<RegisterModel> _logger;
 		private readonly IEmailSender _emailSender;
 
 		public RegisterModel(
-			UserManager<IdentityUser> userManager,
-			SignInManager<IdentityUser> signInManager,
+			UserManager<ApplicationUser> userManager,
+			SignInManager<ApplicationUser> signInManager,
 			ILogger<RegisterModel> logger,
 			IEmailSender emailSender)
 		{
@@ -84,7 +84,6 @@ namespace CapstoneV2.Areas.Identity.Pages.Account
 			[Display(Name = "Phone number")]
 			public string PhoneNumber { get; set; }
 
-
 			[Display(Name = "Ethnicities", Description = "Select one or more")]
 			public IList<EnumFlagCheckboxModel> Ethnicities { get; set; } 
 				= Enum.GetValues(typeof(Ethnicity)).Cast<Ethnicity>()
@@ -94,7 +93,12 @@ namespace CapstoneV2.Areas.Identity.Pages.Account
 							EnumValue = (int)z,
 							DisplayValue = z.GetDisplayName()
 						}
-					).ToList();
+					)
+                    .OrderBy(z => z.DisplayValue)
+                    .ToList();
+
+            [Display(Name = "Medical Conditions")]
+            public IList<MedicalCondition> MedicalConditions { get; set; } = new List<MedicalCondition>();
 		}
 
 		public void OnGet(string returnUrl = null)

@@ -15,6 +15,18 @@ namespace CapstoneV2.Areas.Identity
         public void Configure(IWebHostBuilder builder)
         {
             builder.ConfigureServices((context, services) => {
+                var isProd = context.HostingEnvironment.IsProduction();
+
+                // Disable all the requirements if it's in Dev mode
+                services.Configure<IdentityOptions>(options =>
+                {
+                    options.Password.RequireDigit = isProd;
+                    options.Password.RequireLowercase = isProd;
+                    options.Password.RequireNonAlphanumeric = isProd;
+                    options.Password.RequireUppercase = isProd;
+                    options.Password.RequiredLength = isProd ? 6 : 1;
+                    options.Password.RequiredUniqueChars = 1;
+                });
             });
         }
     }

@@ -1,0 +1,192 @@
+﻿@model IEnumerable<MedicalCondition>
+
+@{
+    Layout = null;
+}
+
+<div class="table-responsive">
+    <table id="mc-table" class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Severity</th>
+                <th>Additional Information</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr><td colspan="5">There is no medical condition. <span href="" id="add-mc">Click here to add one.</span></td></tr>
+            }
+            else
+            {
+                @foreach (var mc in Model)
+                {
+                    <tr>
+                        <td class="mc-name">
+                            <span class="mc-view">@mc.Name</span>
+                            <input class="form-control mc-edit" type="text" />
+                        </td>
+                        <td class="mc-type">
+                            <span class="mc-view">@mc.Type</span>
+                            <input type="text" class="mc-edit" />
+                        </td>
+                        <td class="mc-severity">
+                            <span class="mc-view">@mc.Severity</span>
+                            <input type="range" class="mc-edit" />
+                        </td>
+                        <td class="mc-additional">
+                            <span class="mc-view">@mc.AdditionalInfo</span>
+                            <input type="text" class="mc-edit" />
+                        </td>
+                        <td>
+                            <span class="mc-view"><i class="fas fa-edit">&nbsp;</i> | <i class="fas fa-trash">&nbsp;</i></span>
+                            <span class="mc-edit"><i class="fas fa-save">&nbsp;</i> | <i class="fas fa-window-close">&nbsp;</i></span>
+                        </td>
+                    </tr>
+                }
+
+                <tr><td colspan="5"><span id="add-mc">Click here to add</span> more medical conditions.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<style>
+    #add-mc {
+        color: #007bff;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    #add-mc:hover {
+        color: #0056b3;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+<script type="text/javascript">
+    function showViewFor(row) {
+        row.find('.mc-view').show();
+        row.find('.mc-edit').hide();
+    }
+
+    function showEditFor(row) {
+        row.find('.mc-edit').show();
+        row.find('.mc-view').hide();
+    }
+
+    function appendRow(mc) {
+        if (!mc) {
+            mc = {
+                name: '',
+                type: '',
+                severity: '',
+                additional: ''
+            }
+        }
+
+        $('#mc-table > tbody:last-child').append(
+            '<tr>' +
+            '<td class="form-group mc-name">' +
+            '<span class="mc-view">' + mc.name + '</span>' +
+            '<input class="form-control mc-edit" type="text" />' +
+            '</td>' +
+            '<td class="mc-type">' +
+            '<span class="mc-view">' + mc.type + '</span>' +
+            '<input class="form-control mc-edit" type="text" />' +
+            '</td>' +
+            '<td class="mc-severity">' +
+            '<span class="mc-view">' + mc.severity + '</span>' +
+            '<input class="form-control mc-edit" type="range" />' +
+            '</td>' +
+            '<td class="mc-additional">' +
+            '<span class="mc-view">' + mc.additional + '</span>' +
+            '<input class="form-control mc-edit" type="text" />' +
+            '</td>' +
+            '<td>' +
+            '<span class="mc-view"><i class="fas fa-edit" title="Edit"></i> | <i class="fas fa-trash" title="Remove"></i></span>' +
+            '<span class="mc-edit"><i class="fas fa-save" title="Save"></i> | <i class="fas fa-window-close" title="Cancel"></i></span>' +
+            '</td>' +
+            '</tr>'
+        );
+
+        return $('#mc-table > tbody:last-child').find('tr').last();
+    }
+
+    function appendAdditionRow() {
+        $('#mc-table > tbody:last-child').append(
+            '<tr><td colspan="5"><span id="add-mc">Click here to add</span> more medical conditions.</td></tr>'
+        );
+    }
+
+    function removeAdditionRow() {
+        $('#mc-table > tbody:last-child').find('tr').last().remove();
+    }
+
+    //Add event handler.
+    $('tbody').on('click', '#add-mc', function () {
+        var isTableEmpty = $('#mc-table tr').length == 2 && $('#mc-table .mc-view').length == 0;
+        if (isTableEmpty) {
+            $('#mc-table tr:eq(1)').remove();
+        } else {
+            removeAdditionRow();
+        }
+
+        var newRow = appendRow();
+        showEditFor(newRow);
+    });
+
+    //Edit event handler.
+    $('body').on('click', '#mc-table .fa-edit', function () {
+        removeAdditionRow();
+
+        var row = $(this).closest('tr');
+        $('td', row).each(function () {
+            if ($(this).find('.mc-edit').length > 0) {
+                showEditFor($(this));
+            }
+        });
+        showEditFor(row);
+    });
+
+    ////Update event handler.
+    $('body').on('click', '#mc-table .fa-save', function () {
+        var row = $(this).closest('tr');
+
+        $('td', row).each(function () {
+            if ($(this).find('.mc-edit').length > 0 && $(this).find('i').length === 0) {
+                $(this).find('.mc-view').html($(this).find('.mc-edit').val());
+                showViewFor($(this));
+            }
+        });
+
+        showViewFor(row);
+        if ($('#mc-table').find('#add-mc').length === 0) appendAdditionRow();
+    });
+
+    ////Cancel event handler.
+    $('body').on('click', '#mc-table .fa-window-close', function () {
+        var row = $(this).closest('tr');
+        $('td', row).each(function () {
+            if ($(this).find('.mc-edit').length > 0) {
+                $(this).find('.mc-edit').val($(this).find('.mc-view').html());
+                showViewFor($(this));
+            }
+        });
+        showViewFor(row);
+    });
+
+    ////Delete event handler.
+    $('body').on('click', '#mc-table .fa-trash', function () {
+        if (confirm('Do you want to delete this row?')) {
+            var row = $(this).closest('tr');
+            row.remove();
+        }
+    });
+</script>
