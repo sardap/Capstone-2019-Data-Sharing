@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CapstoneV2.Models.Enums;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,7 @@ namespace CapstoneV2.Models
 		public string Firstname { get; set; }
 
 		public string Lastname { get; set; }
+
+		public Ethnicity Ethnicities { get; set; }
 	}
 }

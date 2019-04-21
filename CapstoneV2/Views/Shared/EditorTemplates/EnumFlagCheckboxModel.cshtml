@@ -1,0 +1,7 @@
+﻿@model CapstoneV2.Models.Views.EnumFlagCheckboxModel
+
+
+@Html.HiddenFor(x => x.EnumValue)
+@Html.CheckBoxFor(x => x.IsChecked)
+@Html.LabelFor(x => x.IsChecked, Model.DisplayValue)
+<br />
