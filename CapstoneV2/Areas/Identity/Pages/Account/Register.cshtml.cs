@@ -112,16 +112,17 @@ namespace CapstoneV2.Areas.Identity.Pages.Account
 			returnUrl = returnUrl ?? Url.Content("~/");
 			if (ModelState.IsValid)
 			{
-				var user = new ApplicationUser
-				{
-					UserName = Input.Email,
-					Email = Input.Email,
-					Firstname = Input.Firstname,
-					Lastname = Input.Lastname,
-					Birthday = Input.Birthday,
-					PhoneNumber = Input.PhoneNumber,
-					Gender = Input.Gender.ToLower(),
-					Ethnicities = Input.Ethnicities.Where(z => z.IsChecked).Select(z => (Ethnicity) z.EnumValue).Aggregate((e, j) => e | j)
+                var user = new ApplicationUser
+                {
+                    UserName = Input.Email,
+                    Email = Input.Email,
+                    Firstname = Input.Firstname,
+                    Lastname = Input.Lastname,
+                    Birthday = Input.Birthday,
+                    PhoneNumber = Input.PhoneNumber,
+                    Gender = Input.Gender.ToLower(),
+                    Ethnicities = Input.Ethnicities.Where(z => z.IsChecked).Select(z => (Ethnicity)z.EnumValue).Aggregate((e, j) => e | j),
+                    MedicalConditions = Input.MedicalConditions.ToList()
 				};
 
 				var result = await _userManager.CreateAsync(user, Input.Password);

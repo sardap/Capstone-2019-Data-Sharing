@@ -5,38 +5,7 @@
 }
 
 <div id="mc-list">
-    @foreach (var mc in Model)
-    {
-        <div class="card mc-card">
-            <div class="card-body">
-                <div class="mc-edit-options mc-view">
-                    <i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Edit"></i> <i class="fas fa-trash" data-toggle="tooltip" data-placement="top" title="Remove"></i>
-                </div>
-                <p class="card-text">
-                    <div class="mc-name form-group">
-                        <label>Name: </label>
-                        <span class="mc-view">@mc.Name</span>
-                        <input class="form-control mc-edit" type="text" />
-                    </div>
-                    <div class="mc-type form-group">
-                        <span class="mc-view">@mc.Type</span>
-                        <input type="text" class="form-control mc-edit" />
-                    </div>
-                    <div class="mc-severity form-group">
-                        <span class="mc-view">@mc.Severity</span>
-                        <input type="number" min="0" max="10" step="1" class="form-control mc-edit" />
-                    </div>
-                    <div class="mc-additional form-group">
-                        <span class="mc-view">@mc.AdditionalInfo</span>
-                        <textarea class="form-control mc-edit" placeholder="Additional Information" />
-                    </div>
-                </p>
-                <button type="button" class="btn btn-primary mc-edit">Save</button>
-                <button type="button" class="btn btn-light mc-edit">Cancel</button>
-            </div>
-        </div>
-    }
-
+    @Html.EditorFor(m => m)
 
     <div class="card">
         <div class="card-body">
@@ -87,6 +56,8 @@
             }
         }
 
+        var count = @Model.Count();
+
         $('#mc-list').append(
             '<div class="card mc-card">' +
             '<div class="card-body">' +
@@ -97,22 +68,22 @@
             '<div class="mc-name form-group">' +
             '<label>Name</label>' +
             '<div class="mc-view"></div>' +
-            '<input class="form-control mc-edit" type="text" />' +
+            '<input class="form-control mc-edit" type="text" id="Input_MedicalConditions_' + count + '__Name" name="Input.MedicalConditions[' + count + '].Name" />' +
             '</div>' +
             '<div class="mc-type form-group">' +
             '<label>Type</label>' +
             '<div class="mc-view"></div>' +
-            '<input type="text" class="form-control mc-edit" />' +
+            '<input type="text" class="form-control mc-edit" id="Input_MedicalConditions_' + count + '__Type" name="Input.MedicalConditions[' + count + '].Type" />' +
             '</div>' +
             '<div class="mc-severity form-group">' +
             '<label>Severity</label>' +
             '<div class="mc-view"></div>' +
-            '<input type="number" min="0" max="10" step="1" class="form-control mc-edit" placeholder="Severity (min. 0 and max. 10)"/>' +
+            '<input type="number" min="0" max="10" step="1" class="form-control mc-edit" placeholder="Severity (min. 0 and max. 10)" id="Input_MedicalConditions_' + count + '__Severity" name="Input.MedicalConditions[' + count + '].Severity" />' +
             '</div>' +
             '<div class="mc-additional form-group">' +
             '<label>Additional Information</label>' +
             '<div class="mc-view"></div>' +
-            '<textarea class="form-control mc-edit" placeholder="Additional Information" />' +
+            '<textarea class="form-control mc-edit" placeholder="Additional Information" id="Input_MedicalConditions_' + count + '__AdditionalInfo" name="Input.MedicalConditions[' + count + '].AdditionalInfo" />' +
             '</div>' +
             '</p>' +
             '<button type ="button" class="btn btn-primary mc-edit">Save</button> ' +
@@ -142,8 +113,8 @@
 
     //Add event handler.
     $('#mc-list').on('click', '#add-mc', function () {
-        var isTableEmpty = $('#mc-list .card').length === 1;
-        if (isTableEmpty) {
+        var isCardListEmpty = $('#mc-list .card').length === 1;
+        if (isCardListEmpty) {
             $('#mc-list .card').first().remove();
         } else {
             removeAdditionCard();
@@ -205,8 +176,10 @@
 
     //Delete event handler.
     $('#mc-list').on('click', '.fa-trash', function () {
-        if (confirm('Do you want to delete this row?')) {
-            var card = $(this).closest('.mc-card');
+        var card = $(this).closest('.mc-card');
+        var mcName = card.find('.mc-name').first().find('label').first().html();
+
+        if (confirm('Do you want to delete "' + mcName + '"?')) {
             card.remove();
         }
     });
