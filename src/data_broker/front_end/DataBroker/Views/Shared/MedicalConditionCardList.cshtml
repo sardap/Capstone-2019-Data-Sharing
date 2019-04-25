@@ -58,6 +58,9 @@
 
         var count = @Model.Count();
 
+        // IMPORTANT: Notce the id attribute with the _
+        // This is to pass back the Input from here to the code behind Registration.cshtml
+        // It's disgusting, I don't like it but it is the fastest way I can think of for now
         $('#mc-list').append(
             '<div class="card mc-card">' +
             '<div class="card-body">' +

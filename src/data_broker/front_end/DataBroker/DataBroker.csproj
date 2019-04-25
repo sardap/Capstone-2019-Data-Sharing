@@ -4,6 +4,8 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <UserSecretsId>aspnet-CapstoneV2-21D5CB13-FDDB-436D-9F70-C5161DBE9A87</UserSecretsId>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <AssemblyName>DataBroker</AssemblyName>
+    <RootNamespace>DataBroker</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
