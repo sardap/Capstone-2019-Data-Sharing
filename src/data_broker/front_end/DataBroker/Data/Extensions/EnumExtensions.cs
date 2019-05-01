@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CapstoneV2.Data.Extensions
+namespace DataBroker.Data.Extensions
 {
 	public static class EnumExtensions
 	{

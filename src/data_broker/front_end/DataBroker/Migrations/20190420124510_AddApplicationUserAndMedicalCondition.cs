@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace CapstoneV2.Migrations
+namespace DataBroker.Migrations
 {
     public partial class AddApplicationUserAndMedicalCondition : Migration
     {

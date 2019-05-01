@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CapstoneV2.Models
+namespace DataBroker.Models
 {
     public class MedicalCondition
     {

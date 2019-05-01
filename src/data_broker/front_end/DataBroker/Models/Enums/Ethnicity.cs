@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CapstoneV2.Models.Enums
+namespace DataBroker.Models.Enums
 {
     [Flags]
     public enum Ethnicity

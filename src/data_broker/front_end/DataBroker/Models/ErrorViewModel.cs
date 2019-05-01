@@ -1,6 +1,6 @@
 using System;
 
-namespace CapstoneV2.Models
+namespace DataBroker.Models
 {
 	public class ErrorViewModel
 	{
