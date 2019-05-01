@@ -1,0 +1,48 @@
+﻿@model DataBroker.Models.DataSharingPolicy
+
+<div class="card mb-3">
+    <div class="card-header" id="headingOne">
+        <h2 class="mb-0">
+            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Data Sharing Policy 1
+            </button>
+        </h2>
+    </div>
+
+    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+
+        <div class="card-body">
+            <div class="dsp-title form-group">
+                <label>Title</label>
+                <input type="text" class="form-control dsp-edit" />
+            </div>
+
+            <div class="dsp-excluded form-group">
+                <label>Select none or more to exclude your biometric data from buyers</label>
+                <select multiple class="form-control dsp-edit">
+                    <option>Foo search</option>
+                    <option>Bar search</option>
+                </select>
+            </div>
+
+            <div class="dsp-min-price form-group">
+                <label>Minimum price for your biometric data</label>
+                <input type="number" step="0.01" class="form-control dsp-edit" />
+            </div>
+
+            <div class="dsp-time-period form-group">
+                <label>Set a time range of your biometric data to share</label>
+                <div class="row">
+                    <div class="col">
+                        <input type="time" class="form-control dsp-edit dsp-start-time" />
+                    </div>
+                    <div class="col">
+                        <input type="time" class="form-control dsp-edit dsp-start-time" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
