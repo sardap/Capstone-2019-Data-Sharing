@@ -99,6 +99,9 @@ namespace DataBroker.Areas.Identity.Pages.Account
 
             [Display(Name = "Medical Conditions")]
             public IList<MedicalCondition> MedicalConditions { get; set; } = new List<MedicalCondition>();
+
+            [Display(Name= "Country of residence")]
+            public string Country { get; set; }
 		}
 
 		public void OnGet(string returnUrl = null)
@@ -121,6 +124,7 @@ namespace DataBroker.Areas.Identity.Pages.Account
                     Birthday = Input.Birthday,
                     PhoneNumber = Input.PhoneNumber,
                     Gender = Input.Gender.ToLower(),
+                    Country = Input.Country,
                     Ethnicities = Input.Ethnicities.Where(z => z.IsChecked).Select(z => (Ethnicity)z.EnumValue).Aggregate((e, j) => e | j),
                     MedicalConditions = Input.MedicalConditions.ToList()
 				};

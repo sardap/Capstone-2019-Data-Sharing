@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataBroker.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190420124510_AddApplicationUserAndMedicalCondition")]
-    partial class AddApplicationUserAndMedicalCondition
+    [Migration("20190502025508_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,6 +32,9 @@ namespace DataBroker.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
+
+                    b.Property<string>("Country")
+                        .IsRequired();
 
                     b.Property<string>("Email")
                         .HasMaxLength(256);

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DataBroker.Migrations
 {
-    public partial class AddApplicationUserAndMedicalCondition : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,7 +45,8 @@ namespace DataBroker.Migrations
                     Birthday = table.Column<DateTime>(nullable: false),
                     Firstname = table.Column<string>(nullable: false),
                     Lastname = table.Column<string>(nullable: false),
-                    Ethnicities = table.Column<int>(nullable: true)
+                    Ethnicities = table.Column<int>(nullable: true),
+                    Country = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {

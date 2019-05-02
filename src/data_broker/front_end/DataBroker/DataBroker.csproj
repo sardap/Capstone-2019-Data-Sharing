@@ -8,15 +8,6 @@
     <RootNamespace>DataBroker</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Migrations\20190420123244_AddApplicationUserAndMedicalCondition.cs" />
-    <Compile Remove="Migrations\20190420123244_AddApplicationUserAndMedicalCondition.Designer.cs" />
-    <Compile Remove="Migrations\20190420123826_AddApplicationUserAndMedicalCondition.cs" />
-    <Compile Remove="Migrations\20190420123826_AddApplicationUserAndMedicalCondition.Designer.cs" />
-    <Compile Remove="Migrations\20190420124204_AddApplicationUserAndMedicalCondition.cs" />
-    <Compile Remove="Migrations\20190420124204_AddApplicationUserAndMedicalCondition.Designer.cs" />
-  </ItemGroup>
-
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />

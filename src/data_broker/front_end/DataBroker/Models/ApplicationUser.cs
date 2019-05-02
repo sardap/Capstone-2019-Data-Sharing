@@ -24,6 +24,9 @@ namespace DataBroker.Models
 
 		public Ethnicity? Ethnicities { get; set; }
 
+        [Required]
+        public string Country { get; set; }
+
         public List<MedicalCondition> MedicalConditions { get; set; }
 	}
 }
