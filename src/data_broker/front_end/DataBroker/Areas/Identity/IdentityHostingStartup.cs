@@ -20,7 +20,7 @@ namespace DataBroker.Areas.Identity
                 // Disable all the requirements if it's in Dev mode
                 services.Configure<IdentityOptions>(options =>
                 {
-                    options.Password.RequireDigit = isProd;
+                    options.Password.RequireDigit = true;
                     options.Password.RequireLowercase = isProd;
                     options.Password.RequireNonAlphanumeric = isProd;
                     options.Password.RequireUppercase = isProd;

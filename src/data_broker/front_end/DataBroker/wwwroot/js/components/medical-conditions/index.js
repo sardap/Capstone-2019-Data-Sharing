@@ -15,46 +15,49 @@ function appendCard(mc) {
             type: '',
             severity: '',
             additional: ''
-        }
+        };
     }
 
     var count = MODEL_COUNT;
-
+    var rowHtml =
+        `
+        <div class="card mc-card mb-3"> 
+        <div class="card-body"> 
+        <div class="mc-edit-options mc-view"> 
+        <i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Edit"></i> <i class="fas fa-trash" data-toggle="tooltip" data-placement="top" title="Remove"></i> 
+        </div> 
+        <p class="card-text"> 
+        <div class="mc-name form-group"> 
+        <label>Name</label> 
+        <div class="mc-view"></div> 
+        <input class="form-control mc-edit" type="text" id="Input_MedicalConditions_${MODEL_COUNT}__Name" name="Input.MedicalConditions[${MODEL_COUNT}].Name" /> 
+        </div> 
+        <div class="mc-type form-group"> 
+        <label>Type</label> 
+        <div class="mc-view"></div> 
+        <input type="text" class="form-control mc-edit" id="Input_MedicalConditions_${MODEL_COUNT}__Type" name="Input.MedicalConditions[${MODEL_COUNT}].Type" /> 
+        </div> 
+        <div class="mc-severity form-group"> 
+        <label>Severity</label> 
+        <div class="mc-view"></div> 
+        <input type="number" min="0" max="10" step="1" class="form-control mc-edit" placeholder="Severity (min. 0 and max. 10)" id="Input_MedicalConditions_${MODEL_COUNT}__Severity" name="Input.MedicalConditions[${MODEL_COUNT}].Severity" /> 
+        </div> 
+        <div class="mc-additional form-group"> 
+        <label>Additional Information</label> 
+        <div class="mc-view"></div> 
+        <textarea class="form-control mc-edit" placeholder="Additional Information" id="Input_MedicalConditions_${MODEL_COUNT}__AdditionalInfo" name="Input.MedicalConditions[${MODEL_COUNT}].AdditionalInfo" /> 
+        </div> 
+        </p> 
+        <button type ="button" class="btn btn-primary mc-edit">Save</button>  
+        <button type ="button" class="btn btn-light mc-edit">Cancel</button> 
+        </div> 
+        </div>
+        `;
     // IMPORTANT: Notce the id attribute with the _
     // This is to pass back the Input from here to the code behind Registration.cshtml
     // It's disgusting, I don't like it but it is the fastest way I can think of for now.
     $('#mc-list').append(
-        '<div class="card mc-card mb-3">' +
-        '<div class="card-body">' +
-        '<div class="mc-edit-options mc-view">' +
-        '<i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Edit"></i> <i class="fas fa-trash" data-toggle="tooltip" data-placement="top" title="Remove"></i>' +
-        '</div>' +
-        '<p class="card-text">' +
-        '<div class="mc-name form-group">' +
-        '<label>Name</label>' +
-        '<div class="mc-view"></div>' +
-        '<input class="form-control mc-edit" type="text" id="Input_MedicalConditions_' + count + '__Name" name="Input.MedicalConditions[' + count + '].Name" />' +
-        '</div>' +
-        '<div class="mc-type form-group">' +
-        '<label>Type</label>' +
-        '<div class="mc-view"></div>' +
-        '<input type="text" class="form-control mc-edit" id="Input_MedicalConditions_' + count + '__Type" name="Input.MedicalConditions[' + count + '].Type" />' +
-        '</div>' +
-        '<div class="mc-severity form-group">' +
-        '<label>Severity</label>' +
-        '<div class="mc-view"></div>' +
-        '<input type="number" min="0" max="10" step="1" class="form-control mc-edit" placeholder="Severity (min. 0 and max. 10)" id="Input_MedicalConditions_' + count + '__Severity" name="Input.MedicalConditions[' + count + '].Severity" />' +
-        '</div>' +
-        '<div class="mc-additional form-group">' +
-        '<label>Additional Information</label>' +
-        '<div class="mc-view"></div>' +
-        '<textarea class="form-control mc-edit" placeholder="Additional Information" id="Input_MedicalConditions_' + count + '__AdditionalInfo" name="Input.MedicalConditions[' + count + '].AdditionalInfo" />' +
-        '</div>' +
-        '</p>' +
-        '<button type ="button" class="btn btn-primary mc-edit">Save</button> ' +
-        '<button type ="button" class="btn btn-light mc-edit">Cancel</button>' +
-        '</div>' +
-        '</div>'
+        rowHtml
     );
 
     return $('#mc-list').find('.mc-card').last();
