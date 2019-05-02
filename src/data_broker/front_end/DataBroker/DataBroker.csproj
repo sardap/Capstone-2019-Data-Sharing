@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
@@ -7,21 +7,6 @@
     <AssemblyName>DataBroker</AssemblyName>
     <RootNamespace>DataBroker</RootNamespace>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.cs" />
-    <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.Designer.cs" />
-    <Compile Remove="Data\Migrations\20190420120538_AddMedicalConditionToDb.cs" />
-    <Compile Remove="Data\Migrations\20190420120538_AddMedicalConditionToDb.Designer.cs" />
-    <Compile Remove="Data\Migrations\20190420123051_AddMoreFieldsToIdentityUser.cs" />
-    <Compile Remove="Data\Migrations\20190420123051_AddMoreFieldsToIdentityUser.Designer.cs" />
-    <Compile Remove="Migrations\20190420123244_AddApplicationUserAndMedicalCondition.cs" />
-    <Compile Remove="Migrations\20190420123244_AddApplicationUserAndMedicalCondition.Designer.cs" />
-    <Compile Remove="Migrations\20190420123826_AddApplicationUserAndMedicalCondition.cs" />
-    <Compile Remove="Migrations\20190420123826_AddApplicationUserAndMedicalCondition.Designer.cs" />
-    <Compile Remove="Migrations\20190420124204_AddApplicationUserAndMedicalCondition.cs" />
-    <Compile Remove="Migrations\20190420124204_AddApplicationUserAndMedicalCondition.Designer.cs" />
-  </ItemGroup>
 
 
   <ItemGroup>
@@ -32,7 +17,7 @@
 
 
   <ItemGroup>
-    <Folder Include="Data\Migrations\" />
+    <Folder Include="Data\" />
   </ItemGroup>
 
 </Project>

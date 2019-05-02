@@ -10,12 +10,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CapstoneV2.Data;
+using DataBroker.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using CapstoneV2.Models;
+using DataBroker.Models;
 
-namespace CapstoneV2
+namespace DataBroker
 {
 	public class Startup
 	{

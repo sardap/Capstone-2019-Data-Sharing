@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using CapstoneV2.Models;
-using CapstoneV2.Models.Enums;
+using DataBroker.Models;
+using DataBroker.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -12,10 +12,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using System.Linq;
-using CapstoneV2.Data.Extensions;
-using CapstoneV2.Models.Views;
+using DataBroker.Data.Extensions;
+using DataBroker.Models.Views;
 
-namespace CapstoneV2.Areas.Identity.Pages.Account
+namespace DataBroker.Areas.Identity.Pages.Account
 {
 	[AllowAnonymous]
 	public class RegisterModel : PageModel
@@ -99,6 +99,9 @@ namespace CapstoneV2.Areas.Identity.Pages.Account
 
             [Display(Name = "Medical Conditions")]
             public IList<MedicalCondition> MedicalConditions { get; set; } = new List<MedicalCondition>();
+
+            [Display(Name= "Country of residence")]
+            public string Country { get; set; }
 		}
 
 		public void OnGet(string returnUrl = null)
@@ -121,6 +124,7 @@ namespace CapstoneV2.Areas.Identity.Pages.Account
                     Birthday = Input.Birthday,
                     PhoneNumber = Input.PhoneNumber,
                     Gender = Input.Gender.ToLower(),
+                    Country = Input.Country,
                     Ethnicities = Input.Ethnicities.Where(z => z.IsChecked).Select(z => (Ethnicity)z.EnumValue).Aggregate((e, j) => e | j),
                     MedicalConditions = Input.MedicalConditions.ToList()
 				};

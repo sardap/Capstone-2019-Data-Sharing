@@ -1,10 +1,10 @@
-﻿using CapstoneV2.Data.Extensions;
+﻿using DataBroker.Data.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CapstoneV2.Models.Views
+namespace DataBroker.Models.Views
 {
 	public class EnumFlagCheckboxModel
 	{

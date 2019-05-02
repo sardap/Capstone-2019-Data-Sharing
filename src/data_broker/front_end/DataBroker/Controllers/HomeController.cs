@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using CapstoneV2.Models;
+using DataBroker.Models;
 
-namespace CapstoneV2.Controllers
+namespace DataBroker.Controllers
 {
 	public class HomeController : Controller
 	{
