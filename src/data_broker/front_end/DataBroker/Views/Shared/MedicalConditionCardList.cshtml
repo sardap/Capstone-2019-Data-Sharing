@@ -20,6 +20,11 @@
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
 @* Use <script> to pass in the model information (JSON-fy it if necessary) to the external js file *@
-<script>var MODEL_COUNT = @Model.Count();</script>
+<script>
+    var MODEL_COUNT = @Model.Count();
+    if (MODEL_COUNT > 0) {
+        $('.mc-edit').css('display', 'none');
+    }
+</script>
 <script src="~/js/components/medical-conditions/index.js" asp-append-version="true"></script>
 <link rel="stylesheet" href="~/css/components/medical-conditions/style.css"/>

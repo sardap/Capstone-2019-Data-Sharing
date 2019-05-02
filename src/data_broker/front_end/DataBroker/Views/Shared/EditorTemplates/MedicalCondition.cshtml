@@ -9,32 +9,31 @@
 <div class="card mc-card mb-3">
     <div class="card-body">
         <div class="mc-edit-options mc-view">
-            <i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Edit"></i> 
-            <i class="fas fa-trash" data-toggle="tooltip" data-placement="top" title="Remove"></i>
+            <i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Edit"></i> <i class="fas fa-trash" data-toggle="tooltip" data-placement="top" title="Remove"></i>
         </div>
         <p class="card-text">
             <div class="mc-name form-group">
                 <label>Name</label>
-                <span class="mc-view">@Model.Name</span>
-                <input class="form-control mc-edit" type="text" asp-for="@Model.Name" />
+                <div class="mc-view">@Model.Name</div>
+                <input class="form-control mc-edit" type="text" placeholder="Name of your medical condition" asp-for="@Model.Name" />
             </div>
             <div class="mc-type form-group">
                 <label>Type</label>
-                <span class="mc-view">@Model.Type</span>
-                <input type="text" class="form-control mc-edit" asp-for="@Model.Type" />
+                <div class="mc-view">@Model.Type</div>
+                <input type="text" class="form-control mc-edit" placeholder="Type of your medical condition" asp-for="@Model.Type" />
             </div>
             <div class="mc-severity form-group">
                 <label>Severity</label>
-                <span class="mc-view">@Model.Severity</span>
-                <input type="number" min="0" max="10" step="1" class="form-control mc-edit" asp-for="@Model.Severity" />
+                <div class="mc-view">@Model.Severity</div>
+                <input type="number" min="0" max="10" step="1" class="form-control mc-edit" placeholder="Severity (min. 0 and max. 10)" asp-for="@Model.Severity" />
             </div>
             <div class="mc-additional form-group">
                 <label>Additional Information</label>
-                <span class="mc-view">@Model.AdditionalInfo</span>
-                <textarea class="form-control mc-edit" placeholder="Additional Information" asp-for="@Model.AdditionalInfo." />
+                <div class="mc-view">@Model.AdditionalInfo</div>
+                <textarea class="form-control mc-edit" placeholder="Additional Information" asp-for="@Model.AdditionalInfo"></textarea>
             </div>
         </p>
-        <button type="button" class="btn btn-primary mc-edit">Save</button> 
+        <button type="button" class="btn btn-primary mc-edit">Save</button>
         <button type="button" class="btn btn-light mc-edit">Cancel</button>
     </div>
 </div>
