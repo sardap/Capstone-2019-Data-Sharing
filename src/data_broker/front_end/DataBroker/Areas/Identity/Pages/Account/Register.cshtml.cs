@@ -65,10 +65,10 @@ namespace DataBroker.Areas.Identity.Pages.Account
 			[Display(Name = "Gender")]
 			public string Gender { get; set; }
 
-			[Required]
-			[DataType(DataType.Date)]
-			[Display(Name = "Date of birth")]
-			public DateTime Birthday { get; set; }
+            [Required]
+            [DataType(DataType.Date)]
+            [Display(Name = "Date of birth")]
+            public DateTime Birthday { get; set; } = DateTime.Today;
 
 			[Required]
 			[DataType(DataType.Text)]
@@ -125,7 +125,9 @@ namespace DataBroker.Areas.Identity.Pages.Account
                     PhoneNumber = Input.PhoneNumber,
                     Gender = Input.Gender.ToLower(),
                     Country = Input.Country,
-                    Ethnicities = Input.Ethnicities.Where(z => z.IsChecked).Select(z => (Ethnicity)z.EnumValue).Aggregate((e, j) => e | j),
+                    Ethnicities = Input.Ethnicities.Any(z => z.IsChecked) 
+                        ? Input.Ethnicities.Where(z => z.IsChecked).Select(z => (Ethnicity)z.EnumValue).Aggregate((e, j) => e | j) 
+                        : (Ethnicity?) null,
                     MedicalConditions = Input.MedicalConditions.ToList()
 				};
 
