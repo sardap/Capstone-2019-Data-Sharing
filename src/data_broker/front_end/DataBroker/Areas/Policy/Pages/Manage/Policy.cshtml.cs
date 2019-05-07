@@ -6,7 +6,7 @@ using DataBroker.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace DataBroker.Views.Home
+namespace DataBroker.Areas.Policy.Pages.Manage
 {
     public class PolicyModel : PageModel
     {
@@ -15,12 +15,17 @@ namespace DataBroker.Views.Home
 
         public class InputModel
         {
-            public IList<DataSharingPolicy> DataSharingPolicies = new List<DataSharingPolicy>();
+            public IList<DataSharingPolicy> DataSharingPolicies { get; set; } = new List<DataSharingPolicy>();
         }
 
         public void OnGet()
         {
             Input = new InputModel();
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            return Page();
         }
     }
 }
