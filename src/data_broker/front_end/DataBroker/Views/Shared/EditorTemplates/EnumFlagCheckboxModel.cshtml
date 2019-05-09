@@ -1,0 +1,7 @@
+﻿@model DataBroker.Models.Views.EnumFlagCheckboxModel
+
+@Html.HiddenFor(x => x.DisplayValue)
+@Html.HiddenFor(x => x.EnumValue)
+@Html.CheckBoxFor(x => x.IsChecked)
+@Html.LabelFor(x => x.IsChecked, Model.DisplayValue)
+<br />
