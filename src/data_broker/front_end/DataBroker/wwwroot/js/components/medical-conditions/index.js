@@ -30,12 +30,12 @@ function appendCard(mc) {
         <div class="mc-name form-group"> 
         <label>Name</label> 
         <div class="mc-view"></div> 
-        <input class="form-control mc-edit" type="text" id="Input_MedicalConditions_${MODEL_COUNT}__Name" name="Input.MedicalConditions[${MODEL_COUNT}].Name" /> 
+        <input class="form-control mc-edit" type="text" id="Input_MedicalConditions_${MODEL_COUNT}__Name" name="Input.MedicalConditions[${MODEL_COUNT}].Name" placeholder="Name of your medical condition" /> 
         </div> 
         <div class="mc-type form-group"> 
         <label>Type</label> 
         <div class="mc-view"></div> 
-        <input type="text" class="form-control mc-edit" id="Input_MedicalConditions_${MODEL_COUNT}__Type" name="Input.MedicalConditions[${MODEL_COUNT}].Type" /> 
+        <input type="text" class="form-control mc-edit" id="Input_MedicalConditions_${MODEL_COUNT}__Type" name="Input.MedicalConditions[${MODEL_COUNT}].Type" placeholder="Type of your medical condition" /> 
         </div> 
         <div class="mc-severity form-group"> 
         <label>Severity</label> 
