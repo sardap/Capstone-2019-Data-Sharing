@@ -9,7 +9,7 @@ using policy_validator.Models;
 
 namespace policy_validator.Controllers
 {
-    [Route("policy_validator/checkjsonpart/jsonpolicy")]
+    [Route("checkjsonpart")]
     [ApiController]
     public class CheckJsonPart : ControllerBase
     {
