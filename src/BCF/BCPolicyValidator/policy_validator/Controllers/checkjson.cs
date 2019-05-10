@@ -13,7 +13,7 @@ namespace policy_validator.Controllers
     [ApiController]
     public class CheckJson : ControllerBase
     {
-        // https://localhost:5001/policy_validator/checkjson/jsonpolicy/{"excluded_categories":[0],"min_price":10,"time_period":{"start":-4785955200,"end":693705600},"data_type":"heart rate","wallet_ID":"xxxxxxxxxxxxxxxxxx","active":true}
+        // https://localhost:5001/checkjson/{"excluded_categories":[0],"min_price":10,"time_period":{"start":-4785955200,"end":693705600},"data_type":"heart rate","wallet_ID":"xxxxxxxxxxxxxxxxxx","active":true}
         [HttpGet("{stringPolicy}")]
         public ActionResult Validate(string stringPolicy)
         {
