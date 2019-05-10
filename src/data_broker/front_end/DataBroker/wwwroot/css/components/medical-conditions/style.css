@@ -1,0 +1,15 @@
+﻿.mc-edit-options {
+    float: right;
+}
+
+#add-mc {
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#add-mc:hover {
+    color: #0056b3;
+    text-decoration: underline;
+    cursor: pointer;
+}

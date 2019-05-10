@@ -1,0 +1,11 @@
+
+{
+    "comment" : "This file is used to help set default values when using the dotnet CLI extension Amazon.ElasticBeanstalk.Tools. For more information run \"dotnet eb --help\" from the project root.",
+    "profile" : "Nhi Test ADMIN",
+    "region"  : "ap-southeast-2",
+    "application" : "CapstoneV1",
+    "environment" : "CapstoneV1-dev",
+    "iis-website" : "Default Web Site",
+    "app-path"    : "/",
+    "enable-xray" : false
+}
