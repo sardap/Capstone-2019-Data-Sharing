@@ -1,14 +1,15 @@
 using System;
 
-namespace policy_validator.Models
+namespace Policy_Validator.Models
 {
-    public class policyModel
+    public class PolicyModel
     {
-        public int[] excluded_categories {get; set;}
-        public int? min_price {get; set;}
-        public time time_period {get; set;}
-        public string data_type {get; set;}
-        public string wallet_id {get; set;}
-        public bool? active {get; set;}
+        public int[] Excluded_categories {get; set;}
+        public int? Min_price {get; set;}
+        public Time Time_period {get; set;}
+        public string Data_type {get; set;}
+        public string Wallet_ID {get; set;}
+        public bool[] Active {get; set;}
+        public Report[] Report_log {get; set;}
     }
 }

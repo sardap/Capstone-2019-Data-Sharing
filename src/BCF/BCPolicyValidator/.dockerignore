@@ -3,7 +3,7 @@
 .git
 .gitignore
 .vs
-.vscode
+*/vscode
 */bin
 */obj
 **/.toolstarget

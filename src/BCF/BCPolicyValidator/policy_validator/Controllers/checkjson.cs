@@ -5,38 +5,40 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using policy_validator.Models;
+using Policy_Validator.Models;
 
-namespace policy_validator.Controllers
+namespace Policy_Validator.Controllers
 {
     [Route("checkjson")]
     [ApiController]
     public class CheckJson : ControllerBase
     {
-        // https://localhost:5001/checkjson/{"excluded_categories":[0],"min_price":10,"time_period":{"start":-4785955200,"end":693705600},"data_type":"heart rate","wallet_ID":"xxxxxxxxxxxxxxxxxx","active":true}
+        // https://localhost:5001/checkjson/{"excluded_categories":[0],"min_price":10,"time_period":{"start":-4785955200,"end":693705600},"data_type":"heart rate","wallet_ID":"xxxxxxxxxxxxxxxxxx","active":[true, false],"report_log":[{"data":"123","hash":"321"}]}
         [HttpGet("{stringPolicy}")]
         public ActionResult Validate(string stringPolicy)
         {
-            var errorList = new List<string>();
-            policyModel Policy;
+            var ErrorList = new List<string>();
+            PolicyModel Policy;
 
             try
             {
-                Policy = JsonConvert.DeserializeObject<policyModel>(stringPolicy);
+                Policy = JsonConvert.DeserializeObject<PolicyModel>(stringPolicy);
             }
             catch(JsonReaderException)
             {
-                return BadRequest("Wrong JSON format. Expected JSON format:\n\n{'excluded_categories':[<int array>],'min_price':<int>,'time_period':{'start':<long>,'end':<long>},'data_type':'<string>','wallet_id':'<string>','active':<bool>}");
+                return BadRequest("Wrong JSON format. Expected JSON format:\n\n{'excluded_categories':[<int array>],'min_price':<int>,'time_period':{'start':<long>,'end':<long>},'data_type':'<string>','wallet_id':'<string>','active':[<bool array>], 'report_log':[{'data':'<string>', 'hash':'<string>'}]}");
             }
 
-            if(Policy.excluded_categories == null || Policy.excluded_categories.Length == 0 || Policy.min_price == null || Policy.time_period.start == null || Policy.time_period.end == null || Policy.data_type == null || Policy.wallet_id == null || Policy.active == null)
-                errorList.Add("Not all required fields are assigned.");
-            if(Policy.time_period.start >= Policy.time_period.end)
-                errorList.Add("Start time should be before end time.");
-            if(errorList.Count > 0)
-                return BadRequest(errorList);
+            if(Policy.Min_price == null || Policy.Time_period.Start == null || Policy.Time_period.End == null || Policy.Data_type == null || Policy.Wallet_ID == null || Policy.Active.Length == 0)
+                ErrorList.Add("Not all required fields are assigned.");
 
-            //Return JSON policy
+            if(Policy.Time_period.Start >= Policy.Time_period.End)
+                ErrorList.Add("Start time should be before end time.");
+
+            if(ErrorList.Count > 0)
+                return BadRequest(ErrorList);
+
+            //Return JSON policy.
             return Ok(Policy);
         }
     }

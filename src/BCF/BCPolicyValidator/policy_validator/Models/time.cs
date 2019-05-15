@@ -1,10 +1,10 @@
 using System;
 
-namespace policy_validator.Models
+namespace Policy_Validator.Models
 {
-    public class time
+    public class Time
     {
-        public long? start {get; set;}
-        public long? end {get; set;}
+        public long? Start {get; set;}
+        public long? End {get; set;}
     }
 }

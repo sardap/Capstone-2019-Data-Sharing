@@ -11,9 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
-using policy_validator.Models;
 
-namespace policy_validator
+namespace Policy_Validator
 {
     public class Startup
     {
