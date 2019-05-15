@@ -29,7 +29,7 @@ namespace Policy_Validator.Controllers
                 return BadRequest("Wrong JSON format. Expected JSON format:\n\n{'excluded_categories':[<int array>],'min_price':<int>,'time_period':{'start':<long>,'end':<long>},'data_type':'<string>','wallet_id':'<string>','active':[<bool array>], 'report_log':[{'data':'<string>', 'hash':'<string>'}]}");
             }
 
-            if(Policy.Min_price == null || Policy.Time_period.Start == null || Policy.Time_period.End == null || Policy.Data_type == null || Policy.Wallet_ID == null || Policy.Active.Length == 0)
+            if(Policy.Min_price == null || Policy.Time_period.Start == null || Policy.Time_period.End == null || Policy.Data_type == null || Policy.Wallet_ID == null || Policy.Active.Count == 0)
                 ErrorList.Add("Not all required fields are assigned.");
 
             if(Policy.Time_period.Start >= Policy.Time_period.End)
