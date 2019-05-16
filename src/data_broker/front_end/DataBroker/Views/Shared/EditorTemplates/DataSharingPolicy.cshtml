@@ -1,55 +1,69 @@
 ﻿@model DataBroker.Models.DataSharingPolicy
 
-<div class="card mb-3" id="dsp-1">
-    <div class="card-header" id="headingOne">
-        <h2 class="mb-0">
-            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" aria-controls="collapseOne">
-                Data Sharing Policy 1
+<div class="card dsp-card mb-3" id="dsp_0">
+    <div class="card-header" id="heading_0">
+        <h4 class="mb-0">
+            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse_0" aria-expanded="true" aria-controls="collapse_0">
+                Data Sharing Policy 0
             </button>
-            <input type="checkbox" checked data-toggle="toggle">
-        </h2>
+            <div class="badge badge-pill badge-success float-right mt-1">Active</div>
+        </h4>
+
     </div>
 
-    <div id="collapseOne" class="collapse show" aria-labelledby="heading_1" data-parent="#accordionExample">
+    <div id="collapse_0" class="collapse show" aria-labelledby="heading_0" data-parent="#dsp_0">
 
         <div class="card-body">
             <div class="dsp-excluded form-group">
-                <label>Select none or more to exclude your biometric data from buyers</label>
+                <span class="dsp-view"></span>
+                <label class="dsp-edit">Select none or more to exclude your biometric data from buyers</label>
                 <select multiple class="form-control dsp-edit">
                     <option>Foo search</option>
                     <option>Bar search</option>
+                    <option value="" selected>None</option>
                 </select>
             </div>
 
             <div class="dsp-min-price form-group">
-                <label>Minimum price for your biometric data</label>
-                <input type="number" step="0.01" class="form-control dsp-edit" />
+                <label class="dsp-view">You will be paid at least $<span class="dsp-view"></span> for your biometric data.</label>
+                <label class="dsp-edit">Minimum price for your biometric data</label>
+                <div class="input-group">
+                    <div class="input-group-prepend dsp-edit">
+                        <div class="input-group-text">&dollar;</div>
+                    </div>
+                    <input type="number" step="0.01" value="0" class="form-control dsp-edit" />
+                </div>
             </div>
 
             <div class="dsp-time-period form-group">
-                <label>Set a time range of your biometric data to share</label>
+                <span class="dsp-view"></span>
+
+                <label class="dsp-edit">Set a time range of your biometric data to share</label>
                 <div class="row">
                     <div class="col">
                         <input type="time" class="form-control dsp-edit dsp-start-time" />
                     </div>
                     <div class="col">
-                        <input type="time" class="form-control dsp-edit dsp-start-time" />
+                        <input type="time" class="form-control dsp-edit dsp-end-time" />
                     </div>
                 </div>
             </div>
 
-            <div class="dsp-active form-group">
-                <label>
-                    Toggle this data sharing policy's status. 
-                    By setting the data sharing policy status to active, the restrictions which you speicified here will be followed.
+            <div class="dsp-active form-group dsp-edit">
+                <label class="dsp-edit">
+                    Toggle this data sharing policy's status
+                    <small class="form-text text-muted">
+                        By setting the data sharing policy status to active,
+                        the restrictions which you speicified here will be enforced.
+                    </small>
                 </label>
-                <button class="btn btn-success btn-lg">Activate data sharing policy</button>
+                <button class="btn btn-block btn-danger dsp-edit" id="dsp-toggle-btn">Disable data sharing policy</button>
             </div>
 
-
-            <button type="button" class="btn btn-primary dsp-edit">Save</button>
-            <button type="button" class="btn btn-light dsp-edit">Cancel</button>
+            <button type="button" class="btn btn-primary dsp-edit" id="save-dsp"><i class="far fa-save"></i> Save</button>
+            <button type="button" class="btn btn-light dsp-edit" id="cancel-dsp">Cancel</button>
+            <button type="button" class="btn btn-info dsp-view" id="edit-dsp"><i class="fas fa-edit"></i> Edit</button>
+            <button type="button" class="btn btn-danger dsp-view" id="remove-dsp"><i class="far fa-trash-alt"></i> Remove</button>
         </div>
     </div>
 </div>
-
