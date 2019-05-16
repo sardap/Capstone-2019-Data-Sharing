@@ -38,25 +38,28 @@ function appendCard(dsp) {
 
                 <div class="card-body">
                     <div class="dsp-excluded form-group">
-                        <label class="dsp-view">The following buyers will not be allowed to purchase your data</label>
                         <span class="dsp-view"></span>
                         <label class="dsp-edit">Select none or more to exclude your biometric data from buyers</label>
                         <select multiple class="form-control dsp-edit">
                             <option>Foo search</option>
                             <option>Bar search</option>
+                            <option value="" selected>None</option>
                         </select>
                     </div>
 
                     <div class="dsp-min-price form-group">
-                        <label class="dsp-view">You will be paid at least $<span class="dsp-view"></span> for your biometric data</label>
+                        <label class="dsp-view">You will be paid at least $<span class="dsp-view"></span> for your biometric data.</label>
                         <label class="dsp-edit">Minimum price for your biometric data</label>
-                        <input type="number" step="0.01" class="form-control dsp-edit" />
+                        <div class="input-group">
+                            <div class="input-group-prepend dsp-edit">
+                                <div class="input-group-text">&dollar;</div>
+                            </div>
+                            <input type="number" step="0.01" value="0" class="form-control dsp-edit" />
+                        </div>
                     </div>
 
                     <div class="dsp-time-period form-group">
-                        <label class="dsp-view">Only data that are recorded between 
-                                <span class="dsp-view dsp-start-time"></span> to <span class="dsp-view dsp-end-time"></span>
-                        </label>
+                        <span class="dsp-view"></span>
 
                         <label class="dsp-edit">Set a time range of your biometric data to share</label>
                         <div class="row">
@@ -74,14 +77,16 @@ function appendCard(dsp) {
                             Toggle this data sharing policy's status
                             <small class="form-text text-muted">
                                 By setting the data sharing policy status to active, 
-                                the restrictions which you speicified here will be followed.
+                                the restrictions which you speicified here will be enforced.
                             </small>
                         </label>
                         <button class="btn btn-block btn-danger dsp-edit" id="dsp-toggle-btn">Disable data sharing policy</button>
                     </div>
 
-                    <button type="button" class="btn btn-primary dsp-edit">Save</button>
-                    <button type="button" class="btn btn-light dsp-edit">Cancel</button>
+                    <button type="button" class="btn btn-primary dsp-edit" id="save-dsp"><i class="far fa-save"></i> Save</button>
+                    <button type="button" class="btn btn-light dsp-edit" id="cancel-dsp">Cancel</button>
+                    <button type="button" class="btn btn-info dsp-view" id="edit-dsp"><i class="fas fa-edit"></i> Edit</button>
+                    <button type="button" class="btn btn-danger dsp-view" id="remove-dsp"><i class="far fa-trash-alt"></i> Remove</button>
                 </div>
             </div>
         </div>
@@ -89,9 +94,7 @@ function appendCard(dsp) {
     // IMPORTANT: Notce the id attribute with the _
     // This is to pass back the Input from here to the code behind Registration.cshtml
     // It's disgusting, I don't like it but it is the fastest way I can think of for now.
-    $('#dsp-list').append(
-        rowHtml
-    );
+    $('#dsp-list').append(rowHtml);
 
     return $('#dsp-list').find('.dsp-card').last();
 }
@@ -126,7 +129,7 @@ $('#dsp-list').on('click', '#add-dsp', function () {
 });
 
 //Edit event handler.
-$('body').on('click', '#dsp-list .fa-edit', function () {
+$('body').on('click', '#dsp-list #edit-dsp', function () {
     removeAdditionCard();
 
     var card = $(this).closest('.dsp-card');
@@ -138,8 +141,54 @@ $('body').on('click', '#dsp-list .fa-edit', function () {
     showEditFor(card);
 });
 
+function displayTimeRangeFields(formField, view) {
+    var formFields = formField.toArray();
+    var anyEmptyFieldValue = formFields.some(field => !field || !field.value);
+
+    if (anyEmptyFieldValue)
+        view.html('Your health data will not be limited by time range.');
+    else {
+        view.html(
+            `Only data that are recorded between 
+             <span class="dsp-start-time"></span> to <span class="dsp-end-time"></span>
+             will be available for purchases. Data Broker will not record any health data outside this time range.`
+        );
+        formFields.forEach(function (field) {
+            displayTimeFieldValue(field, view);
+        });
+    }
+
+    showViewFor(view);
+}
+
+function displayTimeFieldValue(inputField, view) {
+    
+    var timeView, timeClass;
+
+    if (inputField.classList.contains('dsp-start-time')) {
+        timeClass = 'dsp-start-time';
+    }
+
+    if (inputField.classList.contains('dsp-end-time')) {
+        timeClass = 'dsp-end-time';
+    }
+
+    var userInput = inputField.value;
+    timeView = view.find('.' + timeClass);
+    $(timeView).html(userInput);
+}
+
+
+function createUnorderedListOfSelectedBuyers(userInput) {
+    if (!userInput.length || userInput.some(v => !v))
+        return 'Buyers from all categories can purchase your health data.';
+
+    const $ul = $('<ul>', {class: 'ml-2'}).append(userInput.map(i => $("<li>").text(i)));
+    return 'The following users will not be able to purchase your health data:' + $ul.prop('outerHTML');
+}
+
 //Update event handler.
-$('body').on('click', '#dsp-list .btn-primary', function () {
+$('body').on('click', '#dsp-list #save-dsp', function () {
     var card = $(this).closest('.dsp-card');
 
     $('div.form-group', card).each(function () {
@@ -147,29 +196,19 @@ $('body').on('click', '#dsp-list .btn-primary', function () {
             var view = $(this).find('span.dsp-view');
             var formField = $(this).find('.form-control.dsp-edit');
             var userInput = formField.val();
+            var viewText = (userInput || '').toString();
+            var isFieldBuyersSelector = Array.isArray(userInput);
+            var isFieldDurationOfShareTime = formField.length > 1;
 
-            if (Array.isArray(userInput)) userInput = userInput.join(', ');
+            if (isFieldBuyersSelector) 
+                viewText = createUnorderedListOfSelectedBuyers(userInput);
 
-            if (formField.length > 1) {
-                var formFields = formField.toArray();
-                formFields.forEach(function (field) {
-                    var timeView;
-                    if (field.classList.contains('dsp-start-time')) {
-                        timeView = view.find('span.dsp-start-time');
-                    }
-
-                    if (field.classList.contains('dsp-end-time')) {
-                        timeView = view.find('span.dsp-end-time');
-                    }
-
-                    timeView.html(userInput);
-                    showViewFor(view);
-                });
-
+            if (isFieldDurationOfShareTime) {
+                displayTimeRangeFields(formField, view);
                 return;
             }
 
-            view.html(userInput);
+            view.html(viewText);
             showViewFor($(this));
         }
     });
@@ -180,14 +219,19 @@ $('body').on('click', '#dsp-list .btn-primary', function () {
 });
 
 //Cancel event handler.
-$('#dsp-list').on('click', '.btn-light', function () {
+$('#dsp-list').on('click', '#cancel-dsp', function () {
     var card = $(this).closest('.dsp-card');
     var isCardNew = true;
 
     $('div.form-group', card).each(function () {
         if ($(this).find('.dsp-edit').length > 0 && $(this).find('i').length === 0) {
-            isCardNew = !$(this).find('.dsp-view').html();
-            $(this).find('.dsp-edit').val($(this).find('.dsp-view').html());
+            if ($(this).find('.dsp-view').html())
+                isCardNew = false;
+
+            var formField = $(this).find('.dsp-edit');
+            var fieldValueFromView = $(this).find('span.dsp-view').html();
+            formField.val(fieldValueFromView);
+
             showViewFor($(this));
         }
     });
@@ -201,13 +245,11 @@ $('#dsp-list').on('click', '.btn-light', function () {
 });
 
 //Delete event handler.
-$('#dsp-list').on('click', '.fa-trash', function () {
+$('#dsp-list').on('click', '#remove-dsp', function () {
     var card = $(this).closest('.dsp-card');
-    var dspName = card.find('.dsp-name').first().find('label').first().html();
 
-    if (confirm('Do you want to delete "' + dspName + '"?')) {
+    if (card && confirm('Do you want to delete this policy?'))
         card.remove();
-    }
 });
 
 $('#dsp-list').on('click', '#dsp-toggle-btn', function () {
@@ -216,17 +258,17 @@ $('#dsp-list').on('click', '#dsp-toggle-btn', function () {
     var badge = card.find('.badge').first();
 
     if (btn.hasClass('btn-danger') || btn.hasClass('btn-success')) {
+        if (btn.hasClass('btn-danger')) {
+            btn.text('Activate this data sharing policy');
+            badge.text('Disabled');
+        } else if (btn.hasClass('btn-success')) {
+            btn.text('Disable this data sharing policy');
+            badge.text('Active');
+        }
+
         btn.toggleClass('btn-danger');
         btn.toggleClass('btn-success');
         badge.toggleClass('badge-danger');
         badge.toggleClass('badge-success');
-
-        if (btn.hasClass('btn-danger')) {
-            btn.text('Activate this data sharing policy');
-            badge.text('Active');
-        } else if (btn.hasClass('btn-success')) {
-            btn.text('Disable this data sharing policy');
-            badge.text('Disabled');
-        }
     }
 });
