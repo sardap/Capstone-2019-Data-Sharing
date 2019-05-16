@@ -1,4 +1,6 @@
-﻿function showViewFor(card) {
+﻿var count = 0;
+
+function showViewFor(card) {
     card.find('.dsp-view').show();
     card.find('.dsp-edit').hide();
 }
@@ -18,29 +20,27 @@ function appendCard(dsp) {
         };
     }
 
-    var count = MODEL_COUNT;
+    count++;
     var rowHtml =
         `
-        <div class="card mb-3">
-            <div class="card-header" id="headingOne">
-                <h2 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        Data Sharing Policy 1
+        <div class="card dsp-card mb-3" id="dsp_${count}">
+            <div class="card-header" id="heading_${count}">
+                <h4 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse_${count}" aria-expanded="true" aria-controls="collapse_${count}">
+                        Data Sharing Policy ${count}
                     </button>
-                    <input type="checkbox" data-toggle="toggle">
-                </h2>
+                    <div class="badge badge-pill badge-success float-right mt-1">Active</div>
+                </h4>
+
             </div>
 
-            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+            <div id="collapse_${count}" class="collapse show" aria-labelledby="heading_${count}" data-parent="#dsp_${count}">
 
                 <div class="card-body">
-                    <div class="dsp-title form-group">
-                        <label>Title</label>
-                        <input type="text" class="form-control dsp-edit" />
-                    </div>
-
                     <div class="dsp-excluded form-group">
-                        <label>Select none or more to exclude your biometric data from buyers</label>
+                        <label class="dsp-view">The following buyers will not be allowed to purchase your data</label>
+                        <span class="dsp-view"></span>
+                        <label class="dsp-edit">Select none or more to exclude your biometric data from buyers</label>
                         <select multiple class="form-control dsp-edit">
                             <option>Foo search</option>
                             <option>Bar search</option>
@@ -48,20 +48,36 @@ function appendCard(dsp) {
                     </div>
 
                     <div class="dsp-min-price form-group">
-                        <label>Minimum price for your biometric data</label>
+                        <label class="dsp-view">You will be paid at least $<span class="dsp-view"></span> for your biometric data</label>
+                        <label class="dsp-edit">Minimum price for your biometric data</label>
                         <input type="number" step="0.01" class="form-control dsp-edit" />
                     </div>
 
                     <div class="dsp-time-period form-group">
-                        <label>Set a time range of your biometric data to share</label>
+                        <label class="dsp-view">Only data that are recorded between 
+                                <span class="dsp-view dsp-start-time"></span> to <span class="dsp-view dsp-end-time"></span>
+                        </label>
+
+                        <label class="dsp-edit">Set a time range of your biometric data to share</label>
                         <div class="row">
                             <div class="col">
                                 <input type="time" class="form-control dsp-edit dsp-start-time" />
                             </div>
                             <div class="col">
-                                <input type="time" class="form-control dsp-edit dsp-start-time" />
+                                <input type="time" class="form-control dsp-edit dsp-end-time" />
                             </div>
                         </div>
+                    </div>
+                    
+                    <div class="dsp-active form-group dsp-edit">
+                        <label class="dsp-edit">
+                            Toggle this data sharing policy's status
+                            <small class="form-text text-muted">
+                                By setting the data sharing policy status to active, 
+                                the restrictions which you speicified here will be followed.
+                            </small>
+                        </label>
+                        <button class="btn btn-block btn-danger dsp-edit" id="dsp-toggle-btn">Disable data sharing policy</button>
                     </div>
 
                     <button type="button" class="btn btn-primary dsp-edit">Save</button>
@@ -85,7 +101,7 @@ function appendAdditionCard() {
         <div class="card">
             <div class="card-body">
                 <p class="card-text">
-                    <i class="fas fa-plus ml-2"></i><span id="add-dsp">Click here to add</span> a new data sharing policy.
+                    <i class="fas fa-plus mr-2"></i><span id="add-dsp">Click here to add</span> a new data sharing policy.
                 </p>
             </div>
         </div>`
@@ -128,7 +144,32 @@ $('body').on('click', '#dsp-list .btn-primary', function () {
 
     $('div.form-group', card).each(function () {
         if ($(this).find('.dsp-edit').length > 0 && $(this).find('i').length === 0) {
-            $(this).find('.dsp-view').html($(this).find('.dsp-edit').val());
+            var view = $(this).find('span.dsp-view');
+            var formField = $(this).find('.form-control.dsp-edit');
+            var userInput = formField.val();
+
+            if (Array.isArray(userInput)) userInput = userInput.join(', ');
+
+            if (formField.length > 1) {
+                var formFields = formField.toArray();
+                formFields.forEach(function (field) {
+                    var timeView;
+                    if (field.classList.contains('dsp-start-time')) {
+                        timeView = view.find('span.dsp-start-time');
+                    }
+
+                    if (field.classList.contains('dsp-end-time')) {
+                        timeView = view.find('span.dsp-end-time');
+                    }
+
+                    timeView.html(userInput);
+                    showViewFor(view);
+                });
+
+                return;
+            }
+
+            view.html(userInput);
             showViewFor($(this));
         }
     });
@@ -166,5 +207,26 @@ $('#dsp-list').on('click', '.fa-trash', function () {
 
     if (confirm('Do you want to delete "' + dspName + '"?')) {
         card.remove();
+    }
+});
+
+$('#dsp-list').on('click', '#dsp-toggle-btn', function () {
+    var card = $(this).closest('.dsp-card');
+    var btn = card.find('#dsp-toggle-btn').first();
+    var badge = card.find('.badge').first();
+
+    if (btn.hasClass('btn-danger') || btn.hasClass('btn-success')) {
+        btn.toggleClass('btn-danger');
+        btn.toggleClass('btn-success');
+        badge.toggleClass('badge-danger');
+        badge.toggleClass('badge-success');
+
+        if (btn.hasClass('btn-danger')) {
+            btn.text('Activate this data sharing policy');
+            badge.text('Active');
+        } else if (btn.hasClass('btn-success')) {
+            btn.text('Disable this data sharing policy');
+            badge.text('Disabled');
+        }
     }
 });
