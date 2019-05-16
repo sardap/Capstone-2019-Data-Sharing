@@ -1,23 +1,18 @@
 ﻿@model DataBroker.Models.DataSharingPolicy
 
-<div class="card mb-3">
+<div class="card mb-3" id="dsp-1">
     <div class="card-header" id="headingOne">
         <h2 class="mb-0">
-            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" aria-controls="collapseOne">
                 Data Sharing Policy 1
             </button>
             <input type="checkbox" checked data-toggle="toggle">
         </h2>
     </div>
 
-    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+    <div id="collapseOne" class="collapse show" aria-labelledby="heading_1" data-parent="#accordionExample">
 
         <div class="card-body">
-            <div class="dsp-title form-group">
-                <label>Title</label>
-                <input type="text" class="form-control dsp-edit" />
-            </div>
-
             <div class="dsp-excluded form-group">
                 <label>Select none or more to exclude your biometric data from buyers</label>
                 <select multiple class="form-control dsp-edit">
@@ -42,6 +37,15 @@
                     </div>
                 </div>
             </div>
+
+            <div class="dsp-active form-group">
+                <label>
+                    Toggle this data sharing policy's status. 
+                    By setting the data sharing policy status to active, the restrictions which you speicified here will be followed.
+                </label>
+                <button class="btn btn-success btn-lg">Activate data sharing policy</button>
+            </div>
+
 
             <button type="button" class="btn btn-primary dsp-edit">Save</button>
             <button type="button" class="btn btn-light dsp-edit">Cancel</button>
