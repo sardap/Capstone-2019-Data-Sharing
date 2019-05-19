@@ -29,17 +29,35 @@ namespace Policy_Validator.Controllers
                 return BadRequest("Wrong JSON format. Expected JSON format:\n\n{'excluded_categories':[<int array>],'min_price':<int>,'time_period':{'start':<long>,'end':<long>},'wallet_id':'<string>', 'report_log':[{'data':<string>, 'hash':<string>}]'}");
             }
 
-            if(Policy.Min_price == null || Policy.Time_period.Start == null || Policy.Time_period.End == null || Policy.Wallet_ID == null)
-                ErrorList.Add("Not all required fields are assigned.");
-
-            if(Policy.Time_period.Start >= Policy.Time_period.End)
-                ErrorList.Add("Start time should be before end time.");
+            ErrorList.AddRange(JsonPartValidate(Policy));
 
             if(ErrorList.Count > 0)
                 return BadRequest(ErrorList);
 
             //Return JSON policy.
             return Ok(Policy);
+        }
+
+        public static List<string> JsonPartValidate(PolicyModel policy)
+        {
+            var ErrorList = new List<string>();
+
+            if(policy.Time_period.Start >= policy.Time_period.End)
+                ErrorList.Add("Start time should be before end time.");
+
+            if(policy.Min_price == null)
+                ErrorList.Add("min_price field is not assigned.");
+
+            if(policy.Time_period.Start == null)
+                ErrorList.Add("start field is not assigned.");
+
+            if(policy.Time_period.End == null)
+                ErrorList.Add("end field is not assigned.");
+
+            if(policy.Wallet_ID == null)
+                ErrorList.Add("wallet_ID field is not assigned.");
+
+            return ErrorList;
         }
     }
 }
