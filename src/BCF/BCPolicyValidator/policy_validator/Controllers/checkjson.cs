@@ -22,11 +22,15 @@ namespace Policy_Validator.Controllers
 
             try
             {
-                Policy = JsonConvert.DeserializeObject<PolicyModel>(stringPolicy);
+                Policy = JsonConvert.DeserializeObject<PolicyModel>(stringPolicy, new StrictStringConverter());
             }
             catch(JsonReaderException)
             {
                 return BadRequest("Wrong JSON format. Expected JSON format:\n\n{'excluded_categories':[<int array>],'min_price':<int>,'time_period':{'start':<long>,'end':<long>},'data_type':'<string>','wallet_id':'<string>','active':[<bool array>], 'report_log':[{'data':'<string>', 'hash':'<string>'}]}");
+            }
+            catch(JsonSerializationException)
+            {
+                return BadRequest("Wrong JSON format. Expected JSON format:\n\n{'excluded_categories':[<int array>],'min_price':<int>,'time_period':{'start':<long>,'end':<long>},'wallet_id':'<string>', 'report_log':[{'data':<string>, 'hash':<string>}]'}");
             }
 
             ErrorList.AddRange(CheckJsonPart.JsonPartValidate(Policy));
