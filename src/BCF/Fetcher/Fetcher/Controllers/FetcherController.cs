@@ -14,7 +14,8 @@ namespace Fetcher.Controllers
 	{
 		private Dictionary<CustodianType, IFetcher> _fetchers = new Dictionary<CustodianType, IFetcher>()
 		{
-			{ CustodianType.Fake, new FakeFetcher() }
+			{ CustodianType.Fake, new FakeFetcher() },
+			{ CustodianType.GoogleFit, new GoogleFetcher() }
 		};
 
 		[HttpGet()]
