@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Fetcher
 {
@@ -18,6 +20,12 @@ namespace Fetcher
 		public Startup(IConfiguration configuration)
 		{
 			Configuration = configuration;
+			
+			//Note this file is git ignored
+			string jsonStr = File.ReadAllText("secrets.json");
+
+			var secrets = JsonConvert.DeserializeObject<SecretsJson>(jsonStr);
+			SecretsJson.Instance = secrets;
 		}
 
 		public IConfiguration Configuration { get; }
