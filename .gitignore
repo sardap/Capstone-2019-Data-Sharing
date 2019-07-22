@@ -459,4 +459,5 @@ dmypy.json
 .pyre/
 
 # End of https://www.gitignore.io/api/python
+
 src/BCF/Fetcher/Fetcher/secrets.json

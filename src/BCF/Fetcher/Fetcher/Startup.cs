@@ -20,12 +20,10 @@ namespace Fetcher
 		public Startup(IConfiguration configuration)
 		{
 			Configuration = configuration;
-			
-			//Note this file is git ignored
-			string jsonStr = File.ReadAllText("secrets.json");
 
-			var secrets = JsonConvert.DeserializeObject<SecretsJson>(jsonStr);
-			SecretsJson.Instance = secrets;
+			Secrets.Instance = new Secrets();
+			Secrets.Instance.Google_api_client_id = Environment.GetEnvironmentVariable("GOOGLE_API_CLIENT_ID");
+			Secrets.Instance.Google_api_client_secert = Environment.GetEnvironmentVariable("GOOGLE_API_CLIENT_SECERT");
 		}
 
 		public IConfiguration Configuration { get; }
@@ -36,20 +34,21 @@ namespace Fetcher
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 		}
 
-		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
+			// Only added when running in Development
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
 			}
-			else
+
+			// Only added when running in Production
+			if (env.IsProduction())
 			{
-				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-				app.UseHsts();
+				app.UseExceptionHandler("/Error");
 			}
 
-			app.UseHttpsRedirection();
+			app.UseStaticFiles();
 			app.UseMvc();
 		}
 	}

@@ -21,8 +21,8 @@ namespace Fetcher
 
 			string url =
 				baseURL +
-				"?client_id=" + SecretsJson.Instance.google_api_client_id +
-				"&client_secret=" + SecretsJson.Instance.google_api_client_secert +
+				"?client_id=" + Secrets.Instance.Google_api_client_id +
+				"&client_secret=" + Secrets.Instance.Google_api_client_secert +
 				"&refresh_token=" + refresh_token +
 				"&grant_type=" + grantType;
 

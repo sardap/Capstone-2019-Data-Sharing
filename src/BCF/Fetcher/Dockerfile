@@ -15,6 +15,9 @@ FROM build AS publish
 RUN dotnet publish "Fetcher.csproj" -c Release -o /app
 
 FROM base AS final
+RUN apt update && \
+    apt install unzip && \
+    curl -sSL https://aka.ms/getvsdbgsh | /bin/sh /dev/stdin -v latest -l /vsdbg
 WORKDIR /app
 COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "Fetcher.dll"]
