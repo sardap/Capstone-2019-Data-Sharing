@@ -23,7 +23,9 @@ namespace Fetcher
 
 			Secrets.Instance = new Secrets();
 			Secrets.Instance.Google_api_client_id = Environment.GetEnvironmentVariable("GOOGLE_API_CLIENT_ID");
-			Secrets.Instance.Google_api_client_secert = Environment.GetEnvironmentVariable("GOOGLE_API_CLIENT_SECERT");
+			Secrets.Instance.Google_api_client_secret = Environment.GetEnvironmentVariable("GOOGLE_API_CLIENT_SECRET");
+			Console.WriteLine(Secrets.Instance.Google_api_client_id);
+			Console.WriteLine(Secrets.Instance.Google_api_client_secret);
 		}
 
 		public IConfiguration Configuration { get; }

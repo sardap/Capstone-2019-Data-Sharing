@@ -11,6 +11,6 @@ namespace Fetcher
 
 		public string Google_api_client_id { get; set; }
 
-		public string Google_api_client_secert { get; set; }
+		public string Google_api_client_secret { get; set; }
 	}
 }

@@ -7,6 +7,6 @@ namespace Fetcher
 {
 	public enum DataType
 	{
-		Heartrate, Height, Foo, Bar
+		HeartRate, Height, Foo, Bar
 	}
 }
