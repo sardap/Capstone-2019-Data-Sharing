@@ -16,6 +16,7 @@ sudo apt install -y docker-compose
 sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
+sudo apt install -y python-pip
 sudo apt install -y build-essential
 sudo apt-get install -y libdb4.8-dev libdb4.8++-dev
 sudo pip install pathlib2
