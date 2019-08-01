@@ -9,20 +9,47 @@ namespace BlockchainPolicyDeployer
 	{
 		public static Paths Instance
 		{
-			get;
-			set;
+			get; set;
 		}
 
 		public string VaildatorIP
 		{
-			get;
-			set;
+			get; set;
 		}
 
 		public string VaildatorPort
 		{
-			get;
-			set;
+			get; set;
+		}
+
+		public string StreamName
+		{
+			get; set;
+		}
+
+		public string ChainName
+		{
+			get; set;
+		}
+
+		public string RPCPort
+		{
+			get; set;
+		}
+
+		public string RPCIP
+		{
+			get; set;
+		}
+
+		public string RPCUserName
+		{
+			get; set;
+		}
+
+		public string RPCPassword
+		{
+			get; set;
 		}
 	}
 }

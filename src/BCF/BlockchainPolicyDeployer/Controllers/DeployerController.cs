@@ -6,7 +6,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using RestSharp;
+using RestSharp.Authenticators;
 
 namespace BlockchainPolicyDeployer.Controllers
 {
@@ -14,6 +16,8 @@ namespace BlockchainPolicyDeployer.Controllers
 	[ApiController]
 	public class DeployerController : ControllerBase
 	{
+		private const int MAX_STREAM_KEY_LENGTH = 256;
+
 		public class RequestBody
 		{
 			public string json_policy { get; set; }
@@ -22,9 +26,9 @@ namespace BlockchainPolicyDeployer.Controllers
 
 		// POST api/values
 		[HttpPost]
-		public HttpResponseMessage Post(RequestBody requestBody)
+		public IActionResult Post(RequestBody requestBody)
 		{
-			var jsonPolicyStr = HttpUtility.UrlDecode(requestBody.json_policy);
+			var jsonPolicyStr = HttpUtility.UrlDecode(requestBody.json_policy).Replace(" ", "");
 			var walletId = requestBody.wallet_id;
 
 			// Check policy valid
@@ -32,27 +36,41 @@ namespace BlockchainPolicyDeployer.Controllers
 			var client = new RestClient("http://" + url + "/checkjson/" + jsonPolicyStr);
 			IRestResponse response = client.Execute(new RestRequest(Method.GET));
 
-			if(response.Content != jsonPolicyStr.Replace(" ", ""))
+			if(response.Content != jsonPolicyStr)
 			{
-				var result = new HttpResponseMessage(HttpStatusCode.BadRequest);
-				return result;
+				return BadRequest();
 			}
 
+			var stream = Paths.Instance.StreamName;
+			var key = Utility.RandomString(MAX_STREAM_KEY_LENGTH);
+			var chainName = Paths.Instance.ChainName;
 
+			client = new RestClient("http://localhost:25565")
+			{
+				Authenticator = new HttpBasicAuthenticator(Paths.Instance.RPCUserName, Paths.Instance.RPCPassword)
+			};
+			var request = new RestRequest(Method.POST);
+			request.AddHeader("cache-control", "no-cache");
+			request.AddHeader("Connection", "keep-alive");
+			request.AddHeader("Accept-Encoding", "gzip, deflate");
+			request.AddHeader("Host", Paths.Instance.RPCIP + ":" + Paths.Instance.RPCPort);
+			request.AddHeader("Cache-Control", "no-cache");
+			request.AddHeader("Accept", "*/*");
+			request.AddHeader("User-Agent", "PostmanRuntime/7.15.2");
+			request.AddHeader("Content-Type", "application/json");
+			request.AddParameter("undefined", "{\"method\":\"publish\",\"params\":[ \"" + stream + "\", \"" + key + "\", { \"json\":" + jsonPolicyStr + "}],\"chain_name\":\"" + chainName + "\"}", ParameterType.RequestBody);
+			response = client.Execute(request);
 
-			return new HttpResponseMessage(HttpStatusCode.OK);
-		}
+			dynamic reponseResult = JsonConvert.DeserializeObject(response.Content);
 
-		// PUT api/values/5
-		[HttpPut("{id}")]
-		public void Put(int id, [FromBody] string value)
-		{
-		}
+			//Error Handling for Bad submission? 
 
-		// DELETE api/values/5
-		[HttpDelete("{id}")]
-		public void Delete(int id)
-		{
+			var result = new ContentResult
+			{
+				Content = "{\"trans_id\":\"" + reponseResult.result + "\", \"key\" : \"" + key +"\"}"
+			};
+
+			return result;
 		}
 	}
 }
