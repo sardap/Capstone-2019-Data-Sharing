@@ -24,11 +24,17 @@ namespace BlockchainPolicyDeployer.Controllers
 			public string wallet_id { get; set; }
 		}
 
+		[HttpGet("working")]
+		public string Working()
+		{
+			return "Working";
+		}
+
 		// POST api/values
 		[HttpPost("deploy")]
 		public IActionResult Post(RequestBody requestBody)
 		{
-			var jsonPolicyStr = HttpUtility.UrlDecode(requestBody.json_policy).Replace(" ", "");
+			var jsonPolicyStr = requestBody.json_policy.Replace(" ", "");
 			var walletId = requestBody.wallet_id;
 
 			dynamic policyWalletID = JsonConvert.DeserializeObject(jsonPolicyStr);
@@ -45,7 +51,7 @@ namespace BlockchainPolicyDeployer.Controllers
 
 			if(response.ErrorException != null)
 			{
-				return StatusCode(500);
+				return StatusCode(500, "Failled to check policy valid: " + response.ErrorMessage);
 			}
 
 			if(response.Content != jsonPolicyStr)
@@ -58,7 +64,7 @@ namespace BlockchainPolicyDeployer.Controllers
 			var chainName = Paths.Instance.ChainName;
 			var ipPort = Paths.Instance.RPCIP + ":" + Paths.Instance.RPCPort;
 
-			client = new RestClient("https://" + ipPort)
+			client = new RestClient("http://" + ipPort)
 			{
 				Authenticator = new HttpBasicAuthenticator(Paths.Instance.RPCUserName, Paths.Instance.RPCPassword)
 			};
@@ -76,7 +82,7 @@ namespace BlockchainPolicyDeployer.Controllers
 
 			if(response.ErrorException != null)
 			{
-				return StatusCode(500, response.ErrorMessage);
+				return StatusCode(500, response.ErrorException);
 			}
 
 			dynamic reponseResult = JsonConvert.DeserializeObject(response.Content);

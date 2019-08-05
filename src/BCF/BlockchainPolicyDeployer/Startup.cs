@@ -19,23 +19,25 @@ namespace BlockchainPolicyDeployer
 		{
 			Configuration = configuration;
 
+			/*
 			if(Environment.GetEnvironmentVariable("HOME") != "HOME=/root")
 			{
 				//For testing outside docker
-				Environment.SetEnvironmentVariable("VAILDATOR_IP", "127.0.0.1");
-				Environment.SetEnvironmentVariable("VAILDATOR_PORT", "5005");
+				Environment.SetEnvironmentVariable("VALIDATOR_IP", "127.0.0.1");
+				Environment.SetEnvironmentVariable("VALIDATOR_PORT", "5005");
 				Environment.SetEnvironmentVariable("STREAM_NAME", "stream1");
 				Environment.SetEnvironmentVariable("CHAIN_NAME", "chain1");
 				Environment.SetEnvironmentVariable("RPC_PORT", "25565");
 				Environment.SetEnvironmentVariable("RPC_IP", "localhost");
 				Environment.SetEnvironmentVariable("RPC_USERNAME", "multichainrpc");
-				Environment.SetEnvironmentVariable("RPC_PASSWORD", "7FkityQ9fVURtZHzSMCPDXfrj8hXTKApC2yCNDbxYSHC");
+				Environment.SetEnvironmentVariable("RPC_PASSWORD", "");
 			}
+			*/
 
 			var paths = new Paths
 			{
-				VaildatorIP = Environment.GetEnvironmentVariable("VAILDATOR_IP"),
-				VaildatorPort = Environment.GetEnvironmentVariable("VAILDATOR_PORT") ?? null,
+				VaildatorIP = Environment.GetEnvironmentVariable("VALIDATOR_IP"),
+				VaildatorPort = Environment.GetEnvironmentVariable("VALIDATOR_PORT") ?? null,
 				StreamName = Environment.GetEnvironmentVariable("STREAM_NAME"),
 				ChainName = Environment.GetEnvironmentVariable("CHAIN_NAME"),
 				RPCPort = Environment.GetEnvironmentVariable("RPC_PORT"),

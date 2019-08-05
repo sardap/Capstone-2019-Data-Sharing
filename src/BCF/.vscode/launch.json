@@ -5,6 +5,24 @@
    "version": "0.2.0",
    "configurations": [
         {
+            "name": "Attach to webapi (Docker)",
+            "type": "coreclr",
+            "request": "attach",
+            "sourceFileMap": {
+                "/app": "${workspaceFolder}/src/api"
+            },
+            "processId" : "${command:pickRemoteProcess}",
+            "pipeTransport": {
+                "debuggerPath": "/publish/vsdbg/vsdbg",
+                "pipeProgram": "docker",
+                "pipeCwd": "${workspaceFolder}/src/api",
+                "quoteArgs": false,
+                "pipeArgs": [
+                    "exec","-i", "webapi_debug"
+                ]
+            }
+        },
+        {
             "name": ".NET Core Docker Attach",
             "type": "coreclr",
             "request": "attach",
