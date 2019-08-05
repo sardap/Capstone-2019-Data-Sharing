@@ -25,16 +25,28 @@ namespace BlockchainPolicyDeployer.Controllers
 		}
 
 		// POST api/values
-		[HttpPost]
+		[HttpPost("deploy")]
 		public IActionResult Post(RequestBody requestBody)
 		{
 			var jsonPolicyStr = HttpUtility.UrlDecode(requestBody.json_policy).Replace(" ", "");
 			var walletId = requestBody.wallet_id;
 
+			dynamic policyWalletID = JsonConvert.DeserializeObject(jsonPolicyStr);
+
+			if (walletId != policyWalletID.wallet_ID.Value)
+			{
+				return BadRequest();
+			}
+
 			// Check policy valid
 			var url = Paths.Instance.VaildatorPort == null ? Paths.Instance.VaildatorIP : Paths.Instance.VaildatorIP + ":" + Paths.Instance.VaildatorPort;
 			var client = new RestClient("http://" + url + "/checkjson/" + jsonPolicyStr);
 			IRestResponse response = client.Execute(new RestRequest(Method.GET));
+
+			if(response.ErrorException != null)
+			{
+				return StatusCode(500);
+			}
 
 			if(response.Content != jsonPolicyStr)
 			{
@@ -44,8 +56,9 @@ namespace BlockchainPolicyDeployer.Controllers
 			var stream = Paths.Instance.StreamName;
 			var key = Utility.RandomString(MAX_STREAM_KEY_LENGTH);
 			var chainName = Paths.Instance.ChainName;
+			var ipPort = Paths.Instance.RPCIP + ":" + Paths.Instance.RPCPort;
 
-			client = new RestClient("http://localhost:25565")
+			client = new RestClient("https://" + ipPort)
 			{
 				Authenticator = new HttpBasicAuthenticator(Paths.Instance.RPCUserName, Paths.Instance.RPCPassword)
 			};
@@ -53,13 +66,18 @@ namespace BlockchainPolicyDeployer.Controllers
 			request.AddHeader("cache-control", "no-cache");
 			request.AddHeader("Connection", "keep-alive");
 			request.AddHeader("Accept-Encoding", "gzip, deflate");
-			request.AddHeader("Host", Paths.Instance.RPCIP + ":" + Paths.Instance.RPCPort);
+			request.AddHeader("Host", ipPort);
 			request.AddHeader("Cache-Control", "no-cache");
 			request.AddHeader("Accept", "*/*");
 			request.AddHeader("User-Agent", "PostmanRuntime/7.15.2");
 			request.AddHeader("Content-Type", "application/json");
 			request.AddParameter("undefined", "{\"method\":\"publish\",\"params\":[ \"" + stream + "\", \"" + key + "\", { \"json\":" + jsonPolicyStr + "}],\"chain_name\":\"" + chainName + "\"}", ParameterType.RequestBody);
 			response = client.Execute(request);
+
+			if(response.ErrorException != null)
+			{
+				return StatusCode(500, response.ErrorMessage);
+			}
 
 			dynamic reponseResult = JsonConvert.DeserializeObject(response.Content);
 
