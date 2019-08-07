@@ -1,11 +1,9 @@
-# Fetcher Com
+# Deployer Com
 
 ## Docker Info
 
 ### Building Image
 `docker build --rm -f "BlockchainPolicyDeployer\Dockerfile" -t blockchain_policy_deployer:dev BlockchainPolicyDeployer`
-
-docker stop dep; docker rm dep; docker run  -d -it -p 6000:80 -e RPC_USERNAME=multichainrpc -e RPC_PASSWORD=7FkityQ9fVURtZHzSMCPDXfrj8hXTKApC2yCNDbxYSHC --name dep blockchain_policy_deployer:dev bash
 
 ### Startup Info
 Requires the following environment variables be set 
