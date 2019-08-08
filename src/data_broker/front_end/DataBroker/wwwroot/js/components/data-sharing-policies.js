@@ -64,7 +64,13 @@ function appendCard(dsp) {
                         <label class="dsp-edit">Set a time range of your biometric data to share</label>
                         <div class="row">
                             <div class="col">
+                                <input type="date" class="form-control dsp-edit dsp-start-date" />
+                            </div>
+                            <div class="col">
                                 <input type="time" class="form-control dsp-edit dsp-start-time" />
+                            </div>
+                            <div class="col">
+                                <input type="date" class="form-control dsp-edit dsp-end-date" />
                             </div>
                             <div class="col">
                                 <input type="time" class="form-control dsp-edit dsp-end-time" />
@@ -91,7 +97,7 @@ function appendCard(dsp) {
             </div>
         </div>
         `;
-    // IMPORTANT: Notce the id attribute with the _
+    // IMPORTANT: Notice the id attribute with the _
     // This is to pass back the Input from here to the code behind Registration.cshtml
     // It's disgusting, I don't like it but it is the fastest way I can think of for now.
     $('#dsp-list').append(rowHtml);
@@ -115,7 +121,7 @@ function removeAdditionCard() {
     $('#dsp-list').find('#add-dsp').last().parents('.card').last().remove();
 }
 
-//Add event handler.
+
 $('#dsp-list').on('click', '#add-dsp', function () {
     var isCardListEmpty = $('#dsp-list .card').length === 1;
     if (isCardListEmpty) {
@@ -128,7 +134,6 @@ $('#dsp-list').on('click', '#add-dsp', function () {
     showEditFor(newCard);
 });
 
-//Edit event handler.
 $('body').on('click', '#dsp-list #edit-dsp', function () {
     removeAdditionCard();
 
@@ -150,8 +155,8 @@ function displayTimeRangeFields(formField, view) {
     else {
         view.html(
             `Only data that are recorded between 
-             <span class="dsp-start-time"></span> to <span class="dsp-end-time"></span>
-             will be available for purchases. Data Broker will not record any health data outside this time range.`
+             <span class="dsp-start-date"></span> @ <span class="dsp-start-time"></span> to <span class="dsp-end-date"></span> @ <span class="dsp-end-time"></span>
+             will be available for purchases.<br/>Data Broker will not record any health data outside this time range.`
         );
         formFields.forEach(function (field) {
             displayTimeFieldValue(field, view);
@@ -162,20 +167,31 @@ function displayTimeRangeFields(formField, view) {
 }
 
 function displayTimeFieldValue(inputField, view) {
-    
-    var timeView, timeClass;
+    let timeView, timeClass;
+    let isDate = false;
+
+    if (inputField.classList.contains('dsp-start-date')) {
+        timeClass = 'dsp-start-date';
+        isDate = true;
+    }
 
     if (inputField.classList.contains('dsp-start-time')) {
         timeClass = 'dsp-start-time';
+    }
+
+    if (inputField.classList.contains('dsp-end-date')) {
+        timeClass = 'dsp-end-date';
+        isDate = true;
     }
 
     if (inputField.classList.contains('dsp-end-time')) {
         timeClass = 'dsp-end-time';
     }
 
-    var userInput = inputField.value;
+    let userInput = inputField.value;
+    let displayValue = isDate ? new Date(userInput).toLocaleDateString() : userInput;
     timeView = view.find('.' + timeClass);
-    $(timeView).html(userInput);
+    $(timeView).html(displayValue);
 }
 
 
