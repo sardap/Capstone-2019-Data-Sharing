@@ -1,0 +1,15 @@
+﻿@page
+
+@model PolicyModel
+
+@{
+    ViewData["Title"] = "Data Sharing Policies";
+}
+
+<h1>Manage your data sharing policies</h1>
+
+<div class="row">
+    <div class="col">
+        <partial name="DataSharingPolicyList" model="@Model.Input.DataSharingPolicies">
+    </div>
+</div>
