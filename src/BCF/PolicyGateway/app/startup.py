@@ -1,6 +1,5 @@
 from flask import Flask, Blueprint, request, Response, abort, jsonify
 import requests
-
 import json
 import os
 
