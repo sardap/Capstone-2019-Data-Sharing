@@ -17,10 +17,16 @@ Environment variables:
     - Software expects a PORT environment variable.  If no PORT variable exists it will default to 8080
     - The dockerfile exposes port 8080
 
-Additional information:
-    - The database will be stored in storage/nedb.db 
-
 Running in Docker:
     - Build with `$docker build -t name/app-name .`
     - For persistent storage mount a directory in the container with /usr/src/app/storage
         - eg `docker run -p 8080:8080 -v $(pwd)/storage:/usr/src/app/storage andrew/token-app` will mount ./storage into the container
+
+Broker keys:
+    - Becoming a broker isn't a technical process.  For the prototype the accepted broker API keys are ["broker0", "broker1", "broker2"]
+
+Additional information:
+    - The database will be stored in storage/nedb.db 
+    - Routes:
+        - Generate a new token:     /bcc_policy_token_gateway/newtoken/:brokerapikey
+        - Validate existing token:  /bcc_policy_token_gateway/checktoken/:token
