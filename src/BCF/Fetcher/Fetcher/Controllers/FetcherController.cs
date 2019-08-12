@@ -30,12 +30,12 @@ namespace Fetcher.Controllers
 			var errors = new List<string>();
 
 			if (!Enum.IsDefined(typeof(CustodianType), custodianType))
-				errors.Add("custodian_type invaild");
+				errors.Add("custodian_type invalid");
 
 			var custodian = (CustodianType)custodianType;
 
 			if (!Enum.IsDefined(typeof(DataType), dataType))
-				errors.Add("data_type invaild");
+				errors.Add("data_type invalid");
 
 			var dataTypeEnum = (DataType)dataType;
 
