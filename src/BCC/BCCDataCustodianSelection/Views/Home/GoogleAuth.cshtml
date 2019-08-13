@@ -1,0 +1,86 @@
+﻿@model DataCustodianModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<script>
+    function selectionchange() {
+        var e = document.getElementById("mySelect");
+        var str = e.options[e.selectedIndex].value;
+
+        if (str == 'Google Fit') {
+            document.getElementById('datatypeselect').style.display = 'block';
+            document.getElementById('googlefit').style.display = 'none';
+            document.getElementById('fitbit').style.display = 'block';
+        }
+        else if (str == 'Fitbit') {
+            document.getElementById('datatypeselect').style.display = 'block';
+            document.getElementById('googlefit').style.display = 'block';
+            document.getElementById('fitbit').style.display = 'none';
+        }
+        else {
+            document.getElementById('datatypeselect').style.display = 'none';
+        }
+    }
+</script>
+
+
+
+
+<form method="post">
+
+    <h1> Google Authentication test page</h1>
+
+    // https://developers.google.com/identity/protocols/OAuth2WebServer
+    // STEPS:
+    // 1. Your application identifies the permissions it needs.
+    // 2. Your application redirects the user to Google along with the list of requested permissions.
+    // The user decides whether to grant the permissions to your application.
+    // Your application finds out what the user decided.
+    // If the user granted the requested permissions, your application retrieves tokens needed to make API requests on the user's behalf.
+
+    // STEP 1: PERMISSIONS / SCOPES
+    // https://developers.google.com/fit/rest/v1/authorization
+
+    // https://www.googleapis.com/auth/fitness.activity.read
+    //      - com.google.step_count.delta
+    // https://www.googleapis.com/auth/fitness.blood_glucose.read
+    // https://www.googleapis.com/auth/fitness.blood_pressure.read
+    // https://www.googleapis.com/auth/fitness.body.read
+    //      - com.google.heart_rate.bpm
+    //      - com.google.height
+    //      - com.google.weight
+    // https://www.googleapis.com/auth/fitness.body_temperature.read
+    // https://www.googleapis.com/auth/fitness.location.read
+    // https://www.googleapis.com/auth/fitness.nutrition.read
+    // https://www.googleapis.com/auth/fitness.oxygen_saturation.read
+    // https://www.googleapis.com/auth/fitness.reproductive_health.read
+
+    // STEP 2: Redirect to Google along with requested permissions
+    // OAuth 2.0 Endpoint: https://accounts.google.com/o/oauth2/v2/auth
+    // Parameters:
+    //      (necessary)
+    //      client_id: 446983905302-uuv9ap7s6poee19ksl4fkad4c5r9d0b3.apps.googleusercontent.com (test-client 1 - My test project)
+    //      redirect_uri: This will be where the service redirects to once it's done. What this means is that we cannot accurately test this until we have it hosted on a website.
+    //      scope: A space-delimited list of scopes that identify the resources that your application could access on the user's behalf (see above)
+    //      (unnecessary)
+    //      access_type: suggest we use value of 'offline' for this prototype
+    //      prompt: use value of 'consent' to display consent prompt
+
+    // Example REST request with line breaks for readability:
+    // https://accounts.google.com/o/oauth2/v2/auth?
+    //    scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.metadata.readonly&
+    //    access_type=offline&
+    //    include_granted_scopes=true&
+    //    state=state_parameter_passthrough_value&
+    //    redirect_uri=http%3A%2F%2Foauth2.example.com%2Fcallback&
+    //    response_type=code&
+    //    client_id=client_id
+
+    <asp:LinkButton ID="googleAuth" runat="server" Text="Test Google redirect"
+                    OnClick="myButton_Click"
+                    OnClientClick="aspnetForm.target ='_blank';" />
+
+
+</form>
