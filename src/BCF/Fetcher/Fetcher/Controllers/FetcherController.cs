@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -12,10 +12,11 @@ namespace Fetcher.Controllers
 	[ApiController]
 	public class FetcherController : ControllerBase
 	{
-		private Dictionary<CustodianType, IFetcher> _fetchers = new Dictionary<CustodianType, IFetcher>()
+		private readonly Dictionary<CustodianType, IFetcher> _fetchers = new Dictionary<CustodianType, IFetcher>
 		{
 			{ CustodianType.Fake, new FakeFetcher() },
-			{ CustodianType.GoogleFit, new GoogleFetcher() }
+			{ CustodianType.GoogleFit, new GoogleFetcher() },
+			{ CustodianType.Fitbit, new FitbitFetcher() }
 		};
 
 		[HttpGet()]
