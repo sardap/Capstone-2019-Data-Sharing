@@ -18,7 +18,7 @@ Requires the following environment variables be set
 
 Must open a port to 80
 
-Example run `docker run  -d -it -p 6000:80 -e VALIDATOR_IP=X.X.X.X -e VALIDATOR_PORT=5005 -e STREAM_NAME=stream1 -e CHAIN_NAME=chain1 -e RPC_PORT=25565 -e RPC_IP=X.X.X.X -e RPC_USERNAME=multichainrpc -e RPC_PASSWORD=workersunite --name dep blockchain_policy_deployer:dev bash`
+Example run `docker run -d -it -p 6000:80 -e VALIDATOR_IP=X.X.X.X -e VALIDATOR_PORT=5005 -e STREAM_NAME=stream1 -e CHAIN_NAME=chain1 -e RPC_PORT=25565 -e RPC_IP=X.X.X.X -e RPC_USERNAME=multichainrpc -e RPC_PASSWORD=workersunite --name dep blockchain_policy_deployer:dev bash`
 
 ## Accessing
 Refer to polciy deploy command here https://docs.google.com/spreadsheets/d/1tx5qSRbAhjFloYm4dX-Mxn17BmzcYBLhHZqnTUNTeOo/edit#gid=0
