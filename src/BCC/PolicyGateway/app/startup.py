@@ -1,4 +1,5 @@
 from flask import Flask, Blueprint, request, Response, abort, jsonify
+from werkzeug.exceptions import BadRequest
 import requests
 import json
 import os
@@ -6,9 +7,10 @@ import re
 
 #docker build -t docker-flask:latest .; docker stop flaskapp; docker rm flaskapp; docker run --name flaskapp -d -e DEPLOYER_IP=140.140.140.30:6000 -p 5000:5000 docker-flask:latest; docker logs flaskapp -f
 
-DEPLOYER_IP = os.environ['DEPLOYER_IP']
+_deployer_ip = os.environ['DEPLOYER_IP'] if os.environ.get('DEPLOYER_IP') is not None else '140.140.140.30:6000'
+_fetcher_ip = os.environ['FETCHER_IP'] if os.environ.get('FETCHER_IP') is not None else '140.140.140.30:80'
 
-app = Flask(__name__)
+_app = Flask(__name__)
 
 class InvalidUsage(Exception):
     status_code = 400
@@ -38,7 +40,7 @@ def check_add_policy_request(request_json):
 def deploy_policy(json_policy, wallet_id):
     import requests
 
-    url = "http://" + DEPLOYER_IP + "/blockchain_policy_deployer/deploy"
+    url = "http://" + _deployer_ip + "/blockchain_policy_deployer/deploy"
 
     json_policy = re.sub(r'\"', '\\\"', json_policy)
     
@@ -49,7 +51,7 @@ def deploy_policy(json_policy, wallet_id):
         'User-Agent': "PostmanRuntime/7.15.2",
         'Accept': "*/*",
         'Cache-Control': "no-cache",
-        'Host': DEPLOYER_IP,
+        'Host': _deployer_ip,
         'Accept-Encoding': "gzip, deflate",
         'Connection': "keep-alive",
         'cache-control': "no-cache"
@@ -57,26 +59,48 @@ def deploy_policy(json_policy, wallet_id):
     
     response = requests.request("POST", url, data=payload, headers=headers)
            
-    app.logger.info(response.text)
+    _app.logger.info(response.text)
 
     return response.text
     
+def test_fetch(api_key):
+    import requests
+
+    url = "http://" + _fetcher_ip + "/fetcher/testfetch/" + api_key +"/1/1"
+
+    headers = {
+        'User-Agent': "PostmanRuntime/7.15.2",
+        'Accept': "*/*",
+        'Host': _fetcher_ip,
+        'Accept-Encoding': "gzip, deflate",
+        'Connection': "keep-alive",
+        'cache-control': "no-cache"
+        }
+
+    response = requests.request("GET", url, headers=headers)
+
+    return json.loads(response.text)['Result'] == True
+
 def handle_invalid_usage(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
 
-@app.route('/addpolicy', methods=['POST'])
+@_app.route('/addpolicy', methods=['POST'])
 def add_policy():
     body = request.get_json()
     #Check if the body is valid
     missing_keys = check_add_policy_request(body)
     if(len(missing_keys) > 0):
-        raise InvalidUsage("Missing Keys: " + str(missing_keys), status_code = 400)
+        raise BadRequest("Missing Keys: " + str(missing_keys))
+
+    if(not test_fetch(body['api_key'])):
+        raise BadRequest("Failed test fetch")
 
     result = deploy_policy(body['json_policy'], body['wallet_id'])
 
     return result
 
 if __name__ == "__main__":
-    app.run(host = '0.0.0.0', port = 5000, debug = True)
+    _app.run(host = '0.0.0.0', port = 5000, debug = True)
+
