@@ -12,7 +12,7 @@ namespace Fetcher
 		private const string FITBIT_API_HOST = "api.fitbit.com";
 		private const char CURRENT_LOGGED_IN_USER = '-';
 
-		private string GetNewAccessToken(string refreshToken)
+		private string GetNewAccessToken(string refreshToken, List<string> errors)
 		{
 			var requestParams = "grant_type=refresh_token" +
 			                    $"&refresh_token={refreshToken}";
@@ -28,8 +28,12 @@ namespace Fetcher
 
 			var rawResponse = client.Execute(request);
 			dynamic response = JObject.Parse(rawResponse.Content);
+			var responseErrors = (JArray) response["errors"];
 
-			return response.access_token;
+			if (responseErrors == null || responseErrors.Count == 0) return response.access_token;
+
+			errors.Add("Unable to establish a connection to Fitbit.");
+			return string.Empty;
 		}
 
 		private string GetUrlFromRequestedDataType(DataType dataType)
@@ -49,7 +53,10 @@ namespace Fetcher
 
 		public bool TestFetch(string apiKey, DataType dataType, List<string> errors)
 		{
-			var accessToken = GetNewAccessToken(HttpUtility.UrlDecode(apiKey));
+			var accessToken = GetNewAccessToken(HttpUtility.UrlDecode(apiKey), errors);
+
+			if (string.IsNullOrWhiteSpace(accessToken)) return false;
+
 			var dataTypeUrl = GetUrlFromRequestedDataType(dataType);
 
 			var client = new RestClient($"https://{FITBIT_API_HOST}/1/user/{CURRENT_LOGGED_IN_USER}/");
