@@ -9,6 +9,7 @@ import re
 
 _deployer_ip = os.environ['DEPLOYER_IP'] if os.environ.get('DEPLOYER_IP') is not None else '140.140.140.30:6000'
 _fetcher_ip = os.environ['FETCHER_IP'] if os.environ.get('FETCHER_IP') is not None else '140.140.140.30:80'
+_policy_token_ip = os.environ['POLICY_TOKEN_IP'] if os.environ.get('POLICY_TOKEN_IP') is not None else '140.140.140.30:80'
 
 _app = Flask(__name__)
 
