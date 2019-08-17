@@ -5,11 +5,9 @@ import json
 import os
 import re
 
-#docker build -t docker-flask:latest .; docker stop flaskapp; docker rm flaskapp; docker run --name flaskapp -d -e DEPLOYER_IP=140.140.140.30:6000 -p 5000:5000 docker-flask:latest; docker logs flaskapp -f
-
-_deployer_ip = os.environ['DEPLOYER_IP'] if os.environ.get('DEPLOYER_IP') is not None else '140.140.140.30:6000'
-_fetcher_ip = os.environ['FETCHER_IP'] if os.environ.get('FETCHER_IP') is not None else '140.140.140.30:80'
-_policy_token_ip = os.environ['POLICY_TOKEN_IP'] if os.environ.get('POLICY_TOKEN_IP') is not None else '140.140.140.30:80'
+_deployer_ip = os.environ['DEPLOYER_IP']
+_fetcher_ip = os.environ['FETCHER_IP']
+_policy_token_ip = os.environ['POLICY_TOKEN_IP']
 
 _app = Flask(__name__)
 
@@ -65,8 +63,6 @@ def deploy_policy(json_policy, wallet_id):
     return response.text
     
 def test_fetch(api_key):
-    import requests
-
     url = "http://" + _fetcher_ip + "/fetcher/testfetch/" + api_key +"/1/1"
 
     headers = {
@@ -82,10 +78,21 @@ def test_fetch(api_key):
 
     return json.loads(response.text)['Result'] == True
 
-def handle_invalid_usage(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
-    return response
+def check_policy_create_token(token):
+    url = "http://" + _policy_token_ip + "/bcc_policy_token_gateway/checktoken/" + token
+
+    headers = {
+        'Accept': "*/*",
+        'Cache-Control': "no-cache",
+        'Host': _policy_token_ip,
+        'Accept-Encoding': "gzip, deflate",
+        'Connection': "keep-alive",
+        'cache-control': "no-cache"
+        }
+
+    response = requests.request("GET", url, headers=headers)
+
+    return response.status_code == 200 and json.loads(response.text)['status'] == "success"
 
 @_app.route('/addpolicy', methods=['POST'])
 def add_policy():
@@ -95,8 +102,15 @@ def add_policy():
     if(len(missing_keys) > 0):
         raise BadRequest("Missing Keys: " + str(missing_keys))
 
+    if(not check_policy_create_token(body['policy_creation_token'])):
+        raise BadRequest("Invalid policy creation token")
+    else:
+        _app.logger.info("Policy Creation Token Valid")
+
     if(not test_fetch(body['api_key'])):
         raise BadRequest("Failed test fetch")
+    else:
+        _app.logger.info("Test Fetch successful")
 
     result = deploy_policy(body['json_policy'], body['wallet_id'])
 
