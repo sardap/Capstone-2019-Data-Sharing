@@ -1,0 +1,21 @@
+@page
+@model DataBroker.Areas.Request.Pages.Purchase.Index
+
+@{
+    ViewData["Title"] = "Request Purchase";
+}
+
+<h1>Request Data Purchase</h1>
+
+<p>Please submit a request to purchase outlining what kind of health data you are looking for.</p>
+
+<button class="btn btn-primary" id="add-purchase-request">Add a new request</button>
+
+<div id="request-list" class="mt-3"></div>
+
+<script>
+    var MODEL_COUNT = 0;
+</script>
+<script src="~/js/components/request-purchase.js" type="module" asp-append-version="true"></script>
+<script src="~/js/components/medical-conditions.js" type="module" asp-append-version="true"></script>
+<link rel="stylesheet" href="~/css/components/medical-conditions.css" />
