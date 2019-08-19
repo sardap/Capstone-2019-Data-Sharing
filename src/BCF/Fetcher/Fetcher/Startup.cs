@@ -24,6 +24,9 @@ namespace Fetcher
 			Secrets.Instance = new Secrets();
 			Secrets.Instance.GoogleAPIClientID = Environment.GetEnvironmentVariable("GOOGLE_API_CLIENT_ID");
 			Secrets.Instance.GoogleAPIClientSecret = Environment.GetEnvironmentVariable("GOOGLE_API_CLIENT_SECRET");
+			Secrets.Instance.FitbitApiClientId = Environment.GetEnvironmentVariable("FITBIT_API_CLIENT_ID");
+			Secrets.Instance.FitbitApiClientSecret = Environment.GetEnvironmentVariable("FITBIT_API_CLIENT_SECRET");
+
 			Console.WriteLine(Secrets.Instance.GoogleAPIClientID);
 			Console.WriteLine(Secrets.Instance.GoogleAPIClientSecret);
 		}

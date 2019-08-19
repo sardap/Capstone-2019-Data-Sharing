@@ -14,7 +14,7 @@ namespace Fetcher
 {
 	public class GoogleFetcher : IFetcher
 	{
-		private string GetNewAccessToken(string refresh_token)
+		private string GetNewAccessToken(string refreshToken)
 		{
 			string baseURL = "https://www.googleapis.com/oauth2/v4/token";
 			string grantType = "refresh_token";
@@ -23,7 +23,7 @@ namespace Fetcher
 				baseURL +
 				"?client_id=" + Secrets.Instance.GoogleAPIClientID +
 				"&client_secret=" + Secrets.Instance.GoogleAPIClientSecret +
-				"&refresh_token=" + refresh_token +
+				"&refresh_token=" + refreshToken +
 				"&grant_type=" + grantType;
 
 			var client = new RestClient(url);
