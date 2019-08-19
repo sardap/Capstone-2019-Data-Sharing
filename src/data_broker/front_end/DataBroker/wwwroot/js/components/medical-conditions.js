@@ -8,7 +8,7 @@ function showEditFor(card) {
     card.find('.mc-view').hide();
 }
 
-function appendCard(mc) {
+export function appendCard(mc) {
     if (!mc) {
         mc = {
             name: '',
