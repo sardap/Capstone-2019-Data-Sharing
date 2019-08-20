@@ -30,3 +30,36 @@ Additional information:
     - Routes:
         - Generate a new token:     /bcc_policy_token_gateway/newtoken/:brokerapikey
         - Validate existing token:  /bcc_policy_token_gateway/checktoken/:token
+
+
+
+Testing information:
+Functionality to test: 
+1. Can create token
+   1. Doesn't create with an unverified broker id
+   2. Generates with verified broker id
+2. Can verify token
+   1. Returns success with a token
+   2. Returns failure with an invalid token
+3. State persistance 
+
+All testing procedures assume running locally via Docker with the command:  
+`docker run -p 8080:8080 -v $(pwd)/storage:/usr/src/app/storage name/app-name`  
+Replace 127.0.0.1 with the correct IP address if deployed elsewhere.  
+
+1. Create a token  
+GET request to 127.0.0.1:8080/bcc_policy_token_gateway/newtoken/:brokerapikey  
+   1. Replace `:brokerapikey` with a verified broker key.  Currently broker0 --> broker2.  System should return a success and an API key.  Save the API key somewhere to test token verification
+   2. Replace `:brokerapikey` with any random string.  System should return a failure.  
+2. Can verify tokens  
+GET request to 127.0.0.1:8080/bcc_policy_token_gateway/checktoken/:token  
+
+    1. Replace `:token` with a token generated in testing the token creation.  System should return the token exists
+    2. Replace `:token` with a random string.  The system should return the token 
+
+3. Stop the container and check the storage/nedb.db file for entries after the previously run steps.  Restart the container and verify test 2.1 works with the previously generated token.
+
+
+
+
+        
