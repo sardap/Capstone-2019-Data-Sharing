@@ -30,7 +30,7 @@
 
 <form method="post">
 
-    <h1> Google Authentication test page</h1>
+    // G O O G L E
 
     // https://developers.google.com/identity/protocols/OAuth2WebServer
     // STEPS:
@@ -62,25 +62,60 @@
     // Parameters:
     //      (necessary)
     //      client_id: 446983905302-uuv9ap7s6poee19ksl4fkad4c5r9d0b3.apps.googleusercontent.com (test-client 1 - My test project)
+    //      We should all use the same client_id
+
     //      redirect_uri: This will be where the service redirects to once it's done. What this means is that we cannot accurately test this until we have it hosted on a website.
+    //      http://secretwaterfall.club/
+
     //      scope: A space-delimited list of scopes that identify the resources that your application could access on the user's behalf (see above)
     //      (unnecessary)
-    //      access_type: suggest we use value of 'offline' for this prototype
+
+    //      // mebbe no access_type: suggest we use value of 'offline' for this prototype
+
+    //      response_type: token
+
     //      prompt: use value of 'consent' to display consent prompt
 
     // Example REST request with line breaks for readability:
     // https://accounts.google.com/o/oauth2/v2/auth?
-    //    scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.metadata.readonly&
-    //    access_type=offline&
-    //    include_granted_scopes=true&
-    //    state=state_parameter_passthrough_value&
-    //    redirect_uri=http%3A%2F%2Foauth2.example.com%2Fcallback&
-    //    response_type=code&
-    //    client_id=client_id
+    //    scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.body.read%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.activity.read&
+    //    redirect_uri=https%3A%2F%2Fgetpostman.com
+    //    response_type=token&
+    //    client_id=446983905302-uuv9ap7s6poee19ksl4fkad4c5r9d0b3.apps.googleusercontent.com
 
-    <asp:LinkButton ID="googleAuth" runat="server" Text="Test Google redirect"
-                    OnClick="myButton_Click"
-                    OnClientClick="aspnetForm.target ='_blank';" />
+    // https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.body.read%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.activity.read&redirect_uri=https%3A%2F%2Fgetpostman.com&response_type=token&client_id=446983905302-uuv9ap7s6poee19ksl4fkad4c5r9d0b3.apps.googleusercontent.com
+
+    // response: https://www.getpostman.com/#access_token=ya29.GltqBxlm9Rod-GVoepnFvuQZbKW-JWME-b61lJKvCeDveeGh76VKNBzHTjjpAGgU2oPd2NN4NA6FkIdEXFZ0OBknEPcwd4PV5DI-iyIJ5tsj79TwA4ZUHppOzZFU&token_type=Bearer&expires_in=3600&scope=https://www.googleapis.com/auth/fitness.activity.read%20https://www.googleapis.com/auth/fitness.body.read
 
 
+    // F I T  B I T
+
+    // Step 1: Parameters/Scopes
+
+    // REST URL: https://www.fitbit.com/oauth2/authorize
+
+    // Params
+    // client_ID : required :
+    // response_type : required : token
+    // scope : required : %20 (whitespace) delimited
+    //      activity
+    //      heartrate
+    //      nutrition
+    //      sleep
+    //      weight
+    // redirect_uri : required unless we have only one URI setup on dev.fitbit.com : URIs to be setup on dev.fitbit.com
+    // expires_in : optional : Number of seconds. Defaults to 86400 (one day). Can be set to anything
+    //
+
+    // construct:
+    // https://www.fitbit.com/oauth2/authorize?
+    // client_id=22B74V&
+    // response_type=token&
+    // scope=activity%20heartrate%20nutrition%20sleep%20weight&
+    // redirect_uri=https%3A%2F%2Fauthorization.secretwaterfall.club&
+    // expires_in=60
+
+    // my example: https://www.fitbit.com/oauth2/authorize?client_id=22B74V&response_type=token&scope=activity%20heartrate%20nutrition%20sleep%20weight&redirect_uri=https%3A%2F%2Fauthorization.secretwaterfall.club&expires_in=60
+
+    // example response: https://authorization.secretwaterfall.club/#access_token=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMkI3NFYiLCJzdWIiOiI3RkJEWDgiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJzZXQgcmFjdCBybG9jIHJ3ZWkgcmhyIHJudXQgcnBybyByc2xlIiwiZXhwIjoxNTY2ODY0MDgyLCJpYXQiOjE1NjYyNTkyODJ9.E06onaBZ7xT3GUUBImixI6e9xAZxIc5iiqLKxniN0Kg&user_id=7FBDX8&scope=settings+social+weight+location+sleep+nutrition+profile+activity+heartrate&token_type=Bearer&expires_in=604800
 </form>
