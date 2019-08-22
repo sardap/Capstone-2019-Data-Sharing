@@ -5,3 +5,6 @@
 - [] Is there a Readme for the component if applicable ([Example](https://github.com/sardap/Capstone-2019-Data-Sharing/blob/Development/src/BCF/Fetcher/README.md))
   - [] Does the Readme include testing information
 - [] example
+
+### Related issues
+This resolves #issue_number 
