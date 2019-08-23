@@ -16,7 +16,7 @@ namespace BCCDataCustodianSelection.Controllers
 {
     public class HomeController : Controller
     {
-        //https://localhost:5001/{policy}/key
+        //https://localhost:5001/{policy}/policykey
         [Route("{policy}/{policykey}")]
         public IActionResult Index(string policy, string policykey)
         {
@@ -47,7 +47,7 @@ namespace BCCDataCustodianSelection.Controllers
 
         public IActionResult DataTypeSelection()
         {
-            //Data custodian selection
+            //Data type selection based on custodian
             string DataCustodian = Request.Form["Input.DataCustodian"];
 
             if (DataCustodian == "GoogleFit")
@@ -79,6 +79,10 @@ namespace BCCDataCustodianSelection.Controllers
         {
             //Google OAuth
             string DataType = Request.Form["Input.DataType"];
+            if(DataType == "")
+            {
+                return View("GoogleTypeSelection");
+            }
             string ResultAPIKey = "test";//placeholder
 
 
@@ -91,6 +95,10 @@ namespace BCCDataCustodianSelection.Controllers
         {
             //Fitbit OAuth
             string DataType = Request.Form["Input.DataType"];
+            if(DataType == "")
+            {
+                return View("FitbitTypeSelection");
+            }
             string ResultAPIKey = "test";//placeholder
 
 
