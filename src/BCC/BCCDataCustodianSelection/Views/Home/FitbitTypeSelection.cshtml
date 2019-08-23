@@ -1,0 +1,23 @@
+@model DataCustodianModel
+
+@{
+    ViewData["Title"] = "BCC";
+}
+
+<form method="post" action="/Home/FitbitOAuth">
+    <label>Data type</label>
+    <div id="fitbit">
+        <select id="fitbitselect" class="form-control" asp-for="Input.DataType">
+            <option value="">Select Data Type</option>
+            <option value=""></option>
+            <option value=""></option>
+            <option value=""></option>
+            <option value=""></option>
+            <option value=""></option>
+            <option value=""></option>
+            <option value=""></option>
+        </select>
+    </div>
+    <br />
+    <button type="submit">Submit</button>
+</form>

@@ -1,0 +1,38 @@
+@model DataCustodianModel
+
+@{
+    ViewData["Title"] = "BCC";
+}
+
+<form method="post" action="/Home/GoogleOAuth">
+    <label>Data type</label>
+    <div id="googlefit">
+        <select id="googlefitselect" class="form-control" asp-for="Input.DataType">
+            <option value="">Select Data Type</option>
+            <option value="com.google.activity.sample">Activity sample</option>
+            <option value="com.google.activity.segment">Activity segment</option>
+            <option value="com.google.calories.consumed">Calories consumed</option>
+            <option value="com.google.calories.expended">Calories expended</option>
+            <option value="com.google.cycling.pedaling.cadence">Cycling pedaling cadence</option>
+            <option value="com.google.cycling.wheel_revolution.rpm">Cycling wheel revolution rpm</option>
+            <option value="com.google.distance.delta">Distance delta</option>
+            <option value="com.google.heart_rate.bpm">Heart rate bpm</option>
+            <option value="com.google.height">Height</option>
+            <option value="com.google.nutrition">Nutrition</option>
+            <option value="com.google.power.sample">Power sample</option>
+            <option value="com.google.speed">Speed</option>
+            <option value="com.google.step_count.cadence">Step count cadence</option>
+            <option value="com.google.step_count.delta">Step count delta</option>
+            <option value="com.google.weight">Weight</option>
+            <option value="com.google.activity.exercise">Activity exercise</option>
+            <option value="com.google.activity.summary">Activity summary</option>
+            <option value="com.google.heart_rate.summary">Heart rate summary</option>
+            <option value="com.google.nutrition.summary">Nutrition summary</option>
+            <option value="com.google.power.summary">Power summary</option>
+            <option value="com.google.speed.summary">Speed summary</option>
+            <option value="com.google.weight.summary">Weight summary</option>
+        </select>
+    </div>
+    <br />
+    <button type="submit">Submit</button>
+</form>

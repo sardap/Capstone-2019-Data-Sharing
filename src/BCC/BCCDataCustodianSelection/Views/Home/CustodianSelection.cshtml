@@ -1,0 +1,16 @@
+@model DataCustodianModel
+
+@{
+    ViewData["Title"] = "BCC";
+}
+
+<form method="post" action="/Home/DataTypeSelection">
+    <label>Data custodian</label>
+        <select id="custSelect" class="form-control" asp-for="Input.DataCustodian">
+            <option value="">Select Data Custodian</option>
+            <option value="GoogleFit">Google Fit</option>
+            <option value="Fitbit">Fitbit</option>
+        </select>
+        <br />
+    <button type="submit">Submit</button>
+</form>

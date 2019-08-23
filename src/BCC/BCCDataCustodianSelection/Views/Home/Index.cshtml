@@ -1,64 +1,15 @@
 ﻿@model DataCustodianModel
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "BCC";
 }
 
-<script>
-    function selectionchange()
-    {
-        var e = document.getElementById("mySelect");
-        var str = e.options[e.selectedIndex].value;
-
-        if(str == 'Google Fit')
-        {
-            document.getElementById('datatypeselect').style.display='block';
-            document.getElementById('googlefit').style.display='none';
-            document.getElementById('fitbit').style.display='block';
-        }
-        else if(str == 'Fitbit')
-        {
-            document.getElementById('datatypeselect').style.display='block';
-            document.getElementById('googlefit').style.display='block';
-            document.getElementById('fitbit').style.display='none';
-        }
-        else
-        {
-            document.getElementById('datatypeselect').style.display='none';
-        }
-    }
-</script>
-
-<form method="post">
-    <h4>Data Custodian Selection</h4>
-    <hr />
+<form method="post" action="/Home/CustodianSelection">
+    <label>Wallet ID</label>
+    <input asp-for="Input.Wallet_ID" class="form-control" />
+    <br />
     <label>API key</label>
     <input asp-for="Input.APIKey" class="form-control" />
     <br />
-    <label>Data custodian</label>
-    <select id="mySelect" onchange="selectionchange();" class="form-control" asp-for="Input.DataCustodian">
-        <option>Select Data Custodian</option>
-        <option value="Google Fit">Google Fit</option>
-        <option value="Fitbit">Fitbit</option>
-    </select>
-    <br />
-    <div id="datatypeselect">
-        <label>Data type</label>
-        <div id="googlefit">
-            <select class="form-control" asp-for="Input.DataType">
-                <option>Select Data Type</option>
-                <option value=""></option>
-                <option value=""></option>
-            </select>
-        </div>
-        <div id="fitbit">
-            <select class="form-control" asp-for="Input.DataType">
-                <option>Select Data Type</option>
-                <option value=""></option>
-                <option value=""></option>
-            </select>
-        </div>
-        <br />
-    </div>
     <button type="submit">Submit</button>
 </form>

@@ -12,11 +12,9 @@ namespace BCCDataCustodianSelection.Models
 
         public class InputModel
         {
-            [Required]
+            public string Wallet_ID { get; set; }
             public string DataCustodian { get; set; }
-            [Required]
             public string DataType { get; set; }
-            [Required]
             public string APIKey { get; set; }
         }
     }
