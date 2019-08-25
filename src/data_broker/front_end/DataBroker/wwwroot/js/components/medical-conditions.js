@@ -8,7 +8,7 @@ function showEditFor(card) {
     card.find('.mc-view').hide();
 }
 
-export function appendCard(mc) {
+function appendCard(mc) {
     if (!mc) {
         mc = {
             name: '',
@@ -24,7 +24,7 @@ export function appendCard(mc) {
         <div class="card mc-card mb-3"> 
         <div class="card-body"> 
         <div class="mc-edit-options mc-view"> 
-        <i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Edit"></i> <i class="fas fa-trash" data-toggle="tooltip" data-placement="top" title="Remove"></i> 
+        <i class="fas fa-edit" id="edit-mc" data-toggle="tooltip" data-placement="top" title="Edit"></i> <i class="fas fa-trash" id="remove-mc" data-toggle="tooltip" data-placement="top" title="Remove"></i> 
         </div> 
         <p class="card-text"> 
         <div class="mc-name form-group"> 
@@ -48,8 +48,8 @@ export function appendCard(mc) {
         <textarea class="form-control mc-edit" placeholder="Additional Information" id="Input_MedicalConditions_${MODEL_COUNT}__AdditionalInfo" name="Input.MedicalConditions[${MODEL_COUNT}].AdditionalInfo" /> 
         </div> 
         </p> 
-        <button type ="button" class="btn btn-primary mc-edit">Save</button>  
-        <button type ="button" class="btn btn-light mc-edit">Cancel</button> 
+        <button type ="button" class="btn btn-primary mc-edit save-mc">Save</button>  
+        <button type ="button" class="btn btn-light mc-edit cancel-mc">Cancel</button> 
         </div> 
         </div>
         `;
@@ -65,7 +65,7 @@ export function appendCard(mc) {
 
 function appendAdditionCard() {
     $('#mc-list').append(
-        '<div class="card">' +
+        '<div class="card" id="addition-mc-card">' +
         '<div class="card-body">' +
         '<p class="card-text">' +
         '<i class="fas fa-plus"></i> <span id="add-mc">Click here to add</span> medical conditions.' +
@@ -76,37 +76,26 @@ function appendAdditionCard() {
 }
 
 function removeAdditionCard() {
-    $('#mc-list').find('#add-mc').last().parents('.card').last().remove();
+    var additionCard = $('#mc-list').find('#addition-mc-card');
+    if (additionCard) additionCard.remove();
 }
 
-//Add event handler.
-$('#mc-list').on('click', '#add-mc', function () {
-    var isCardListEmpty = $('#mc-list .card').length === 1;
-    if (isCardListEmpty) {
-        $('#mc-list .card').first().remove();
-    } else {
-        removeAdditionCard();
-    }
-
+function onAddMcClick() {
+    removeAdditionCard();
     var newCard = appendCard();
     showEditFor(newCard);
-});
+}
 
-//Edit event handler.
-$('body').on('click', '#mc-list .fa-edit', function () {
+function makeMcListReadonly() {
+    $('#mc-list').find('.mc-edit-options').remove();
     removeAdditionCard();
+}
 
-    var card = $(this).closest('.mc-card');
-    $('div.form-group', card).each(function () {
-        if ($(this).find('.mc-edit').length > 0) {
-            showEditFor($(this));
-        }
-    });
-    showEditFor(card);
+$('body').on('click', '#mc-list #add-mc', function () {
+    onAddMcClick();
 });
 
-//Update event handler.
-$('body').on('click', '#mc-list .btn-primary', function () {
+$('body').on('click', '#mc-list .save-mc', function () {
     var card = $(this).closest('.mc-card');
 
     $('div.form-group', card).each(function () {
@@ -121,8 +110,7 @@ $('body').on('click', '#mc-list .btn-primary', function () {
     if ($('#mc-list').find('#add-mc').length === 0) appendAdditionCard();
 });
 
-//Cancel event handler.
-$('#mc-list').on('click', '.btn-light', function () {
+$('body').on('click', '#mc-list .cancel-mc', function () {
     var card = $(this).closest('.mc-card');
     var isCardNew = true;
 
@@ -142,8 +130,19 @@ $('#mc-list').on('click', '.btn-light', function () {
     appendAdditionCard();
 });
 
-//Delete event handler.
-$('#mc-list').on('click', '.fa-trash', function () {
+$('body').on('click', '#mc-list .fa-edit', function () {
+    removeAdditionCard();
+
+    var card = $(this).closest('.mc-card');
+    $('div.form-group', card).each(function () {
+        if ($(this).find('.mc-edit').length > 0) {
+            showEditFor($(this));
+        }
+    });
+    showEditFor(card);
+});
+
+$('body').on('click', '#mc-list .fa-trash', function () {
     var card = $(this).closest('.mc-card');
     var mcName = card.find('.mc-name').first().find('label').first().html();
 
@@ -151,3 +150,5 @@ $('#mc-list').on('click', '.fa-trash', function () {
         card.remove();
     }
 });
+
+export {makeMcListReadonly};
