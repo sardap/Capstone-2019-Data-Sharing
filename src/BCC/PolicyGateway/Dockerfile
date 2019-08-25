@@ -1,7 +1,9 @@
 FROM ubuntu:16.04
 
-RUN apt-get update -y && \
-    apt-get install -y python3-pip python3-dev
+RUN apt-get update -y
+RUN apt-get remove -y python3-pip
+RUN apt-get install -y python3-dev
+RUN apt-get install -y python3-pip
 
 COPY ./requirements.txt /requirements.txt
 

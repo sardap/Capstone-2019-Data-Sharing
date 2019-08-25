@@ -32,6 +32,6 @@ def main():
 
 	#Work around so it doesn't leave exit signal which kills the containtor
 	while(True):
-		x = 0
+		time.sleep(1)
 
 main()
