@@ -4,20 +4,18 @@
     ViewData["Title"] = "BCC";
 }
 
-<form method="post" action="/Home/FitbitOAuth">
+<form method="post" action="/Home/Idle">
     <label>Data type</label>
     <div id="fitbit">
         <select id="fitbitselect" class="form-control" asp-for="Input.DataType">
-            <option value="">Select Data Type</option>
-            <option value=""></option>
-            <option value=""></option>
-            <option value=""></option>
-            <option value=""></option>
-            <option value=""></option>
-            <option value=""></option>
-            <option value=""></option>
+            <option value="activeMinutes">Active minutes</option>
+            <option value="calories">Calories</option>
+            <option value="distance">Distance</option>
+            <option value="elevationGain">Elevation gain</option>
+            <option value="steps">Steps</option>
+            <option value="heartRate">Heart rate</option>
         </select>
     </div>
     <br />
-    <button type="submit">Submit</button>
+    <button type="submit" OnClick="WindowOpen('https://www.fitbit.com/oauth2/authorize?client_id=22B74V&response_type=token&scope=activity%20heartrate%20nutrition%20sleep%20weight&redirect_uri=https%3A%2F%2Fauthorization.secretwaterfall.club&expires_in=6000')">Submit</button>
 </form>

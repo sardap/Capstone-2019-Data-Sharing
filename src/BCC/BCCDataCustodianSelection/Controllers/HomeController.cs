@@ -16,6 +16,11 @@ namespace BCCDataCustodianSelection.Controllers
 {
     public class HomeController : Controller
     {
+        public IActionResult Index()
+        {
+            return View();
+        }
+
         //https://localhost:5001/{policy}/policykey
         [Route("{policy}/{policykey}")]
         public IActionResult Index(string policy, string policykey)
@@ -32,7 +37,7 @@ namespace BCCDataCustodianSelection.Controllers
             TempData["APIKey"] = APIKey;
             TempData["Wallet_ID"] = Wallet_ID;
 
-            return View();//testing
+            return View();
             // if(CheckPolicyForm())
             // {
             //     if(CheckPolicy().Result)
@@ -42,14 +47,14 @@ namespace BCCDataCustodianSelection.Controllers
             //     }
             //     return Error();
             // }
-            // return Error();
+            // return BadRequest("Wallet ID and API Key are not filled");
         }
 
         public IActionResult DataTypeSelection()
         {
             //Data type selection based on custodian
             string DataCustodian = Request.Form["Input.DataCustodian"];
-
+            TempData["DataCustodian"] = DataCustodian;
             if (DataCustodian == "GoogleFit")
             {
                 return View("GoogleTypeSelection");
@@ -75,41 +80,26 @@ namespace BCCDataCustodianSelection.Controllers
             return View();
         }
 
-        public IActionResult GoogleOAuth()
+        public IActionResult Idle()
         {
-            //Google OAuth
             string DataType = Request.Form["Input.DataType"];
-            if(DataType == "")
-            {
-                return View("GoogleTypeSelection");
-            }
-            string ResultAPIKey = "test";//placeholder
-
-
-
-            TempData["resultapikey"] = ResultAPIKey;
+            TempData["DataType"] = DataType;
             return View();
         }
 
-        public IActionResult FitbitOAuth()
+        public IActionResult OAuthResult(string access_token, string scope, string token_type, string expires_in, string user_id)
         {
-            //Fitbit OAuth
-            string DataType = Request.Form["Input.DataType"];
-            if(DataType == "")
-            {
-                return View("FitbitTypeSelection");
-            }
-            string ResultAPIKey = "test";//placeholder
-
-
-
-            TempData["resultapikey"] = ResultAPIKey;
+            TempData["access_token"] = access_token;
+            TempData["scope"] = scope;
+            TempData["token_type"] = token_type;
+            TempData["expires_in"] = expires_in;
+            TempData["user_id"] = user_id;
             return View();
         }
 
         public bool CheckPolicyForm()
         {
-            //Check if Wallet_ID and APIKey were empty
+            //Check if Wallet_ID and APIKey are empty
             string Wallet_ID = Request.Form["Input.Wallet_ID"];
             string APIKey = Request.Form["Input.APIKey"];
             if(Wallet_ID != null && APIKey != null)
@@ -128,7 +118,7 @@ namespace BCCDataCustodianSelection.Controllers
 
             var Client = new HttpClient();
             var Uri = Paths.Instance.ValidatorIP + ":" + Paths.Instance.ValidatorPort;
-            var Response = await Client.GetAsync(Uri + "/checkjsonpart/" + Policy);
+            var Response = await Client.GetAsync("http://" + Uri + "/checkjsonpart/" + Policy);
 
             return Response.IsSuccessStatusCode;
         }
@@ -143,7 +133,7 @@ namespace BCCDataCustodianSelection.Controllers
             var Content = new FormUrlEncodedContent(Parameters);
             var Client = new HttpClient();
             var Uri = Paths.Instance.PolicyGatewayIP + ":" + Paths.Instance.PolicyGatewayPort;
-            var Response = await Client.PostAsync(Uri + "/addpolicy/", Content);
+            var Response = await Client.PostAsync("http://" + Uri + "/addpolicy/", Content);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

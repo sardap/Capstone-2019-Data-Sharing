@@ -3,3 +3,32 @@
 
 // Write your JavaScript code.
 
+var urlHash, access_token, scope, token_type, expires_in, user_id;
+
+function WindowOpen(url)
+{
+    window.open(url, "_new", "height:auto, width:auto");
+}
+
+window.onload = function Load()
+{
+    CheckFragment();
+}
+
+function CheckFragment ()
+{
+    urlHash = window.location.hash;
+    if (urlHash != "")
+    {
+        urlHash = urlHash.replace("#", "?");
+        if(window.opener != null)
+        {
+            window.opener.location.href = "/Home/OAuthResult/" + urlHash;
+            window.close();
+        }
+        else
+        {
+            window.location.href = "/Home/OAuthResult/" + urlHash;
+        }
+    }
+}
