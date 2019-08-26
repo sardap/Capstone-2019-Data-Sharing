@@ -3,7 +3,7 @@
 
 // Write your JavaScript code.
 
-var urlHash, access_token, scope, token_type, expires_in, user_id;
+var urlHash;
 
 function WindowOpen(url)
 {
