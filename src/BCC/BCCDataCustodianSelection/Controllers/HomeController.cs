@@ -37,17 +37,16 @@ namespace BCCDataCustodianSelection.Controllers
             TempData["APIKey"] = APIKey;
             TempData["Wallet_ID"] = Wallet_ID;
 
-            return View();
-            // if(CheckPolicyForm())
-            // {
-            //     if(CheckPolicy().Result)
-            //     {
-            //         AddPolicy();
-            //         return View();
-            //     }
-            //     return Error();
-            // }
-            // return BadRequest("Wallet ID and API Key are not filled");
+            if(CheckPolicyForm())
+            {
+                if(CheckPolicy().Result)
+                {
+                    AddPolicy();
+                    return View();
+                }
+                return Error();
+            }
+            return BadRequest("Wallet ID and API Key are not filled");
         }
 
         public IActionResult DataTypeSelection()
