@@ -12,10 +12,11 @@ namespace Fetcher.Controllers
 	[ApiController]
 	public class FetcherController : ControllerBase
 	{
-		private Dictionary<CustodianType, IFetcher> _fetchers = new Dictionary<CustodianType, IFetcher>()
+		private readonly Dictionary<CustodianType, IFetcher> _fetchers = new Dictionary<CustodianType, IFetcher>
 		{
 			{ CustodianType.Fake, new FakeFetcher() },
-			{ CustodianType.GoogleFit, new GoogleFetcher() }
+			{ CustodianType.GoogleFit, new GoogleFetcher() },
+			{ CustodianType.Fitbit, new FitbitFetcher() }
 		};
 
 		[HttpGet()]
@@ -27,34 +28,34 @@ namespace Fetcher.Controllers
 		[HttpGet("testfetch/{apiKey}/{custodianType}/{dataType}")]
 		public ActionResult<string> Get(string apiKey, int custodianType, int dataType)
 		{
-			var errors = new List<string>();
+			var fetchResult = new TestFetchResult
+			{
+				Result = null,
+				Errors = new List<string>()
+			};
 
 			if (!Enum.IsDefined(typeof(CustodianType), custodianType))
-				errors.Add("custodian_type invaild");
+				fetchResult.Errors.Add("custodian_type invalid");
 
 			var custodian = (CustodianType)custodianType;
 
 			if (!Enum.IsDefined(typeof(DataType), dataType))
-				errors.Add("data_type invaild");
+				fetchResult.Errors.Add("data_type invalid");
 
 			var dataTypeEnum = (DataType)dataType;
 
-			bool? result = null;
-
-			if (errors.Count == 0 && _fetchers.ContainsKey(custodian))
+			if (fetchResult.Errors.Any())
 			{
-				result = _fetchers[custodian].TestFetch(apiKey, dataTypeEnum, errors);
-			}
-			else if(errors.Count == 0)
-			{
-				//Missing Fetcher implementation 
-				return StatusCode(500);
+				Response.StatusCode = (int) HttpStatusCode.BadRequest;
+				return JsonConvert.SerializeObject(fetchResult);
 			}
 
-			if(errors.Count > 0)
-				Response.StatusCode = 400;
+			//Missing Fetcher implementation 
+			if (!_fetchers.ContainsKey(custodian))
+				return StatusCode((int) HttpStatusCode.InternalServerError);
 
-			return JsonConvert.SerializeObject(new TestFetchResult() { Result = result, Errors = errors });
+			fetchResult.Result = _fetchers[custodian].TestFetch(apiKey, dataTypeEnum, fetchResult.Errors);
+			return JsonConvert.SerializeObject(fetchResult);
 		}
 	}
 }

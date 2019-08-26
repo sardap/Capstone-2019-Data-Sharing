@@ -9,8 +9,11 @@ namespace Fetcher
 	{
 		public static Secrets Instance { get; set; }
 
-		public string Google_api_client_id { get; set; }
+		public string GoogleAPIClientID { get; set; }
 
-		public string Google_api_client_secret { get; set; }
+		public string GoogleAPIClientSecret { get; set; }
+
+		public string FitbitApiClientId { get; set; }
+		public string FitbitApiClientSecret { get; set; }
 	}
 }

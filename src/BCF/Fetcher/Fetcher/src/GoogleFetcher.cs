@@ -14,16 +14,16 @@ namespace Fetcher
 {
 	public class GoogleFetcher : IFetcher
 	{
-		private string GetNewAccessToken(string refresh_token)
+		private string GetNewAccessToken(string refreshToken)
 		{
 			string baseURL = "https://www.googleapis.com/oauth2/v4/token";
 			string grantType = "refresh_token";
 
 			string url =
 				baseURL +
-				"?client_id=" + Secrets.Instance.Google_api_client_id +
-				"&client_secret=" + Secrets.Instance.Google_api_client_secret +
-				"&refresh_token=" + refresh_token +
+				"?client_id=" + Secrets.Instance.GoogleAPIClientID +
+				"&client_secret=" + Secrets.Instance.GoogleAPIClientSecret +
+				"&refresh_token=" + refreshToken +
 				"&grant_type=" + grantType;
 
 			var client = new RestClient(url);

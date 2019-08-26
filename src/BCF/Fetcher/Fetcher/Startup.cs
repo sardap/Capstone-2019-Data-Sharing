@@ -22,10 +22,13 @@ namespace Fetcher
 			Configuration = configuration;
 
 			Secrets.Instance = new Secrets();
-			Secrets.Instance.Google_api_client_id = Environment.GetEnvironmentVariable("GOOGLE_API_CLIENT_ID");
-			Secrets.Instance.Google_api_client_secret = Environment.GetEnvironmentVariable("GOOGLE_API_CLIENT_SECRET");
-			Console.WriteLine(Secrets.Instance.Google_api_client_id);
-			Console.WriteLine(Secrets.Instance.Google_api_client_secret);
+			Secrets.Instance.GoogleAPIClientID = Environment.GetEnvironmentVariable("GOOGLE_API_CLIENT_ID");
+			Secrets.Instance.GoogleAPIClientSecret = Environment.GetEnvironmentVariable("GOOGLE_API_CLIENT_SECRET");
+			Secrets.Instance.FitbitApiClientId = Environment.GetEnvironmentVariable("FITBIT_API_CLIENT_ID");
+			Secrets.Instance.FitbitApiClientSecret = Environment.GetEnvironmentVariable("FITBIT_API_CLIENT_SECRET");
+
+			Console.WriteLine(Secrets.Instance.GoogleAPIClientID);
+			Console.WriteLine(Secrets.Instance.GoogleAPIClientSecret);
 		}
 
 		public IConfiguration Configuration { get; }
