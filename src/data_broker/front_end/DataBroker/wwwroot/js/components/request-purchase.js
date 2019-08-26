@@ -77,7 +77,7 @@ function getDataTypeField() {
 function getGenderField() {
     return `
     <div class="form-group request-gender">
-      <b>Gender</b>
+      <b>Select one or more genders</b>
       <span class="request-view"></span>
       <div class="request-edit">
         <div class="ml-2">
@@ -152,7 +152,7 @@ function getEthnicityField() {
         <b>Ethnicity</b>
         <fieldset>
           <select class="form-control dropdown" id="ethnicity" name="ethnicity">
-            <option value="" selected="selected">Select one or more...</option>
+            <option value="" selected="selected">Any</option>
             <optgroup label="White">
               <option value="White English">English</option>
               <option value="White Welsh">Welsh</option>
@@ -202,6 +202,7 @@ function getCountryField() {
       <div class="request-edit">
         <label for="Input_Country"><b>Country of residence</b></label>
         <select class="form-control" id="Input_Country" name="Input.Country">
+          <option value="" selected="selected">Any</option>
           <option value="Afghanistan">Afghanistan</option>
           <option value="Albania">Albania</option>
           <option value="Algeria">Algeria</option>
@@ -214,7 +215,7 @@ function getCountryField() {
           <option value="Argentina">Argentina</option>
           <option value="Armenia">Armenia</option>
           <option value="Aruba">Aruba</option>
-          <option value="Australia" selected="">Australia</option>
+          <option value="Australia">Australia</option>
           <option value="Austria">Austria</option>
           <option value="Azerbaijan">Azerbaijan</option>
           <option value="Bahamas">Bahamas</option>
