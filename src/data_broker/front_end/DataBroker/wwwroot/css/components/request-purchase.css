@@ -1,9 +1,9 @@
-#request-list li {
+.request-view li {
     list-style-type: none;
 }
 
-#request-list li:before {
+.request-view li:before {
     content: '✔️';
     margin-left: -37px;
-    margin-right: 3px;
+    margin-right: 4px;
 }

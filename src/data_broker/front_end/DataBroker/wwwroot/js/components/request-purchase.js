@@ -58,14 +58,17 @@ function getDescriptionBox() {
 function getDataTypeField() {
     return `
     <div class="form-group request-datatype">
-      <span class="request-view"></span>
-      <label for="request-datatype" class="request-edit"><b>Select one or more health data type</b></label>
+      <label for="request-datatype">
+        <b>Data type</b>
+        <small class="form-text text-muted request-edit">Select all that apply to cohort</small>
+      </label>
+      <div class="request-view ml-2"></div>
       <select
         name="request-datatype"
         class="form-control request-edit"
         multiple="multiple"
       >
-        <option value="heartrate">Heart Rate</option>
+        <option value="heart rate">Heart Rate</option>
         <option value="height">Height</option>
         <option value="foo">Foo</option>
         <option value="bar">Bar</option>
@@ -77,8 +80,11 @@ function getDataTypeField() {
 function getGenderField() {
     return `
     <div class="form-group request-gender">
-      <b>Select one or more genders</b>
-      <span class="request-view"></span>
+      <label>
+        <b>Gender</b>
+        <small class="form-text text-muted request-edit">Select all that apply to cohort</small>
+      </label>
+      <div class="request-view ml-2"></div>
       <div class="request-edit">
         <div class="ml-2">
           <input
@@ -116,15 +122,15 @@ function getAgeRangeField() {
 
     return `
     <div class="form-group request-age">
-      <b>Age range</b>
-      <span class="request-view"></span>
-      <p class="request-edit">
+      <label><b>Age range</b></label>
+      <div class="request-view ml-2"></div>
+      <div class="request-edit">
         <div class="row">
           <div class="col">
             <label for="request-age-from" class="request-edit">From</label>
             <input
               type="number"
-              class="form-control request-edit"
+              class="form-control request-edit request-age-from"
               name="request-age-from"
               value="${DEFAULT_FROM}"
             />
@@ -133,13 +139,13 @@ function getAgeRangeField() {
             <label for="request-ade-to" class="request-edit">To</label>
             <input
               type="number"
-              class="form-control request-edit"
+              class="form-control request-edit request-age-to"
               name="request-age-to"
               value="${DEFAULT_TO}"
             />
           </div>
         </div>
-      </p>
+      </div>
     </div>
     `;
 }
@@ -147,50 +153,48 @@ function getAgeRangeField() {
 function getEthnicityField() {
     return `
     <div class="form-group request-ethnicity">
-      <span class="request-view"></span>
-      <p class="request-edit">
-        <b>Ethnicity</b>
-        <fieldset>
-          <select class="form-control dropdown" id="ethnicity" name="ethnicity">
-            <option value="" selected="selected">Any</option>
-            <optgroup label="White">
-              <option value="White English">English</option>
-              <option value="White Welsh">Welsh</option>
-              <option value="White Scottish">Scottish</option>
-              <option value="White Northern Irish">Northern Irish</option>
-              <option value="White Irish">Irish</option>
-              <option value="White Gypsy or Irish Traveller">Gypsy or Irish Traveller</option>
-              <option value="White Other">Any other White background</option>
-            </optgroup>
-            <optgroup label="Mixed or Multiple ethnic groups">
-              <option value="Mixed White and Black Caribbean">White and Black Caribbean</option>
-              <option value="Mixed White and Black African">White and Black African</option>
-              <option value="Mixed White Other">Any other Mixed or Multiple background</option>
-            </optgroup>
-            <optgroup label="Asian">
-              <option value="Asian Indian">Indian</option>
-              <option value="Asian Pakistani">Pakistani</option>
-              <option value="Asian Bangladeshi">Bangladeshi</option>
-              <option value="Asian Chinese">Chinese</option>
-              <option value="Asian Other">Any other Asian background</option>
-            </optgroup>
-            <optgroup label="Black">
-              <option value="Black African">African</option>
-              <option value="Black African American">African American</option>
-              <option value="Black Caribbean">Caribbean</option>
-              <option value="Black Other">Any other Black background</option>
-            </optgroup>
-            <optgroup label="Other ethnic groups">
-              <option value="Arab">Arab</option>
-              <option value="Hispanic">Hispanic</option>
-              <option value="Latino">Latino</option>
-              <option value="Native American">Native American</option>
-              <option value="Pacific Islander">Pacific Islander</option>
-              <option value="Other">Any other ethnic group</option>
-            </optgroup>
-          </select>
-        </fieldset>
-      </p>
+      <label><b>Ethnicity</b></label>
+      <div class="request-view ml-2"></div>
+      <fieldset class="request-edit">
+        <select class="form-control selectpicker" id="ethnicity" name="ethnicity" multiple>
+          <option value="Any" selected="selected">Any</option>
+          <optgroup label="White">
+            <option value="White English">English</option>
+            <option value="White Welsh">Welsh</option>
+            <option value="White Scottish">Scottish</option>
+            <option value="White Northern Irish">Northern Irish</option>
+            <option value="White Irish">Irish</option>
+            <option value="White Gypsy or Irish Traveller">Gypsy or Irish Traveller</option>
+            <option value="White Other">Any other White background</option>
+          </optgroup>
+          <optgroup label="Mixed or Multiple ethnic groups">
+            <option value="Mixed White and Black Caribbean">White and Black Caribbean</option>
+            <option value="Mixed White and Black African">White and Black African</option>
+            <option value="Mixed White Other">Any other Mixed or Multiple background</option>
+          </optgroup>
+          <optgroup label="Asian">
+            <option value="Asian Indian">Indian</option>
+            <option value="Asian Pakistani">Pakistani</option>
+            <option value="Asian Bangladeshi">Bangladeshi</option>
+            <option value="Asian Chinese">Chinese</option>
+            <option value="Asian Other">Any other Asian background</option>
+          </optgroup>
+          <optgroup label="Black">
+            <option value="Black African">African</option>
+            <option value="Black African American">African American</option>
+            <option value="Black Caribbean">Caribbean</option>
+            <option value="Black Other">Any other Black background</option>
+          </optgroup>
+          <optgroup label="Other ethnic groups">
+            <option value="Arab">Arab</option>
+            <option value="Hispanic">Hispanic</option>
+            <option value="Latino">Latino</option>
+            <option value="Native American">Native American</option>
+            <option value="Pacific Islander">Pacific Islander</option>
+            <option value="Other">Any other ethnic group</option>
+          </optgroup>
+        </select>
+      </fieldset>
     </div>
     `;
 }
@@ -198,10 +202,10 @@ function getEthnicityField() {
 function getCountryField() {
     return `
     <div class="form-group request-country">
-      <span class="request-view"></span>
+      <label for="country"><b>Country of residence</b></label>
+      <div class="request-view ml-2"></div>
       <div class="request-edit">
-        <label for="Input_Country"><b>Country of residence</b></label>
-        <select class="form-control" id="Input_Country" name="Input.Country">
+        <select class="form-control selectpicker" id="country" name="Input.Country" multiple>
           <option value="" selected="selected">Any</option>
           <option value="Afghanistan">Afghanistan</option>
           <option value="Albania">Albania</option>
@@ -450,17 +454,19 @@ function getCountryField() {
 
 function getAddMcButton() {
     return `
-    <label><b>Medical conditions</b></label>
-    <span class="request-view"></span>
-    <div id="mc-list" class="mb-3">
-        <div class="card mb-3" id="addition-mc-card">
-          <div class="card-body">
-            <p class="card-text">
-            <i class="fas fa-plus"></i>
-            <span id="add-mc">Click here to add</span> medical conditions.
-            </p>
+    <div class="request-mc-list">
+      <label><b>Medical conditions</b></label>
+      <div class="request-view ml-2"></div>
+      <div id="mc-list" class="mb-3">
+          <div class="card mb-3" id="addition-mc-card">
+            <div class="card-body">
+              <p class="card-text">
+              <i class="fas fa-plus"></i>
+              <span id="add-mc">Click here to add</span> medical conditions.
+              </p>
+            </div>
           </div>
-        </div>
+      </div>
     </div>
     `;
 }
@@ -473,11 +479,8 @@ function getButtons() {
     <button type="button" class="btn btn-light request-edit" id="cancel-request">
       Cancel
     </button>
-    <button type="button" class="btn btn-primary request-view" id="edit-request">
-      Edit
-    </button>
     <button type="button" class="btn btn-danger request-view" id="revoke-request">
-      Revoke
+      Revoke request
     </button>
     `;
 }
@@ -495,7 +498,8 @@ function showViewMode(request) {
 function addNewRequestForEdit() {
     count++;
     $('#request-list').append(getRequest());
-    showEditMode($('#request-list').last('.request-item'));
+    showEditMode($('#request-list .request-item').last());
+    $('.selectpicker').selectpicker('refresh');
 }
 
 function displaySubmitted(request) {
@@ -519,15 +523,13 @@ function displayDataTypeAnswer(request) {
     let dataTypeOptions = dataTypeSection.find('select.request-edit option');
     let selectedOptions = dataTypeOptions.filter((i, el) => el.selected);
     let dataTypeView = dataTypeSection.find('.request-view');
-    let answerText = `<p>⭕ None selected</p>`;
+    let answerText = `⭕ None selected`;
 
     if (selectedOptions.length > 0) {
       answerText = '<ul>';
-      selectedOptions.each((i, el) => { answerText += `<li>${el.value}</li>`})
+      selectedOptions.each((i, el) => { answerText += `<li>${_.capitalize(el.value)}</li>`});
       answerText += '</ul>'
     }
-
-    answerText = `<b>Data type</b>${answerText}`;
     dataTypeView.html(answerText);
 }
 
@@ -536,29 +538,80 @@ function displayGenderAnswer(request) {
     let genderCheckboxes = genderSection.find('input.request-edit');
     let genderView = genderSection.find('.request-view');
     let answers = genderCheckboxes.filter((i, el) => el.checked);
-    let answerText = '<p>⭕ None selected</p>';
+    let answerText = '⭕ None selected';
 
     if (answers.length > 0) {
         answerText = '<ul>';
-        answers.each((i, el) => { answerText += `<li>${el.value}</li>`})
+        answers.each((i, el) => { answerText += `<li>${_.capitalize(el.value)}</li>`});
         answerText += '</ul>'
     }
 
     genderView.html(answerText);
 }
 
+function displayAgeRange(request) {
+    let ageRangeSection = request.find('.request-age');
+    let ageRangeFromInput = ageRangeSection.find('input.request-age-from');
+    let ageRangeToInput = ageRangeSection.find('input.request-age-to');
+    let ageFrom = ageRangeFromInput.val();
+    let ageTo = ageRangeToInput.val();
+    let ageRangeView = ageRangeSection.find('div.request-view');
+    ageRangeView.html(`✔ From ${ageFrom} to ${ageTo} years old`);
+}
+
+function displayEthnicity(request) {
+    let ethnicitySection = request.find('.request-ethnicity');
+    let ethnicityOptions = ethnicitySection.find('select#ethnicity option');
+    let selectedEthnicity = ethnicityOptions.filter((i, el) => el.selected);
+    let ethnicityView = ethnicitySection.find('div.request-view');
+    let answerText = '⭕ None selected';
+    if (selectedEthnicity.length > 0) {
+        if (selectedEthnicity.length > 1) selectedEthnicity = selectedEthnicity.filter((i, el) => el.text !== 'Any');
+        answerText = `<ul>
+        ${_.join(_.map(selectedEthnicity, (el) => `<li>${_.capitalize(el.text)}</li>`), '')}
+        </ul>`;
+    }
+    ethnicityView.html(answerText);
+}
+
+function displayCountry(request) {
+    let countrySection = request.find('.request-country');
+    let countryOptions = countrySection.find('select#country option');
+    let selectedCountries = countryOptions.filter((i, el) => el.selected);
+    let countryView = countrySection.find('div.request-view');
+    let answerText = '⭕ None selected';
+    if (selectedCountries.length > 0) {
+        if (selectedCountries.length > 1) selectedCountries = selectedCountries.filter((i, el) => el.text !== 'Any');
+        answerText = `<ul>
+        ${_.join(_.map(selectedCountries, (el) => `<li>${_.capitalize(el.text)}</li>`), '')}
+        </ul>`;
+    }
+    countryView.html(answerText);
+}
+
 function displayMcList(request) {
     makeMcListReadonly();
+    request.find('#addition-mc-card').remove();
+    let mcCards = request.find('.mc-card');
+    if (mcCards.length === 0) request.find('.request-mc-list').find('.request-view').html('⭕ None specified');
 }
 
 $('#add-purchase-request').click(addNewRequestForEdit);
 
+$('#request-list').on('click', '#revoke-request', function () {
+    let request = $(this).closest('.request-item');
+    request.remove();
+});
+
 $('#request-list').on('click', '#submit-request', function () {
     let request = $(this).closest('.request-item');
     
-    displayMcList();
+    displayMcList(request);
     displayDataTypeAnswer(request);
     displayGenderAnswer(request);
+    displayAgeRange(request);
+    displayEthnicity(request);
+    displayCountry(request);
     showViewMode(request);
     displaySubmitted(request);
 });
