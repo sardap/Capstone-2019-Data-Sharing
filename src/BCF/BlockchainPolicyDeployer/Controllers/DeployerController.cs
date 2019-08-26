@@ -20,8 +20,11 @@ namespace BlockchainPolicyDeployer.Controllers
 
 		public class RequestBody
 		{
-			public string json_policy { get; set; }
-			public string wallet_id { get; set; }
+			[JsonProperty("json_policy")]
+			public string JsonPolicy { get; set; }
+			
+			[JsonProperty("wallet_id")]
+			public string WalletID { get; set; }
 		}
 
 		[HttpGet("working")]
@@ -34,8 +37,8 @@ namespace BlockchainPolicyDeployer.Controllers
 		[HttpPost("deploy")]
 		public IActionResult Post(RequestBody requestBody)
 		{
-			var jsonPolicyStr = requestBody.json_policy.Replace(" ", "");
-			var walletId = requestBody.wallet_id;
+			var jsonPolicyStr = requestBody.JsonPolicy.Replace(" ", "");
+			var walletId = requestBody.WalletID;
 
 			dynamic policyWalletID = JsonConvert.DeserializeObject(jsonPolicyStr);
 
