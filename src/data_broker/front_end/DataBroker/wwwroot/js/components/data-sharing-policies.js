@@ -83,7 +83,7 @@ function appendCard(dsp) {
                             Toggle this data sharing policy's status
                             <small class="form-text text-muted">
                                 By setting the data sharing policy status to active, 
-                                the restrictions which you speicified here will be enforced.
+                                the restrictions which you specified here will be enforced.
                             </small>
                         </label>
                         <button class="btn btn-block btn-danger dsp-edit" id="dsp-toggle-btn">Disable data sharing policy</button>
@@ -193,7 +193,6 @@ function displayTimeFieldValue(inputField, view) {
     timeView = view.find('.' + timeClass);
     $(timeView).html(displayValue);
 }
-
 
 function createUnorderedListOfSelectedBuyers(userInput) {
     if (!userInput.length || userInput.some(v => !v))
