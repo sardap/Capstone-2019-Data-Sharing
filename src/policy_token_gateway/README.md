@@ -59,6 +59,161 @@ GET request to 127.0.0.1:8080/bcc_policy_token_gateway/checktoken/:token
 
 3. Stop the container and check the storage/nedb.db file for entries after the previously run steps.  Restart the container and verify test 2.1 works with the previously generated token.
 
+Postman Tests
+
+```json
+{
+	"info": {
+		"name": "Policy_token_creator",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "New Policy Creation Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f21fb2ff-3fae-47f8-aef4-06cbfc06aede",
+						"exec": [
+							"pm.test(\"Status Test\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(\"success\");",
+							"});",
+							"",
+							"pm.test(\"Policy token Created Test\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.policy_creation_token).not.eql(null);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/bcc_policy_token_gateway/newtoken/broker1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"bcc_policy_token_gateway",
+						"newtoken",
+						"broker1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Policy Creation Token Fail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f21fb2ff-3fae-47f8-aef4-06cbfc06aede",
+						"exec": [
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Broker API key invalid\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/bcc_policy_token_gateway/newtoken/SpamThisFLOWERToGIVEN0tailPOWER",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"bcc_policy_token_gateway",
+						"newtoken",
+						"SpamThisFLOWERToGIVEN0tailPOWER"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check policy Creation Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b9f8beee-7915-41a0-8e41-e9b9e6888da1",
+						"exec": [
+							"pm.test(\"Status Test\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(\"success\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/bcc_policy_token_gateway/checktoken/8e397dc9-695e-4e7c-b6ad-9002695618ab",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"bcc_policy_token_gateway",
+						"checktoken",
+						"8e397dc9-695e-4e7c-b6ad-9002695618ab"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check policy Creation Token Fail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b9f8beee-7915-41a0-8e41-e9b9e6888da1",
+						"exec": [
+							"pm.test(\"Response\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Token is not valid\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/bcc_policy_token_gateway/checktoken/Dota2",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"bcc_policy_token_gateway",
+						"checktoken",
+						"Dota2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
+```
 
 
 
