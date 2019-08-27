@@ -37,16 +37,11 @@ namespace BCCDataCustodianSelection.Controllers
             TempData["APIKey"] = APIKey;
             TempData["Wallet_ID"] = Wallet_ID;
 
-            if(CheckPolicyForm())
+            if (Wallet_ID == null || APIKey == null)
             {
-                if(CheckPolicy().Result)
-                {
-                    AddPolicy();
-                    return View();
-                }
-                return Error();
+                return BadRequest("Wallet ID and API Key are not filled");
             }
-            return BadRequest("Wallet ID and API Key are not filled");
+            return View();
         }
 
         public IActionResult DataTypeSelection()
@@ -83,7 +78,13 @@ namespace BCCDataCustodianSelection.Controllers
         {
             string DataType = Request.Form["Input.DataType"];
             TempData["DataType"] = DataType;
-            return View();
+
+            if(CheckPolicy().Result)
+            {
+                AddPolicy();
+                return View();
+            }
+            return Error();
         }
 
         public IActionResult OAuthResult(string access_token, string scope, string token_type, string expires_in, string user_id)
@@ -94,18 +95,6 @@ namespace BCCDataCustodianSelection.Controllers
             TempData["expires_in"] = expires_in;
             TempData["user_id"] = user_id;
             return View();
-        }
-
-        public bool CheckPolicyForm()
-        {
-            //Check if Wallet_ID and APIKey are empty
-            string Wallet_ID = Request.Form["Input.Wallet_ID"];
-            string APIKey = Request.Form["Input.APIKey"];
-            if(Wallet_ID != null && APIKey != null)
-            {
-                return true;
-            }
-            return false;
         }
 
         public async Task<bool> CheckPolicy()
@@ -124,11 +113,16 @@ namespace BCCDataCustodianSelection.Controllers
 
         public async void AddPolicy()
         {
+            PolicyModel Policy = JsonConvert.DeserializeObject<PolicyModel>(((string)TempData["policy"]));
+            Policy.Wallet_ID = (string)TempData["Wallet_ID"];
+            Policy.Data_type = (string)TempData["DataType"];
+            string SerialPolicy = JsonConvert.SerializeObject(Policy);
+
             var Parameters = new Dictionary<string, string>{
-                {"json_policy", (string)TempData["policy"]}, 
+                {"json_policy", SerialPolicy}, 
                 {"policy_creation_token", (string)TempData["policykey"]}, 
-                {"wallet_id", Request.Form["Input.Wallet_ID"]},
-                {"api_key", Request.Form["Input.APIKey"]}};
+                {"wallet_id", (string)TempData["Wallet_ID"]},
+                {"api_key", (string)TempData["APIKey"]}};
             var Content = new FormUrlEncodedContent(Parameters);
             var Client = new HttpClient();
             var Uri = Paths.Instance.PolicyGatewayIP + ":" + Paths.Instance.PolicyGatewayPort;
