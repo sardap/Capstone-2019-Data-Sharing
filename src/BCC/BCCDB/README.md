@@ -13,6 +13,7 @@ Requires the following environment variables be set
 * `MYSQL_DATABASE`
 * `PUID` Set to 1000
 * `PGID` Set to 1000
+* `SET_DEFAULT_BROKER` Will add 3 default test broker api keys
 
 ## Accessing
 
