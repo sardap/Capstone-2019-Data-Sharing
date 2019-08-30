@@ -30,7 +30,7 @@ def main():
 		PRIMARY KEY (ID) \
 	) ENGINE = InnoDB;")
 	cur.execute("CREATE TABLE IF NOT EXISTS Policy ( \
-		OffChainPolicyID varchar(255) NOT NULL, \
+		OffChainPolicyID varchar(500) NOT NULL, \
 		APIAddress varchar(255) NOT NULL, \
 		OnchainAddress varchar(255) NOT NULL, \
 		DataBrokerID int NOT NULL, \
