@@ -4,10 +4,15 @@ import requests
 import json
 import os
 import re
+import mysql.connector
 
 _deployer_ip = os.environ['DEPLOYER_IP']
 _fetcher_ip = os.environ['FETCHER_IP']
 _policy_token_ip = os.environ['POLICY_TOKEN_IP']
+_mysql_username = os.environ['MYSQL_USERNAME']
+_mysql_user_password = os.environ['MYSQL_USER_PASSWORD']
+_mysql_port = os.environ['MYSQL_PORT']
+_mysql_ip = os.environ['MYSQL_IP']
 
 _app = Flask(__name__)
 
@@ -27,7 +32,7 @@ class InvalidUsage(Exception):
         return rv
 
 def check_add_policy_request(request_json):
-    needed_keys = ["json_policy", "policy_creation_token", "wallet_id", "api_key"]
+    needed_keys = ["json_policy", "policy_creation_token", "wallet_id", "api_key", "broker_id"]
     missing_keys = []
 
     for key in needed_keys:
@@ -94,6 +99,24 @@ def check_policy_create_token(token):
 
     return response.status_code == 200 and json.loads(response.text)['status'] == "success"
 
+def push_to_db(off_chain_policy_id, api_address, on_chain_address, data_broker_id):
+    mydb = mysql.connector.connect(
+        host = _mysql_ip,
+        user = _mysql_username,
+        passwd = _mysql_user_password,
+        port = _mysql_port
+    )
+    cur = mydb.cursor()
+
+    cur.execute("USE main;")
+    cur.execute("INSERT INTO Policy(OffChainPolicyID, APIAddress, OnchainAddress, DataBrokerID) \
+        VALUES('" + off_chain_policy_id + "', '" + api_address + "', '" + on_chain_address + "', '" + data_broker_id + "') \
+    ;")
+
+    mydb.commit()
+    cur.close()
+    mydb.close()
+
 @_app.route('/addpolicy', methods=['POST'])
 def add_policy():
     body = request.get_json()
@@ -112,9 +135,15 @@ def add_policy():
     else:
         _app.logger.info("Test Fetch successful")
 
-    result = deploy_policy(body['json_policy'], body['wallet_id'])
+    dep_response_text = deploy_policy(body['json_policy'], body['wallet_id'])
 
-    return result
+    _app.logger.info("Policy Deployed on blockchain")
+
+    dep_response = json.loads(dep_response_text)
+
+    push_to_db(dep_response['key'], body['api_key'], dep_response['trans_id'], body['broker_id'])
+    
+    return {"result" : "success"}
 
 if __name__ == "__main__":
     _app.run(host = '0.0.0.0', port = 5000, debug = True)
