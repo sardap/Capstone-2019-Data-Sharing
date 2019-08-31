@@ -16,6 +16,12 @@ Requires the following environment variables be set
 * `MYSQL_PORT`
 * `MYSQL_IP` 
 
+It will also require the flowing components to be running and functional 
+* policy deployer
+* Fetcher
+* Policy Token Creator
+* Policy drop off point (on brokers side)
+
 #### Port
 You will need to expose port **5000**
 
@@ -42,7 +48,6 @@ Refer to https://docs.google.com/spreadsheets/d/1tx5qSRbAhjFloYm4dX-Mxn17BmzcYBL
 Import the following json into Postman for the collection.
 
 ```json
-{
 {
 	"info": {
 		"name": "PolicyGateway",
