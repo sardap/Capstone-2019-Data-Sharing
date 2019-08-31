@@ -6,7 +6,6 @@ import json
 import os
 import re
 import mysql.connector
-import MySQLdb
 
 _deployer_ip = os.environ['DEPLOYER_IP']
 _fetcher_ip = os.environ['FETCHER_IP']
@@ -33,6 +32,25 @@ class InvalidUsage(Exception):
         rv['message'] = self.message
         return rv
 
+def check_broker_id(broker_id):
+    mydb = mysql.connector.connect(
+        host = _mysql_ip,
+        user = _mysql_username,
+        passwd = _mysql_user_password,
+        port = _mysql_port
+    )
+    
+    cur = mydb.cursor(buffered=True)
+    cur.execute("USE main;")
+    cur.execute("SELECT * FROM Broker WHERE ID = " + str(broker_id) + ";")
+    
+    result = cur.rowcount > 0
+
+    cur.close()
+    mydb.close()
+
+    return result
+
 def check_add_policy_request(request_json):
     needed_keys = ["json_policy", "policy_creation_token", "wallet_id", "api_key", "broker_id"]
     missing_keys = []
@@ -42,6 +60,22 @@ def check_add_policy_request(request_json):
             missing_keys.append(key)
 
     return missing_keys
+
+def test_fetch(api_key):
+    url = "http://" + _fetcher_ip + "/fetcher/testfetch/" + api_key +"/1/1"
+
+    headers = {
+        'User-Agent': "PostmanRuntime/7.15.2",
+        'Accept': "*/*",
+        'Host': _fetcher_ip,
+        'Accept-Encoding': "gzip, deflate",
+        'Connection': "keep-alive",
+        'cache-control': "no-cache"
+        }
+
+    response = requests.request("GET", url, headers=headers)
+
+    return json.loads(response.text)['Result'] == True
 
 def deploy_policy(json_policy, wallet_id):
     import requests
@@ -69,22 +103,6 @@ def deploy_policy(json_policy, wallet_id):
 
     return response.text
     
-def test_fetch(api_key):
-    url = "http://" + _fetcher_ip + "/fetcher/testfetch/" + api_key +"/1/1"
-
-    headers = {
-        'User-Agent': "PostmanRuntime/7.15.2",
-        'Accept': "*/*",
-        'Host': _fetcher_ip,
-        'Accept-Encoding': "gzip, deflate",
-        'Connection': "keep-alive",
-        'cache-control': "no-cache"
-        }
-
-    response = requests.request("GET", url, headers=headers)
-
-    return json.loads(response.text)['Result'] == True
-
 def check_policy_create_token(token):
     url = "http://" + _policy_token_ip + "/bcc_policy_token_gateway/checktoken/" + token
 
@@ -110,19 +128,14 @@ def push_to_db(off_chain_policy_id, api_address, on_chain_address, data_broker_i
     )
     cur = mydb.cursor()
 
-    try:
-        cur.execute("USE main;")
-        cur.execute("INSERT INTO Policy(OffChainPolicyID, APIAddress, OnchainAddress, DataBrokerID) \
-            VALUES('" + off_chain_policy_id + "', '" + api_address + "', '" + on_chain_address + "', '" + data_broker_id + "') \
-        ;")
-        mydb.commit()
-    except MySQLdb.IntegrityError:
-        return False
-    finally:
-        cur.close()
-        mydb.close()
+    cur.execute("USE main;")
+    cur.execute("INSERT INTO Policy(OffChainPolicyID, APIAddress, OnchainAddress, DataBrokerID) \
+        VALUES('" + off_chain_policy_id + "', '" + api_address + "', '" + on_chain_address + "', '" + str(data_broker_id) + "') \
+    ;")
 
-    return True
+    mydb.commit()
+    cur.close()
+    mydb.close()
 
 @_app.route('/addpolicy', methods=['POST'])
 def add_policy():
@@ -131,6 +144,11 @@ def add_policy():
     missing_keys = check_add_policy_request(body)
     if(len(missing_keys) > 0):
         raise BadRequest("Missing Keys: " + str(missing_keys))
+    
+    if(not check_broker_id(body['broker_id'])):
+        raise BadRequest("Invalid Broker ID")
+    else:
+        _app.logger.info("Broker ID is valid")
 
     if(not check_policy_create_token(body['policy_creation_token'])):
         raise BadRequest("Invalid policy creation token")
@@ -148,8 +166,7 @@ def add_policy():
 
     dep_response = json.loads(dep_response_text)
 
-    if(not push_to_db(dep_response['key'], body['api_key'], dep_response['trans_id'], body['broker_id'])):
-        raise InternalServerError("internal SQL Error")
+    push_to_db(dep_response['key'], body['api_key'], dep_response['trans_id'], body['broker_id'])
     
     return {"result" : "success"}
 
