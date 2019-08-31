@@ -1,10 +1,12 @@
 from flask import Flask, Blueprint, request, Response, abort, jsonify
 from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import InternalServerError
 import requests
 import json
 import os
 import re
 import mysql.connector
+import MySQLdb
 
 _deployer_ip = os.environ['DEPLOYER_IP']
 _fetcher_ip = os.environ['FETCHER_IP']
@@ -108,14 +110,19 @@ def push_to_db(off_chain_policy_id, api_address, on_chain_address, data_broker_i
     )
     cur = mydb.cursor()
 
-    cur.execute("USE main;")
-    cur.execute("INSERT INTO Policy(OffChainPolicyID, APIAddress, OnchainAddress, DataBrokerID) \
-        VALUES('" + off_chain_policy_id + "', '" + api_address + "', '" + on_chain_address + "', '" + data_broker_id + "') \
-    ;")
+    try:
+        cur.execute("USE main;")
+        cur.execute("INSERT INTO Policy(OffChainPolicyID, APIAddress, OnchainAddress, DataBrokerID) \
+            VALUES('" + off_chain_policy_id + "', '" + api_address + "', '" + on_chain_address + "', '" + data_broker_id + "') \
+        ;")
+        mydb.commit()
+    except MySQLdb.IntegrityError:
+        return False
+    finally:
+        cur.close()
+        mydb.close()
 
-    mydb.commit()
-    cur.close()
-    mydb.close()
+    return True
 
 @_app.route('/addpolicy', methods=['POST'])
 def add_policy():
@@ -131,7 +138,7 @@ def add_policy():
         _app.logger.info("Policy Creation Token Valid")
 
     if(not test_fetch(body['api_key'])):
-        raise BadRequest("Failed test fetch")
+        raise BadRequest("Failed test fetch")   
     else:
         _app.logger.info("Test Fetch successful")
 
@@ -141,7 +148,8 @@ def add_policy():
 
     dep_response = json.loads(dep_response_text)
 
-    push_to_db(dep_response['key'], body['api_key'], dep_response['trans_id'], body['broker_id'])
+    if(not push_to_db(dep_response['key'], body['api_key'], dep_response['trans_id'], body['broker_id'])):
+        raise InternalServerError("internal SQL Error")
     
     return {"result" : "success"}
 
