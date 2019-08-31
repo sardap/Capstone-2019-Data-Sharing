@@ -27,6 +27,7 @@ def main():
 		ID int NOT NULL AUTO_INCREMENT, \
 		DataBrokerAPIKey varchar(255) NOT NULL, \
 		BrokerName varchar(255), \
+		DropOffLocation varchar(1024), \
 		PRIMARY KEY (ID) \
 	) ENGINE = InnoDB;")
 	cur.execute("CREATE TABLE IF NOT EXISTS Policy ( \
