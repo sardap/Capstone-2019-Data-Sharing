@@ -15,7 +15,7 @@ def main():
 				passwd = os.environ['MYSQL_ROOT_PASSWORD'],
 				port = 3306
 			)
-			cur = mydb.cursor()
+			cur = mydb.cursor(buffered=True)
 			con = False
 		except:
 			time.sleep(1)
@@ -39,13 +39,16 @@ def main():
 		FOREIGN KEY (DataBrokerID) REFERENCES Broker(ID) \
 	) ENGINE = InnoDB;")
 
-	if(True or ('SET_DEFAULT_BROKER' in os.environ and os.environ['SET_DEFAULT_BROKER'].lower() == "true")):
+	cur.execute("SELECT * FROM Broker;")
+	data = cur.fetchone()
+
+	if(('SET_DEFAULT_BROKER' in os.environ and os.environ['SET_DEFAULT_BROKER'].lower() == "true") and (data is None)):
 		cur.execute("INSERT INTO Broker(DataBrokerAPIKey, BrokerName) VALUES('broker1', 'It Just Works');")
 		cur.execute("INSERT INTO Broker(DataBrokerAPIKey, BrokerName) VALUES('broker2', 'No Worries INC');")
 		cur.execute("INSERT INTO Broker(DataBrokerAPIKey) VALUES('broker3');")
-
+		cur.close()
+	
 	mydb.commit()
-	cur.close()
 	mydb.close()
 
 	#Work around so it doesn't leave exit signal which kills the containtor
