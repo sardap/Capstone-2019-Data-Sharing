@@ -13,6 +13,7 @@ namespace BCCDataCustodianSelection.Models
         public class InputModel
         {
             public string Wallet_ID { get; set; }
+            public string BrokerID { get; set; }
             public string DataCustodian { get; set; }
             public string DataType { get; set; }
             public string APIKey { get; set; }

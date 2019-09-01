@@ -15,6 +15,11 @@ window.onload = function Load()
     CheckFragment();
 }
 
+function IntegerOnly(obj)
+{
+    obj.value = obj.value.replace(/[^0-9]/g,'');
+}
+
 function CheckFragment ()
 {
     urlHash = window.location.hash;

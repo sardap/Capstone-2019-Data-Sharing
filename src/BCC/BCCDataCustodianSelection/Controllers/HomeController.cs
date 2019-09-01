@@ -34,12 +34,15 @@ namespace BCCDataCustodianSelection.Controllers
         {
             string Wallet_ID = Request.Form["Input.Wallet_ID"];
             string APIKey = Request.Form["Input.APIKey"];
+            string BrokerID = Request.Form["Input.BrokerID"];
+
             TempData["APIKey"] = APIKey;
             TempData["Wallet_ID"] = Wallet_ID;
+            TempData["BrokerID"] = BrokerID;
 
             if (Wallet_ID == null || APIKey == null)
             {
-                return BadRequest("Wallet ID and API Key are not filled");
+                return BadRequest("Wallet ID, API Key and Broker ID are not filled");
             }
             return View();
         }

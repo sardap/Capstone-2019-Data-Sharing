@@ -11,5 +11,8 @@
     <label>API key</label>
     <input asp-for="Input.APIKey" class="form-control" />
     <br />
+    <label>Broker ID</label>
+    <input asp-for="Input.BrokerID" class="form-control" onkeyup="IntegerOnly(this)"/>
+    <br />
     <button type="submit">Submit</button>
 </form>
