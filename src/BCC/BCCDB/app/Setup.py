@@ -33,6 +33,8 @@ def main():
 	cur.execute("CREATE TABLE IF NOT EXISTS Policy ( \
 		OffChainPolicyID varchar(500) NOT NULL, \
 		APIAddress varchar(255) NOT NULL, \
+		DataCust Int NOT NULL,	\
+		DataType Int NOT NULL,	\
 		OnchainAddress varchar(255) NOT NULL, \
 		DataBrokerID int NOT NULL, \
 		PRIMARY KEY (OffChainPolicyID, DataBrokerID), \
