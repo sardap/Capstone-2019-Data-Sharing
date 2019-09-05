@@ -3,13 +3,6 @@
 
 // Write your JavaScript code.
 
-var urlHash;
-
-function WindowOpen(url)
-{
-    window.open(url, "_new", "height:auto, width:auto");
-}
-
 window.onload = function Load()
 {
     CheckFragment();
@@ -22,18 +15,10 @@ function IntegerOnly(obj)
 
 function CheckFragment ()
 {
-    urlHash = window.location.hash;
+    var urlHash = window.location.hash;
     if (urlHash != "")
     {
         urlHash = urlHash.replace("#", "?");
-        if(window.opener != null)
-        {
-            window.opener.location.href = "/Home/OAuthResult/" + urlHash;
-            window.close();
-        }
-        else
-        {
-            window.location.href = "/Home/OAuthResult/" + urlHash;
-        }
+        window.location.href = "/Home/OAuthResult/" + urlHash;
     }
 }
