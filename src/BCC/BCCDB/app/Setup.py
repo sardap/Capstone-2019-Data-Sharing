@@ -4,6 +4,10 @@ import mysql.connector
 import time
 
 #docker build -t bccdb:latest .; docker stop mariadb; docker rm mariadb; docker run --name=mariadb -e PUID=1000 -e PGID=1000 -e MYSQL_ROOT_PASSWORD=mypass -e MYSQL_DATABASE=main -p 3306:3306 --restart unless-stopped bccdb:latest;
+#docker build -t bccdb:latest .; 
+#docker stop mariadb; 
+#docker rm mariadb; 
+#docker run --name=mariadb -e PUID=1000 -e PGID=1000 -e MYSQL_ROOT_PASSWORD=mypass -e MYSQL_DATABASE=main -p 3306:3306 --restart unless-stopped bccdb:latest;
 
 def main():
 	con = True
