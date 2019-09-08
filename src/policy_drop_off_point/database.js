@@ -1,39 +1,47 @@
-import { Connection, Request, TYPES } from "tedious";
+import * as mssql from "mssql/msnodesqlv8";
 import dotenv from "dotenv";
+import uuidv4 from "uuid/v4";
 
 dotenv.config();
 const { DB_NAME, DB_USER, DB_PASS, DB_HOST } = process.env;
-let config = {
+const config = {
   server: DB_HOST,
-  authentication: {
-    type: "default",
-    options: {
-      userName: DB_USER,
-      password: DB_PASS
-    }
-  },
-  options: {
-    database: DB_NAME
-  }
+  user: DB_USER,
+  password: DB_PASS,
+  database: DB_NAME
 };
 
-function add_new_linking_entry_to_user(token, location, callback) {
-  let connection = new Connection(config);
-
-  connection.on("connect", function(error) {
-    if (error) console.log(error);
-    else {
-      console.log(`Inserting new token...`);
-
-      let request = new Request(
-        `INSERT INTO ${DB_NAME}.UserTokenBlockchainLinks (Token, Location) OUTPUT INSERTED.Id VALUES (@Token, @Location);`,
-        (error, rowCount) => callback(error, rowCount)
-      );
-      request.addParameter("Token", TYPES.UniqueIdentifier, token);
-      request.addParameter("Location", TYPES.NVarChar, location);
-      connection.execSql(request);
-    }
-  });
+async function add_new_linking_entry_to_user(user, token, location) {
+  mssql
+    .connect(config)
+    .then(pool => {
+      return pool
+        .request()
+        .input("Id", mssql.UniqueIdentifier, uuidv4())
+        .input("UserId", mssql.UniqueIdentifier, user)
+        .input("Token", mssql.VarChar, token)
+        .input("Location", mssql.VarChar, location)
+        .query(
+          `INSERT INTO UserTokenLinkings (Id, UserId, PolicyCreationToken, PolicyBlockchainLocation) VALUES (@Id, @UserId, @Token, @Location);`
+        );
+    })
+    .then(() => {
+      return {
+        result: "success",
+        msg: ""
+      };
+    })
+    .catch(err => {
+      console.error(`${err}`);
+      return {
+        result: "failure",
+        msg: `${err}`
+      };
+    })
+    .then(result => {
+      mssql.close();
+      return result;
+    });
 }
 
 export { add_new_linking_entry_to_user };
