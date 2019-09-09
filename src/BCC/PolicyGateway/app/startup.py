@@ -139,6 +139,32 @@ def push_to_db(off_chain_policy_id, api_address, on_chain_address, data_broker_i
     cur.close()
     mydb.close()
 
+def send_to_drop_off(creation_token, policy_blockchain_location, broker_id):
+    mydb = mysql.connector.connect(
+        host = _mysql_ip,
+        user = _mysql_username,
+        passwd = _mysql_user_password,
+        port = _mysql_port
+    )
+    
+    cur = mydb.cursor(buffered=True)
+    cur.execute("USE main;")
+    cur.execute("SELECT * FROM Broker WHERE ID = " + str(broker_id) + " limit 1;")
+    row = cur.fetchone()
+    drop_off_location = row['DropOffLocation']
+
+    cur.close()
+    mydb.close()
+
+    url = "https://" + drop_off_location + "/policy_drop_off_point/receivepolicy"
+
+    payload = "{\n\t\"policy_creation_token\" : \"" + creation_token + "\",\n\t\"policy_blockchain_location\" : \"" + policy_blockchain_location + "\"\n}"
+    headers = {
+        'Content-Type': "application/json",
+        }
+
+    response = requests.request("POST", url, data=payload, headers=headers)
+
 @_app.route('/addpolicy', methods=['POST'])
 def add_policy():
     body = request.get_json()
@@ -169,7 +195,13 @@ def add_policy():
     dep_response = json.loads(dep_response_text)
 
     push_to_db(dep_response['key'], body['api_key'], dep_response['trans_id'], body['broker_id'])
+
+    _app.logger.info("Policy Pushed to DB")
     
+    send_to_drop_off(body['policy_creation_token'], dep_response['trans_id'])
+
+    _app.logger.info("Policy Sent to drop off")
+
     return {"result" : "success"}
 
 if __name__ == "__main__":
