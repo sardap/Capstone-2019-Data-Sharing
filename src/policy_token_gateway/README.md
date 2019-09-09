@@ -31,6 +31,9 @@ Additional information:
         - Generate a new token:     /bcc_policy_token_gateway/newtoken/:brokerapikey
         - Validate existing token:  /bcc_policy_token_gateway/checktoken/:token
 
+	- Debugging:
+    	- Set the environment variable DEBUG=1  then go to the route http://IP:PORT/debug/ to see a list of available debug routes
+        	- eg /debug/brokers will dump a list of broker API keys
 
 
 Testing information:
