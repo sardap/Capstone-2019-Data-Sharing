@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
+    "mysql": "^2.17.1",
     "nedb": "^1.8.0",
     "uuid": "^3.3.2"
   }
