@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "jquery@3.4.0",
+      "destination": "wwwroot/lib/jquery/"
+    },
+    {
+      "library": "lodash.js@4.17.15",
+      "destination": "wwwroot/lib/lodash.js/"
+    },
+    {
+      "library": "twitter-bootstrap@4.3.1",
+      "destination": "wwwroot/lib/twitter-bootstrap/"
+    },
+    {
+      "library": "font-awesome@5.10.2",
+      "destination": "wwwroot/lib/font-awesome/"
+    },
+    {
+      "library": "bootstrap-select@1.13.10",
+      "destination": "wwwroot/lib/bootstrap-select/"
+    }
+  ]
+}

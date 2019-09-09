@@ -7,7 +7,7 @@
 <div id="mc-list">
     @Html.EditorFor(m => m)
 
-    <div class="card">
+    <div class="card" id="addition-mc-card">
         <div class="card-body">
             <p class="card-text">
                 <i class="fas fa-plus"></i> <span id="add-mc">Click here to add</span> medical conditions.
@@ -16,9 +16,6 @@
     </div>
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-
 @* Use <script> to pass in the model information (JSON-fy it if necessary) to the external js file *@
 <script>
     var MODEL_COUNT = @Model.Count();
@@ -26,5 +23,5 @@
         $('.mc-edit').css('display', 'none');
     }
 </script>
-<script src="~/js/components/medical-conditions/index.js" asp-append-version="true"></script>
-<link rel="stylesheet" href="~/css/components/medical-conditions/style.css"/>
+<script src="~/js/components/medical-conditions.js" type="module" asp-append-version="true"></script>
+<link rel="stylesheet" href="~/css/components/medical-conditions.css"/>

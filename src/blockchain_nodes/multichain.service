@@ -1,0 +1,10 @@
+[Unit]
+Description=Multichain service
+
+[Service]
+Type=simple
+User=ubuntu
+ExecStart=/usr/local/bin/multichaind MainChain
+
+[Install]
+WantedBy=multi-user.target

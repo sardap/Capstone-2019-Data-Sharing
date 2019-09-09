@@ -1,0 +1,15 @@
+﻿.dsp-edit-options {
+    float: right;
+}
+
+#add-dsp {
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#add-dsp:hover {
+    color: #0056b3;
+    text-decoration: underline;
+    cursor: pointer;
+}
