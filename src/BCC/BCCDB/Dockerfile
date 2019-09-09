@@ -1,3 +1,5 @@
+#This file is licensed under the GPLv2 - To get a copy visit https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
+
 FROM linuxserver/mariadb:latest
 
 RUN apt-get update
