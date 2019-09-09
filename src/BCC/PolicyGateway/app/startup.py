@@ -64,7 +64,7 @@ def check_broker_id(broker_id):
     return result
 
 def test_fetch(api_key, cust_type, data_type):
-    url = "http://" + _fetcher_ip + "/fetcher/testfetch/" + api_key +"/" + cust_type + "/" + data_type
+    url = "http://" + _fetcher_ip + "/fetcher/testfetch/" + api_key + "/" + cust_type + "/" + data_type
 
     headers = {
         'User-Agent': "PostmanRuntime/7.15.2",
@@ -121,7 +121,7 @@ def check_policy_create_token(token):
 
     return response.status_code == 200 and json.loads(response.text)['status'] == "success"
 
-def push_to_db(off_chain_policy_id, api_address, on_chain_address, data_broker_id):
+def push_to_db(off_chain_policy_id, api_address, data_cust, data_type, on_chain_address, data_broker_id):
     mydb = mysql.connector.connect(
         host = _mysql_ip,
         user = _mysql_username,
@@ -131,8 +131,8 @@ def push_to_db(off_chain_policy_id, api_address, on_chain_address, data_broker_i
     cur = mydb.cursor()
 
     cur.execute("USE main;")
-    cur.execute("INSERT INTO Policy(OffChainPolicyID, APIAddress, OnchainAddress, DataBrokerID) \
-        VALUES('" + off_chain_policy_id + "', '" + api_address + "', '" + on_chain_address + "', '" + str(data_broker_id) + "') \
+    cur.execute("INSERT INTO Policy(OffChainPolicyID, APIAddress, DataCust, DataType, OnchainAddress, DataBrokerID) \
+        VALUES('" + off_chain_policy_id + "', '" + api_address + "', " + data_cust + ", " + data_type + ", '" + on_chain_address + "', '" + str(data_broker_id) + "') \
     ;")
 
     mydb.commit()
@@ -151,7 +151,8 @@ def send_to_drop_off(creation_token, policy_blockchain_location, broker_id):
     cur.execute("USE main;")
     cur.execute("SELECT * FROM Broker WHERE ID = " + str(broker_id) + " limit 1;")
     row = cur.fetchone()
-    drop_off_location = row['DropOffLocation']
+    # Fetches the Drop off location col named values arent working
+    drop_off_location = row[3] 
 
     cur.close()
     mydb.close()
@@ -194,11 +195,11 @@ def add_policy():
 
     dep_response = json.loads(dep_response_text)
 
-    push_to_db(dep_response['key'], body['api_key'], dep_response['trans_id'], body['broker_id'])
+    push_to_db(dep_response['key'], body['api_key'], body['cust_type'], body['data_type'], dep_response['trans_id'], body['broker_id'])
 
     _app.logger.info("Policy Pushed to DB")
     
-    send_to_drop_off(body['policy_creation_token'], dep_response['trans_id'])
+    send_to_drop_off(body['policy_creation_token'], dep_response['trans_id'], body['broker_id'])
 
     _app.logger.info("Policy Sent to drop off")
 
