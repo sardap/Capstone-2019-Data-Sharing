@@ -1,5 +1,8 @@
 # Policy Gateway Com
 
+## license
+This com is under GPLv2 refer to the license file in this dir
+
 ## Docker Info
 
 ### Building Image
