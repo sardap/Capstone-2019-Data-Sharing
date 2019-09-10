@@ -82,19 +82,22 @@ namespace BCCDataCustodianSelection.Controllers
             string DataType = Request.Form["Input.DataType"];
             TempData["DataType"] = DataType;
 
-            if(CheckPolicy().Result)
-            {
-                AddPolicy();
+            //todo: fix PolicyCheck 
+            //bool? policyResult = CheckPolicy().Result;
+            //if (policyResult == null) Console.WriteLine("PolicyCheck is returning Null. //todo something about that");
+            //if(policyResult != null)
+            //{
+                //AddPolicy();
                 if((string)TempData["DataCustodian"] == "GoogleFit")
                 {
-                    return Redirect("https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.body.read%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.activity.read&redirect_uri=https%3A%2F%2Fauthorization.secretwaterfall.club&response_type=token&client_id=446983905302-uuv9ap7s6poee19ksl4fkad4c5r9d0b3.apps.googleusercontent.com");
+                    return Redirect("https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.body.read%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.activity.read&redirect_uri=http%3A%2F%2Fauthorization.secretwaterfall.club&response_type=token&client_id=446983905302-uuv9ap7s6poee19ksl4fkad4c5r9d0b3.apps.googleusercontent.com");
                 }
                 else
                 {
                     return Redirect("https://www.fitbit.com/oauth2/authorize?client_id=22B74V&response_type=token&scope=activity%20heartrate%20nutrition%20sleep%20weight&redirect_uri=https%3A%2F%2Fauthorization.secretwaterfall.club&expires_in=6000");
                 }
-            }
-            return Error();
+            //}
+            //return Error();
         }
 
         public IActionResult OAuthResult(string access_token, string scope, string token_type, string expires_in, string user_id)
