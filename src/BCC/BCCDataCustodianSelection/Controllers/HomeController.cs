@@ -82,20 +82,34 @@ namespace BCCDataCustodianSelection.Controllers
             string DataType = Request.Form["Input.DataType"];
             TempData["DataType"] = DataType;
 
+            foreach (Object obj in TempData)
+            {
+                Console.WriteLine(obj.ToString());
+
+            }
+
+            Console.WriteLine("Does TempData[datacustodian] equal GoogleFit? ");
+            Console.WriteLine(TempData["DataCustodian"]);
+            Console.WriteLine("GoogleFit");
+            if ((string)TempData["DataCustodian"] == "GoogleFit") Console.WriteLine("... yeah");
+            else Console.WriteLine("... nah");
+
+
             //todo: fix PolicyCheck 
             //bool? policyResult = CheckPolicy().Result;
             //if (policyResult == null) Console.WriteLine("PolicyCheck is returning Null. //todo something about that");
             //if(policyResult != null)
             //{
-                //AddPolicy();
-                if((string)TempData["DataCustodian"] == "GoogleFit")
-                {
-                    return Redirect("https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.body.read%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.activity.read&redirect_uri=http%3A%2F%2Fauthorization.secretwaterfall.club&response_type=token&client_id=446983905302-uuv9ap7s6poee19ksl4fkad4c5r9d0b3.apps.googleusercontent.com");
-                }
-                else
-                {
-                    return Redirect("https://www.fitbit.com/oauth2/authorize?client_id=22B74V&response_type=token&scope=activity%20heartrate%20nutrition%20sleep%20weight&redirect_uri=https%3A%2F%2Fauthorization.secretwaterfall.club&expires_in=6000");
-                }
+            //AddPolicy();
+            if ((string)TempData["DataCustodian"] == "GoogleFit")
+            {
+                return Redirect("https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.body.read%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.activity.read&redirect_uri=http%3A%2F%2Fauthorization.secretwaterfall.club&response_type=token&client_id=446983905302-uuv9ap7s6poee19ksl4fkad4c5r9d0b3.apps.googleusercontent.com");
+            }
+            else if ((string)TempData["DataCustodian"] == "FitBit")
+            {
+                return Redirect("https://www.fitbit.com/oauth2/authorize?client_id=22B74V&response_type=token&scope=activity%20heartrate%20nutrition%20sleep%20weight&redirect_uri=https%3A%2F%2Fauthorization.secretwaterfall.club&expires_in=6000");
+            }
+            else throw new Exception("TempData not correctly passing.");
             //}
             //return Error();
         }
