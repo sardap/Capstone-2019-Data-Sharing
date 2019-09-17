@@ -1,0 +1,21 @@
+version: '3'
+services:
+  deployer:
+    build: .
+    ports:
+      - "6080:80"
+      - "6443:443"
+    environment:
+      - VALIDATOR_IP=${DOCKER_HOST_IP}
+      - VALIDATOR_PORT=7080
+      - CHAIN_NAME=chain1
+      - RPC_IP=${RPC_IP}
+      - RPC_PORT=${RPC_PORT}
+      - RPC_USERNAME=multichainrpc
+      - RPC_PASSWORD=${RPC_PASSWORD}
+    container_name: "deployer"
+  policy-validator:
+    image: "capstonegroup30/policy-validator:latest"
+    ports:
+      - "7080:80"
+    container_name: "policy-validator"
