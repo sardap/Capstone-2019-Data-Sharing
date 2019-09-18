@@ -62,8 +62,9 @@ namespace BlockchainPolicyDeployer.Controllers
 				return BadRequest();
 			}
 
-			// Deploy policy
+			// Create Stream
 			var stream = Utility.RandomString(MAX_STREAM_NAME_LENGTH);
+			var filterName = Utility.RandomString(MAX_STREAM_NAME_LENGTH);
 			var key = "policy";
 			var chainName = Paths.Instance.ChainName;
 			var ipPort = Paths.Instance.RPCIP + ":" + Paths.Instance.RPCPort;
@@ -73,15 +74,68 @@ namespace BlockchainPolicyDeployer.Controllers
 				Authenticator = new HttpBasicAuthenticator(Paths.Instance.RPCUserName, Paths.Instance.RPCPassword)
 			};
 			var request = new RestRequest(Method.POST);
-			request.AddHeader("cache-control", "no-cache");
 			request.AddHeader("Connection", "keep-alive");
 			request.AddHeader("Accept-Encoding", "gzip, deflate");
 			request.AddHeader("Host", ipPort);
-			request.AddHeader("Cache-Control", "no-cache");
+			request.AddHeader("Accept", "*/*");
+			request.AddHeader("User-Agent", "PostmanRuntime/7.15.2");
+			request.AddHeader("Content-Type", "application/json");
+			request.AddParameter("undefined", "{\"method\":\"create\",\"params\":[\"stream\",\"" + stream + "\",false],\"id\":\"44789892-1568698363\",\"chain_name\":\"" + chainName + "\"}", ParameterType.RequestBody);
+			response = client.Execute(request);
+
+			if(response.ErrorException != null)
+			{
+				return StatusCode(500, response.ErrorException);
+			}
+
+			// Deploy policy
+			client = new RestClient("http://" + ipPort)
+			{
+				Authenticator = new HttpBasicAuthenticator(Paths.Instance.RPCUserName, Paths.Instance.RPCPassword)
+			};
+			request = new RestRequest(Method.POST);
+			request.AddHeader("Connection", "keep-alive");
+			request.AddHeader("Accept-Encoding", "gzip, deflate");
+			request.AddHeader("Host", ipPort);
 			request.AddHeader("Accept", "*/*");
 			request.AddHeader("User-Agent", "PostmanRuntime/7.15.2");
 			request.AddHeader("Content-Type", "application/json");
 			request.AddParameter("undefined", "{\"method\":\"publish\",\"params\":[ \"" + stream + "\", \"" + key + "\", { \"json\":" + jsonPolicyStr + "}],\"chain_name\":\"" + chainName + "\"}", ParameterType.RequestBody);
+			response = client.Execute(request);
+
+			if(response.ErrorException != null)
+			{
+				return StatusCode(500, response.ErrorException);
+			}
+
+			// Create Smart filter 
+			client = new RestClient("http://" + ipPort)
+			{
+				Authenticator = new HttpBasicAuthenticator(Paths.Instance.RPCUserName, Paths.Instance.RPCPassword)
+			};
+			request = new RestRequest(Method.POST);
+			request.AddHeader("Connection", "keep-alive");
+			request.AddHeader("Accept-Encoding", "gzip, deflate");
+			request.AddHeader("Host", ipPort);
+			request.AddHeader("Accept", "*/*");
+			request.AddHeader("User-Agent", "PostmanRuntime/7.15.2");
+			request.AddHeader("Content-Type", "application/json");
+			request.AddParameter("undefined", "{\"method\":\"create\",\"params\":[\"streamfilter\",\"" + filterName + "\",{},\"function filterstreamitem() { var item=getfilterstreamitem(); if (item.keys.length<2) return \\\"At least two keys required\\\"; }\"],\"id\":\"68970363-1568698856\",\"chain_name\":\"" + chainName + "\"}", ParameterType.RequestBody);
+			response = client.Execute(request);
+
+			// Apply Smart Filter 
+			client = new RestClient("http://" + ipPort)
+			{
+				Authenticator = new HttpBasicAuthenticator(Paths.Instance.RPCUserName, Paths.Instance.RPCPassword)
+			};
+			request = new RestRequest(Method.POST);
+			request.AddHeader("Connection", "keep-alive");
+			request.AddHeader("Accept-Encoding", "gzip, deflate");
+			request.AddHeader("Host", ipPort);
+			request.AddHeader("Accept", "*/*");
+			request.AddHeader("User-Agent", "PostmanRuntime/7.15.2");
+			request.AddHeader("Content-Type", "application/json");
+			request.AddParameter("undefined", "{\"method\":\"approvefrom\",\"params\":[\"" + Paths.Instance.AdminAddress + "\",\"" + filterName + "\",{\"for\":\"" + stream + "\",\"approve\":true}],\"chain_name\":\"" + chainName + "\"}", ParameterType.RequestBody);
 			response = client.Execute(request);
 
 			if(response.ErrorException != null)
