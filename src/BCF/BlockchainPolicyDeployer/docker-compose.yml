@@ -9,13 +9,18 @@ services:
       - VALIDATOR_IP=${DOCKER_HOST_IP}
       - VALIDATOR_PORT=7080
       - CHAIN_NAME=chain1
-      - RPC_IP=${RPC_IP}
-      - RPC_PORT=${RPC_PORT}
+      - RPC_IP=${DOCKER_HOST_IP}
+      - RPC_PORT=7090
       - RPC_USERNAME=multichainrpc
-      - RPC_PASSWORD=${RPC_PASSWORD}
+      - RPC_PASSWORD=mypass
     container_name: "deployer"
   policy-validator:
     image: "capstonegroup30/policy-validator:latest"
     ports:
       - "7080:80"
     container_name: "policy-validator"
+  multichain:
+    image: "capstonegroup30/multichain-con:dev"
+    ports:
+      - "7090:25565"
+    container_name: "multichain"

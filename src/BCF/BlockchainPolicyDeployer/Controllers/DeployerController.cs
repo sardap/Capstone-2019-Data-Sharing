@@ -120,8 +120,15 @@ namespace BlockchainPolicyDeployer.Controllers
 			request.AddHeader("Accept", "*/*");
 			request.AddHeader("User-Agent", "PostmanRuntime/7.15.2");
 			request.AddHeader("Content-Type", "application/json");
-			request.AddParameter("undefined", "{\"method\":\"create\",\"params\":[\"streamfilter\",\"" + filterName + "\",{},\"function filterstreamitem() { var item=getfilterstreamitem(); if (item.keys.length<2) return \\\"At least two keys required\\\"; }\"],\"id\":\"68970363-1568698856\",\"chain_name\":\"" + chainName + "\"}", ParameterType.RequestBody);
+			request.AddParameter("undefined", "{\"method\":\"create\",\"params\":[\"streamfilter\",\"" + filterName + "\",{},\"function filterstreamitem() { var item=getfilterstreamitem(); if (item.publishers[0] != \\\"" + policyWalletID.wallet_ID.Value + "\\\") return \\\"Only data subject can modify policy\\\"; }\"],\"chain_name\":\"" + chainName + "\"}", ParameterType.RequestBody);
+
+			//request.AddParameter("undefined", "{\"method\":\"create\",\"params\":[\"streamfilter\",\"" + filterName + "\",{},\"function filterstreamitem() { var item=getfilterstreamitem(); if (item.keys.length<2) return \\\"At least two keys required\\\"; }\"],\"id\":\"68970363-1568698856\",\"chain_name\":\"" + chainName + "\"}", ParameterType.RequestBody);
 			response = client.Execute(request);
+
+			if(response.StatusCode != HttpStatusCode.OK)
+			{
+				return StatusCode(500, response.Content);
+			}
 
 			// Apply Smart Filter 
 			client = new RestClient("http://" + ipPort)
