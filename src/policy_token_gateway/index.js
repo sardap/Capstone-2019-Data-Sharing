@@ -16,7 +16,7 @@ if(port == undefined){
 let mysql_details = {
     MYSQL_PASSWORD: process.env.MYSQL_PASSWORD,
     USER: process.env.MYSQL_USER,
-    HOST: process.env.HOST,
+    HOST: process.env.MYSQL_HOST,
     DB: process.env.MYSQL_DATABASE
 }; 
 
