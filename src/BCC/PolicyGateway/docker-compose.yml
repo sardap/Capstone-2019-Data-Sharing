@@ -39,10 +39,10 @@ services:
       - VALIDATOR_PORT=7080
       - CHAIN_NAME=chain1
       - STREAM_NAME=stream1
-      - RPC_IP=${RPC_IP}
-      - RPC_PORT=${RPC_PORT}
+      - RPC_IP=${DOCKER_HOST_IP}
+      - RPC_PORT=7090
       - RPC_USERNAME=multichainrpc
-      - RPC_PASSWORD=${RPC_PASSWORD}
+      - RPC_PASSWORD=mypass
     container_name: "deployer"
   policy-validator:
     image: "capstonegroup30/policy-validator:latest"
@@ -62,3 +62,8 @@ services:
       - PGID=1000
       - SET_DEFAULT_BROKER=true
     container_name: "com_bccdb"
+  multichain:
+    image: "capstonegroup30/multichain-con:dev"
+    ports:
+      - "7090:25565"
+    container_name: "multichain"
