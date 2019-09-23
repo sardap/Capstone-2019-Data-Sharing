@@ -199,7 +199,7 @@ def add_policy():
 
     _app.logger.info("Policy Pushed to DB")
     
-    send_to_drop_off(body['policy_creation_token'], dep_response['trans_id'], body['broker_id'])
+    #send_to_drop_off(body['policy_creation_token'], dep_response['trans_id'], body['broker_id'])
 
     _app.logger.info("Policy Sent to drop off")
 

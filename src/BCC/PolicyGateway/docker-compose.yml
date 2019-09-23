@@ -66,4 +66,6 @@ services:
     image: "capstonegroup30/multichain-con:dev"
     ports:
       - "7090:25565"
+    environment:
+      - STREAM_NAME=stream1
     container_name: "multichain"
