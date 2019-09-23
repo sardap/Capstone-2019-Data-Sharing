@@ -28,7 +28,6 @@ services:
       - GOOGLE_API_CLIENT_SECRET=${GOOGLE_API_CLIENT_SECRET}
       - FITBIT_API_CLIENT_ID=${FITBIT_API_CLIENT_ID}
       - FITBIT_API_CLIENT_SECRET=${FITBIT_API_CLIENT_SECRET}
-    container_name: "fetcher"
   deployer:
     image: "capstonegroup30/policy_deployer:latest"
     ports:
@@ -43,12 +42,10 @@ services:
       - RPC_PORT=7090
       - RPC_USERNAME=multichainrpc
       - RPC_PASSWORD=mypass
-    container_name: "deployer"
   policy-validator:
     image: "capstonegroup30/policy-validator:latest"
     ports:
       - "7080:80"
-    container_name: "policy-validator"
   bccdb:
     image: "capstonegroup30/bccdb:latest"
     ports:
@@ -61,11 +58,9 @@ services:
       - PUID=1000
       - PGID=1000
       - SET_DEFAULT_BROKER=true
-    container_name: "com_bccdb"
   multichain:
-    image: "capstonegroup30/multichain-con:dev"
+    image: "capstonegroup30/multichain-con:latest"
     ports:
       - "7090:25565"
     environment:
       - STREAM_NAME=stream1
-    container_name: "multichain"
