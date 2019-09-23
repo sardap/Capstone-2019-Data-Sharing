@@ -1,7 +1,5 @@
 import os
 import subprocess
-import socket
-import subprocess
 import time
 
 def main():
