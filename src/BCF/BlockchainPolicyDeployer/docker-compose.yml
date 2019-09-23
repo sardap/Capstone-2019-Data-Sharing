@@ -20,7 +20,6 @@ services:
       - "7080:80"
     container_name: "policy-validator"
   multichain:
-    image: "capstonegroup30/multichain-con:dev"
+    image: "capstonegroup30/multichain-con:latest"
     ports:
       - "7090:25565"
-    container_name: "multichain"
