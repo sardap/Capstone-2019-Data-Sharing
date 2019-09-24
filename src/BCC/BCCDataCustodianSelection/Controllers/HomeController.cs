@@ -22,11 +22,15 @@ namespace BCCDataCustodianSelection.Controllers
         }
 
         //https://localhost:5001/{policy}/policykey
+        //policy must be a json policy that is URL encoded
+        //policy key is a policy creation token
+
         [Route("{policy}/{policykey}")]
         public IActionResult Index(string policy, string policykey)
         {
             TempData["policy"] = policy;
             TempData["policykey"] = policykey;
+
             return View();
         }
 
@@ -83,6 +87,7 @@ namespace BCCDataCustodianSelection.Controllers
             TempData["DataType"] = DataType;
 
             //todo: fix PolicyCheck 
+            if (!TempData.ContainsKey("policy")) throw new Exception("Policy not set. Cannot check or add policy");
             if (CheckPolicy().Result)
             //if(true)
             {
@@ -102,6 +107,8 @@ namespace BCCDataCustodianSelection.Controllers
 
         public IActionResult OAuthResult(string access_token, string scope, string token_type, string expires_in, string user_id)
         {
+            //Todo: Put in a database write here that includes this information
+            Console.WriteLine("Successful OAuth");
             TempData["access_token"] = access_token;
             TempData["scope"] = scope;
             TempData["token_type"] = token_type;
@@ -114,12 +121,20 @@ namespace BCCDataCustodianSelection.Controllers
         {
             //Check if policy is valid
             //checkjsonpart/{jsonpolicy}
-            PolicyModel Policy = JsonConvert.DeserializeObject<PolicyModel>(((string)TempData["policy"]));
-            Policy.Wallet_ID = Request.Form["Input.Wallet_ID"];
+            //PolicyModel Policy = JsonConvert.DeserializeObject<PolicyModel>(((string)TempData["policy"]));
+            //Policy.Wallet_ID = Request.Form["Input.Wallet_ID"];
+
+            System.Console.WriteLine("Policy2: " + (string)TempData["policy"]);
+            System.Console.WriteLine("PolicyKey2: " + (string)TempData["policyKey"]);
+
 
             var Client = new HttpClient();
-            var Uri = Paths.Instance.ValidatorIP + ":" + Paths.Instance.ValidatorPort;
-            var Response = await Client.GetAsync("http://" + Uri + "/checkjsonpart/" + Policy);
+            //Todo: figure out how to set these variables and exactly what they should be
+            //var Uri = Paths.Instance.ValidatorIP + ":" + Paths.Instance.ValidatorPort;
+            var validatorIp = Environment.GetEnvironmentVariable("ValidatorIP");
+            var validatorPort = Environment.GetEnvironmentVariable("ValidatorPort");
+            var Uri = validatorIp + ":" + validatorPort;
+            var Response = await Client.GetAsync("http://" + Uri + "/checkjsonpart/" + (string)TempData["policy"]);
 
             return Response.IsSuccessStatusCode;
         }
@@ -138,7 +153,13 @@ namespace BCCDataCustodianSelection.Controllers
                 {"api_key", (string)TempData["APIKey"]}};
             var Content = new FormUrlEncodedContent(Parameters);
             var Client = new HttpClient();
-            var Uri = Paths.Instance.PolicyGatewayIP + ":" + Paths.Instance.PolicyGatewayPort;
+            //var Uri = Paths.Instance.PolicyGatewayIP + ":" + Paths.Instance.PolicyGatewayPort;
+            var policyGatewayIP = Environment.GetEnvironmentVariable("PolicyGatewayIP");
+            var policyGatewayPort = Environment.GetEnvironmentVariable("PolicyGatewayPort");
+            var Uri = policyGatewayIP + ":" + policyGatewayPort;
+
+            System.Console.WriteLine("Policy Gateway: " + Uri);
+
             var Response = await Client.PostAsync("http://" + Uri + "/addpolicy/", Content);
         }
 
