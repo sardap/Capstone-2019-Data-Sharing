@@ -19,7 +19,7 @@ services:
 
 #Database 
   db:
-    image: "capstonegroup30/bccdb:dev"
+    image: "capstonegroup30/bccdb:latest"
     ports:
       - "3306"
     environment:
