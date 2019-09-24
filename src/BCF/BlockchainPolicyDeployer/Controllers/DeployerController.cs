@@ -94,12 +94,6 @@ namespace BlockchainPolicyDeployer.Controllers
 				Authenticator = new HttpBasicAuthenticator(Paths.Instance.RPCUserName, Paths.Instance.RPCPassword)
 			};
 			request = new RestRequest(Method.POST);
-			request.AddHeader("Connection", "keep-alive");
-			request.AddHeader("Accept-Encoding", "gzip, deflate");
-			request.AddHeader("Host", ipPort);
-			request.AddHeader("Accept", "*/*");
-			request.AddHeader("User-Agent", "PostmanRuntime/7.15.2");
-			request.AddHeader("Content-Type", "application/json");
 			request.AddParameter("undefined", "{\"method\":\"publish\",\"params\":[ \"" + stream + "\", \"" + key + "\", { \"json\":" + jsonPolicyStr + "}],\"chain_name\":\"" + chainName + "\"}", ParameterType.RequestBody);
 			response = client.Execute(request);
 
