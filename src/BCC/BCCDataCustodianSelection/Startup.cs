@@ -17,6 +17,16 @@ namespace BCCDataCustodianSelection
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            var paths = new Paths
+            {
+                ValidatorIP = Environment.GetEnvironmentVariable("ValidatorIP"),
+                ValidatorPort = Environment.GetEnvironmentVariable("ValidatorPort"),
+                PolicyGatewayIP = Environment.GetEnvironmentVariable("PolicyGatewayIP"),
+                PolicyGatewayPort = Environment.GetEnvironmentVariable("PolicyGatewayPort")
+            };
+
+            Paths.Instance = paths;
         }
 
         public IConfiguration Configuration { get; }
