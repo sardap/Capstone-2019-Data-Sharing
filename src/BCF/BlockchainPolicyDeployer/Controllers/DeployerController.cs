@@ -114,7 +114,7 @@ namespace BlockchainPolicyDeployer.Controllers
 			request.AddHeader("Accept", "*/*");
 			request.AddHeader("User-Agent", "PostmanRuntime/7.15.2");
 			request.AddHeader("Content-Type", "application/json");
-			request.AddParameter("undefined", "{\"method\":\"create\",\"params\":[\"streamfilter\",\"" + filterName + "\",{},\"function filterstreamitem() { var item=getfilterstreamitem(); if (item.publishers[0] != \\\"" + policyWalletID.wallet_ID.Value + "\\\" ) return \\\"Only data subject can modify policy\\\"; if (item.keys.length > 1 || item.keys.indexOf(\\\"policy\\\") != 0) return \\\"can only change the policy key\\\"; if (item.keys.indexOf(\\\"active\\\") != 0) return \\\" \\\" + item.keys; }\"],\"chain_name\":\"" + chainName + "\"}", ParameterType.RequestBody);
+			request.AddParameter("undefined", "{\"method\":\"create\",\"params\":[\"streamfilter\",\"" + filterName + "\",{},\"function filterstreamitem() { var item=getfilterstreamitem(); if (item.publishers[0] != \\\"" + policyWalletID.wallet_ID.Value + "\\\" ) return \\\"Only data subject can modify policy\\\"; if (item.keys.length > 1 || item.keys.indexOf(\\\"policy\\\") != 0) return \\\"can only change the policy key\\\"; if (Object.keys(item.data.json).length != 1) return \\\"Can Only change the active field: \\\"; if(item.data.json.active != \\\"true\\\" && item.data.json.active != \\\"false\\\") return \\\"Can only set the active field to true or false\\\" }\"],\"chain_name\":\"" + chainName + "\"}", ParameterType.RequestBody);
 
 			response = client.Execute(request);
 

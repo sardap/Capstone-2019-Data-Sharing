@@ -14,6 +14,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using RestSharp.Authenticators;
+using System.Net;
+using System.Net.Http;
 
 namespace BlockchainPolicyDeployer
 {
