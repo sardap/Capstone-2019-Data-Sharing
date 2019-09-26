@@ -17,7 +17,7 @@ namespace BlockchainPolicyDeployer.Controllers
 	public class DeployerController : ControllerBase
 	{
 		private const int MAX_STREAM_NAME_LENGTH = 32;
-
+		
 		public class RequestBody
 		{
 			[JsonProperty("json_policy")]

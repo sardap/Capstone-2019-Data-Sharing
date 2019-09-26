@@ -5,45 +5,14 @@
    "version": "0.2.0",
    "configurations": [
         {
-            "name": "Attach to webapi (Docker)",
-            "type": "coreclr",
-            "request": "attach",
-            "sourceFileMap": {
-                "/app": "${workspaceFolder}/src/api"
-            },
-            "processId" : "${command:pickRemoteProcess}",
-            "pipeTransport": {
-                "debuggerPath": "/publish/vsdbg/vsdbg",
-                "pipeProgram": "docker",
-                "pipeCwd": "${workspaceFolder}/src/api",
-                "quoteArgs": false,
-                "pipeArgs": [
-                    "exec","-i", "webapi_debug"
-                ]
-            }
-        },
-        {
-            "name": ".NET Core Docker Attach",
-            "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:pickRemoteProcess}",
-            "pipeTransport": {
-                "pipeProgram": "docker",
-                "pipeArgs": [ "exec", "-i", "8ddc9bc6e2f6" ],
-                "debuggerPath": "/vsdbg/vsdbg",
-                "pipeCwd": "${workspaceRoot}",
-                "quoteArgs": false
-            }
-        },
-        {
             "name": ".NET Core Launch (web)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/Fetcher/Fetcher/bin/Debug/netcoreapp2.2/Fetcher.dll",
+            "program": "${workspaceFolder}/BCF/Fetcher/Fetcher/bin/Debug/netcoreapp2.2/Fetcher.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Fetcher/Fetcher",
+            "cwd": "${workspaceFolder}/BCF/Fetcher/Fetcher",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {

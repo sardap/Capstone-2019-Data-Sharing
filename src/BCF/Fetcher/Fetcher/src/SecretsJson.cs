@@ -12,5 +12,8 @@ namespace Fetcher
 		public string GoogleAPIClientID { get; set; }
 
 		public string GoogleAPIClientSecret { get; set; }
+
+		public string FitbitApiClientId { get; set; }
+		public string FitbitApiClientSecret { get; set; }
 	}
 }
