@@ -10,6 +10,11 @@ import time
 #docker rm mariadb; 
 #docker run --name=mariadb -e PUID=1000 -e PGID=1000 -e MYSQL_ROOT_PASSWORD=mypass -e MYSQL_DATABASE=main -p 3306:3306 --restart unless-stopped bccdb:latest;
 
+def add_broker(cur, api_key, create_info):
+	split = create_info.split(',')
+	print(split)
+	cur.execute("INSERT INTO Broker(DataBrokerAPIKey, BrokerName, DropOffLocation, WalletAddress) VALUES('{}', '{}', '{}', '{}');".format(api_key, split[0], split[1], split[2]))
+
 def main():
 	con = True
 	while(con):
@@ -33,6 +38,7 @@ def main():
 		DataBrokerAPIKey varchar(255) NOT NULL, \
 		BrokerName varchar(255), \
 		DropOffLocation varchar(1024), \
+		WalletAddress varchar(255), \
 		PRIMARY KEY (ID) \
 	) ENGINE = InnoDB;")
 	cur.execute("CREATE TABLE IF NOT EXISTS Policy ( \
@@ -49,11 +55,10 @@ def main():
 	cur.execute("SELECT * FROM Broker;")
 	data = cur.fetchone()
 
-	if(('SET_DEFAULT_BROKER' in os.environ and os.environ['SET_DEFAULT_BROKER'].lower() == "true") and (data is None)):
-		cur.execute("INSERT INTO Broker(DataBrokerAPIKey, BrokerName) VALUES('broker1', 'It Just Works');")
-		cur.execute("INSERT INTO Broker(DataBrokerAPIKey, BrokerName) VALUES('broker2', 'No Worries INC');")
-		cur.execute("INSERT INTO Broker(DataBrokerAPIKey) VALUES('broker3');")
-		cur.close()
+	broker_num = 0
+	while(("BROKER_{}".format(broker_num) in os.environ) and (data is None)):
+		add_broker(cur, "broker{}".format(broker_num), os.environ["BROKER_{}".format(broker_num)])
+		broker_num += 1
 	
 	mydb.commit()
 	mydb.close()
