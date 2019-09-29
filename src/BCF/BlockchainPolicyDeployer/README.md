@@ -109,7 +109,7 @@ Refer to polciy deploy command here https://docs.google.com/spreadsheets/d/1tx5q
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"json_policy\": \"{\\\"excluded_categories\\\":[0],\\\"min_price\\\":10,\\\"time_period\\\":{\\\"start\\\":-4785955200,\\\"end\\\":693705600},\\\"data_type\\\":\\\"heart rate\\\",\\\"wallet_ID\\\":\\\"{{address}}\\\",\\\"active\\\":[true, false],\\\"report_log\\\":[{\\\"data\\\":\\\"123\\\",\\\"hash\\\":\\\"321\\\"}]}\",\n    \"wallet_id\": \"{{address}}\"\n}",
+					"raw": "{\n    \"json_policy\": \"{\\\"excluded_categories\\\":[0],\\\"min_price\\\":10,\\\"time_period\\\":{\\\"start\\\":-4785955200,\\\"end\\\":693705600},\\\"data_type\\\":\\\"heart rate\\\",\\\"wallet_ID\\\":\\\"{{address}}\\\",\\\"active\\\":[true, false],\\\"report_log\\\":[{\\\"data\\\":\\\"123\\\",\\\"hash\\\":\\\"321\\\"}]}\",\n    \"wallet_id\": \"{{address}}\"\n,\"broker_wallet_id\":\"{{broker_wallet_address}}}\"",
 					"options": {
 						"raw": {
 							"language": "json"
