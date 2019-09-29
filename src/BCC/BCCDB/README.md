@@ -6,7 +6,7 @@ This com is under GPLv2 refer to the license file in this dir
 ## Docker Info
 
 ### Building Image
-No special build instructions
+You can use the docker compose file
 
 ### Startup Info
 Requires the following environment variables be set 
@@ -16,6 +16,8 @@ Requires the following environment variables be set
 * `MYSQL_DATABASE`
 * `PUID` Set to 1000
 * `PGID` Set to 1000
+
+can use docker compose file attached
 
 #### Inserting Default Data
 ***WARNING!!!*** This is a bit funky but Make due.
