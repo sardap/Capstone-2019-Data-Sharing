@@ -25,6 +25,9 @@ namespace BlockchainPolicyDeployer.Controllers
 			
 			[JsonProperty("wallet_id")]
 			public string WalletID { get; set; }
+
+			[JsonProperty("broker_wallet_id")]
+			public string BrokerWalletID { get; set; }
 		}
 
 		[HttpGet("working")]
@@ -48,7 +51,7 @@ namespace BlockchainPolicyDeployer.Controllers
 			
 			var stream = Utility.RandomString(MAX_STREAM_NAME_LENGTH);
 
-			dynamic transID = DeployToMultichain(stream, jsonPolicyStr, requestBody.WalletID);
+			dynamic transID = DeployToMultichain(stream, jsonPolicyStr, requestBody.WalletID, requestBody.BrokerWalletID);
 
 			var result = new ContentResult
 			{
@@ -100,7 +103,7 @@ namespace BlockchainPolicyDeployer.Controllers
 			return response;
 		}
 
-		private string DeployToMultichain(string stream, string jsonPolicyStr, string walletID)
+		private string DeployToMultichain(string stream, string jsonPolicyStr, string walletID, string brokerWalletID)
 		{
 			// Create Stream
 			var filterName = Utility.RandomString(MAX_STREAM_NAME_LENGTH);
@@ -124,7 +127,7 @@ namespace BlockchainPolicyDeployer.Controllers
 
 			// Create Smart filter 
 			// Should put this on multiple lines but it's very touchy about the \\\" for reasons I can't and Don't want to understand Im sure im just a idiot but I can't figure it out and yes using @ then "" the double quotes didn't work
-			var smartFilter = "function filterstreamitem() { var item=getfilterstreamitem(); if (item.publishers[0] != \\\"" + walletID + "\\\" ) return \\\"Only data subject can modify policy\\\"; if (item.keys.length > 1 || item.keys.indexOf(\\\"policy\\\") != 0) return \\\"can only change the policy key\\\"; if (Object.keys(item.data.json).length != 1) return \\\"Can Only change the active field: \\\"; if(item.data.json.active != \\\"true\\\" && item.data.json.active != \\\"false\\\") return \\\"Can only set the active field to true or false\\\" }";
+			var smartFilter = "function filterstreamitem() { var item=getfilterstreamitem(); if (item.publishers[0] != \\\"" + walletID + "\\\" && item.publishers[0] != \\\"" + brokerWalletID + "\\\") return \\\"Only data subject or data broker can modify policy\\\"; if (item.keys.length > 1 || item.keys.indexOf(\\\"policy\\\") != 0) return \\\"can only change the policy key\\\"; if (Object.keys(item.data.json).length != 1) return \\\"Can Only change the active field: \\\"; if(item.data.json.active != \\\"true\\\" && item.data.json.active != \\\"false\\\") return \\\"Can only set the active field to true or false\\\" }";
 
 			response = ExcuteMultichainRPC(client,"{\"method\":\"create\",\"params\":[\"streamfilter\",\"" + filterName + "\",{},\"" + smartFilter + "\"],\"chain_name\":\"" + chainName + "\"}");
 
