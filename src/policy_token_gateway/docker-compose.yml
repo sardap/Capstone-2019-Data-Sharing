@@ -29,4 +29,6 @@ services:
       - MYSQL_DATABASE=db
       - PUID=1000
       - PGID=1000
-      - SET_DEFAULT_BROKER=true
+      - BROKER_0=mock,foo,bar
+      - BROKER_1=mock,bar,foo
+      - BROKER_2=mock,baz,foobar
