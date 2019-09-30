@@ -68,7 +68,7 @@ services:
       - MYSQL_DATABASE=main
       - PUID=1000
       - PGID=1000
-      - SET_DEFAULT_BROKER=true
+      - BROKER_0=mock,${DOCKER_HOST_IP}:7091,minecraftisgood
 
   multichain:
     image: "capstonegroup30/multichain-con:latest"
@@ -76,3 +76,8 @@ services:
       - "7090:25565"
     environment:
       - STREAM_NAME=stream1
+
+  mock_policy_drop_off:
+    image: "capstonegroup30/mock-policy-drop-off:dev"
+    ports:
+      - "7091:5000"
