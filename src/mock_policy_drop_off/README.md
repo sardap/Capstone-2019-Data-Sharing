@@ -1,5 +1,9 @@
 # BCCDB Com
 
+This component is a mock of the policy dropoff point.  
+The policy dropoff is an endpoint for the BCC to send the location of a policy on the blockchain.  
+This dropoff is indended to act as an end point that will take in data and return a success.  
+This allows testing of components without the need to instantiate a real drop off point and its database.  
 
 ## Docker Info
 
