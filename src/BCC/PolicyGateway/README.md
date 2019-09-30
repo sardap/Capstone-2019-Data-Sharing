@@ -120,7 +120,7 @@ Import the following json into Postman for the collection.
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:5010/bcc_policy_token_gateway/newtoken/broker1",
+					"raw": "http://localhost:5010/bcc_policy_token_gateway/newtoken/broker0",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -129,7 +129,7 @@ Import the following json into Postman for the collection.
 					"path": [
 						"bcc_policy_token_gateway",
 						"newtoken",
-						"broker1"
+						"broker0"
 					]
 				}
 			},
