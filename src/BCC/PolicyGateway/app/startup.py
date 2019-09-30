@@ -79,14 +79,36 @@ def test_fetch(api_key, cust_type, data_type):
 
     return json.loads(response.text)['Result'] == True
 
-def deploy_policy(json_policy, wallet_id):
+def get_broker_info(broker_id):
+    mydb = mysql.connector.connect(
+        host = _mysql_ip,
+        user = _mysql_username,
+        passwd = _mysql_user_password,
+        port = _mysql_port
+    )
+    
+    cur = mydb.cursor(buffered=True)
+    cur.execute("USE main;")
+    cur.execute("SELECT * FROM Broker WHERE ID = " + str(broker_id) + " limit 1;")
+    row = cur.fetchone()
+
+    # Fetches the Drop off location col named values aren't working
+    drop_off_location = row[3]
+    broker_wallet_id = row[4] 
+
+    cur.close()
+    mydb.close()
+
+    return broker_wallet_id, drop_off_location
+
+def deploy_policy(json_policy, wallet_id, broker_wallet_id):
     import requests
 
     url = "http://" + _deployer_ip + "/blockchain_policy_deployer/deploy"
 
     json_policy = re.sub(r'\"', '\\\"', json_policy)
-    
-    payload = "{\n\"json_policy\":\"" + json_policy + "\",\n \"wallet_id\": \"" + wallet_id + "\"\n}"
+   
+    payload = "{\n\"json_policy\":\"" + json_policy + "\",\n \"wallet_id\": \"" + wallet_id + "\"\n, \"broker_wallet_id\":\"" + broker_wallet_id + "\"}"
     
     headers = {
         'Content-Type': "application/json",
@@ -139,25 +161,8 @@ def push_to_db(off_chain_policy_id, api_address, data_cust, data_type, on_chain_
     cur.close()
     mydb.close()
 
-def send_to_drop_off(creation_token, policy_blockchain_location, broker_id):
-    mydb = mysql.connector.connect(
-        host = _mysql_ip,
-        user = _mysql_username,
-        passwd = _mysql_user_password,
-        port = _mysql_port
-    )
-    
-    cur = mydb.cursor(buffered=True)
-    cur.execute("USE main;")
-    cur.execute("SELECT * FROM Broker WHERE ID = " + str(broker_id) + " limit 1;")
-    row = cur.fetchone()
-    # Fetches the Drop off location col named values aren't working
-    drop_off_location = row[3] 
-
-    cur.close()
-    mydb.close()
-
-    url = "https://" + drop_off_location + "/policy_drop_off_point/receivepolicy"
+def send_to_drop_off(creation_token, policy_blockchain_location, drop_off_location):
+    url = "http://" + drop_off_location + "/policy_drop_off_point/receivepolicy"
 
     payload = "{\n\t\"policy_creation_token\" : \"" + creation_token + "\",\n\t\"policy_blockchain_location\" : \"" + policy_blockchain_location + "\"\n}"
     headers = {
@@ -189,18 +194,17 @@ def add_policy():
     else:
         _app.logger.info("Test Fetch successful")
 
-    dep_response_text = deploy_policy(body['json_policy'], body['wallet_id'])
+    broker_wallet_id, drop_off_location = get_broker_info(body['broker_id'])
 
+    dep_response_text = deploy_policy(body['json_policy'], body['wallet_id'], broker_wallet_id)
     _app.logger.info("Policy Deployed on blockchain")
 
     dep_response = json.loads(dep_response_text)
 
     push_to_db(dep_response['key'], body['api_key'], body['cust_type'], body['data_type'], dep_response['trans_id'], body['broker_id'])
-
     _app.logger.info("Policy Pushed to DB")
     
-    send_to_drop_off(body['policy_creation_token'], dep_response['trans_id'], body['broker_id'])
-
+    send_to_drop_off(body['policy_creation_token'], dep_response['trans_id'], drop_off_location)
     _app.logger.info("Policy Sent to drop off")
 
     return {"result" : "success"}

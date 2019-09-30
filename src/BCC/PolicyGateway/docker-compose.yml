@@ -36,29 +36,9 @@ services:
       - GOOGLE_API_CLIENT_SECRET=${GOOGLE_API_CLIENT_SECRET}
       - FITBIT_API_CLIENT_ID=${FITBIT_API_CLIENT_ID}
       - FITBIT_API_CLIENT_SECRET=${FITBIT_API_CLIENT_SECRET}
-
-  deployer:
-    image: "capstonegroup30/policy_deployer:latest"
-    ports:
-      - "6080:80"
-      - "6443:443"
-    environment:
-      - VALIDATOR_IP=${DOCKER_HOST_IP}
-      - VALIDATOR_PORT=7080
-      - CHAIN_NAME=chain1
-      - STREAM_NAME=stream1
-      - RPC_IP=${DOCKER_HOST_IP}
-      - RPC_PORT=7090
-      - RPC_USERNAME=multichainrpc
-      - RPC_PASSWORD=mypass
-
-  policy-validator:
-    image: "capstonegroup30/policy-validator:latest"
-    ports:
-      - "7080:80"
-
+      
   bccdb:
-    image: "capstonegroup30/bccdb:dev"
+    image: "capstonegroup30/bccdb:latest"
     ports:
       - "32233:3306"
     environment:
@@ -70,12 +50,28 @@ services:
       - PGID=1000
       - BROKER_0=mock,${DOCKER_HOST_IP}:7091,minecraftisgood
 
+  deployer:
+    image: "capstonegroup30/policy_deployer:latest"
+    ports:
+      - "6080:80"
+    environment:
+      - VALIDATOR_IP=${DOCKER_HOST_IP}
+      - VALIDATOR_PORT=7080
+      - CHAIN_NAME=chain1
+      - RPC_IP=${DOCKER_HOST_IP}
+      - RPC_PORT=7090
+      - RPC_USERNAME=multichainrpc
+      - RPC_PASSWORD=mypass
+
   multichain:
     image: "capstonegroup30/multichain-con:latest"
     ports:
       - "7090:25565"
-    environment:
-      - STREAM_NAME=stream1
+
+  policy-validator:
+    image: "capstonegroup30/policy-validator:latest"
+    ports:
+      - "7080:80"
 
   mock_policy_drop_off:
     image: "capstonegroup30/mock-policy-drop-off:dev"
