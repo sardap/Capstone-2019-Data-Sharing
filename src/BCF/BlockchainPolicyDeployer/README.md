@@ -17,6 +17,8 @@ Requires the following environment variables be set
 
 Example run check the docker compose file
 
+**WARNING!!!** PLEASE CREATE AN .env file and set DOCKER_HOST_IP to your computers ip from the router NOT localhost
+ 
 ## Accessing
 Refer to polciy deploy command here https://docs.google.com/spreadsheets/d/1tx5qSRbAhjFloYm4dX-Mxn17BmzcYBLhHZqnTUNTeOo/edit#gid=0
 

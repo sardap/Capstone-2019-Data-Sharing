@@ -6,7 +6,7 @@ services:
       - "6080:80"
       - "6443:443"
     environment:
-      - VALIDATOR_IP=${DOCKER_HOST_IP}
+      - VALIDATOR_IP=policy-validator
       - VALIDATOR_PORT=7080
       - CHAIN_NAME=chain1
       - RPC_IP=${DOCKER_HOST_IP}
