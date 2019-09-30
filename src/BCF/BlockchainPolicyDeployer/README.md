@@ -26,7 +26,7 @@ Refer to polciy deploy command here https://docs.google.com/spreadsheets/d/1tx5q
 
  Refer to https://docs.google.com/spreadsheets/d/1tx5qSRbAhjFloYm4dX-Mxn17BmzcYBLhHZqnTUNTeOo/edit#gid=0
 
- 1. Run Get address and enter that as the walled ID in the policy
+ 1. Run Get address and enter that as the wallet ID in the policy
  2. Run Test Post The Key is the Stream which the policy was deployed to
  3. Run RPC test Modify Change the RPC call to make sure the smart filter has been applied correctly. Replace the streamid with the key 
 
