@@ -18,7 +18,7 @@ It's a mock none needed
 {
 	"info": {
 		"_postman_id": "2e774b09-0552-42a0-ab0f-22710ab69fb5",
-		"name": "Drop Off",
+		"name": "Mock Drop Off",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
