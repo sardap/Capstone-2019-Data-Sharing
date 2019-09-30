@@ -58,7 +58,7 @@ services:
       - "7080:80"
 
   bccdb:
-    image: "capstonegroup30/bccdb:latest"
+    image: "capstonegroup30/bccdb:dev"
     ports:
       - "32233:3306"
     environment:

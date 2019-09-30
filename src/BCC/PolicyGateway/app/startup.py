@@ -151,7 +151,7 @@ def send_to_drop_off(creation_token, policy_blockchain_location, broker_id):
     cur.execute("USE main;")
     cur.execute("SELECT * FROM Broker WHERE ID = " + str(broker_id) + " limit 1;")
     row = cur.fetchone()
-    # Fetches the Drop off location col named values arent working
+    # Fetches the Drop off location col named values aren't working
     drop_off_location = row[3] 
 
     cur.close()
@@ -199,7 +199,7 @@ def add_policy():
 
     _app.logger.info("Policy Pushed to DB")
     
-    #send_to_drop_off(body['policy_creation_token'], dep_response['trans_id'], body['broker_id'])
+    send_to_drop_off(body['policy_creation_token'], dep_response['trans_id'], body['broker_id'])
 
     _app.logger.info("Policy Sent to drop off")
 
