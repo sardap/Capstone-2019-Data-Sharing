@@ -6,7 +6,7 @@ import os
 
 _app = Flask(__name__)
 
-@_app.route('/receivepolicy', methods=['POST'])
+@_app.route('/policy_drop_off_point/receivepolicy', methods=['POST'])
 def add_policy():
 	body = request.get_json()
 
