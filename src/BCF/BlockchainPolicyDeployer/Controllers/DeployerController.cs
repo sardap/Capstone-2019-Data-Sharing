@@ -16,8 +16,8 @@ namespace BlockchainPolicyDeployer.Controllers
 	[ApiController]
 	public class DeployerController : ControllerBase
 	{
-		private const int MAX_STREAM_KEY_LENGTH = 256;
-
+		private const int MAX_STREAM_NAME_LENGTH = 32;
+		
 		public class RequestBody
 		{
 			[JsonProperty("json_policy")]
@@ -25,6 +25,9 @@ namespace BlockchainPolicyDeployer.Controllers
 			
 			[JsonProperty("wallet_id")]
 			public string WalletID { get; set; }
+
+			[JsonProperty("broker_wallet_id")]
+			public string BrokerWalletID { get; set; }
 		}
 
 		[HttpGet("working")]
@@ -37,14 +40,39 @@ namespace BlockchainPolicyDeployer.Controllers
 		[HttpPost("deploy")]
 		public IActionResult Post(RequestBody requestBody)
 		{
-			var jsonPolicyStr = requestBody.JsonPolicy.Replace(" ", "");
-			var walletId = requestBody.WalletID;
+			var jsonPolicyStr = CleanPolicy(requestBody.JsonPolicy);
 
-			dynamic policyWalletID = JsonConvert.DeserializeObject(jsonPolicyStr);
-
-			if (walletId != policyWalletID.wallet_ID.Value)
+			if(!ValidPolicy(jsonPolicyStr, requestBody.WalletID))
 			{
 				return BadRequest();
+			}
+
+			Console.WriteLine("Policy Valid");
+			
+			var stream = Utility.RandomString(MAX_STREAM_NAME_LENGTH);
+
+			dynamic transID = DeployToMultichain(stream, jsonPolicyStr, requestBody.WalletID, requestBody.BrokerWalletID);
+
+			var result = new ContentResult
+			{
+				Content = "{\"trans_id\":\"" + transID + "\", \"key\" : \"" + stream + "\"}"
+			};
+
+			return result;
+		}
+
+		private string CleanPolicy(string jsonPolicyStr)
+		{
+			return jsonPolicyStr.Replace(" ", "");
+		}
+
+		private bool ValidPolicy(string jsonPolicyStr, string walletID)
+		{
+			dynamic policyWalletID = JsonConvert.DeserializeObject(jsonPolicyStr);
+
+			if (walletID != policyWalletID.wallet_ID.Value)
+			{
+				return false;
 			}
 
 			// Check policy valid
@@ -54,50 +82,65 @@ namespace BlockchainPolicyDeployer.Controllers
 
 			if(response.ErrorException != null)
 			{
-				return StatusCode(500, "Failled to check policy valid: " + response.ErrorMessage);
+				throw new Exception("Failed to check policy valid: " + response.ErrorMessage);
 			}
 
-			if(response.Content != jsonPolicyStr)
+			return response.Content == jsonPolicyStr;
+		}
+
+		private IRestResponse ExcuteMultichainRPC(RestClient client, string body)
+		{
+			var request = new RestRequest(Method.POST);
+			request.AddHeader("Content-Type", "application/json");
+			request.AddParameter("undefined", body, ParameterType.RequestBody);
+			var response = client.Execute(request);
+
+			if(response.StatusCode != HttpStatusCode.OK)
 			{
-				return BadRequest();
+				Console.WriteLine(response.ErrorException);
 			}
 
-			var stream = Paths.Instance.StreamName;
-			var key = Utility.RandomString(MAX_STREAM_KEY_LENGTH);
+			return response;
+		}
+
+		private string DeployToMultichain(string stream, string jsonPolicyStr, string walletID, string brokerWalletID)
+		{
+			// Create Stream
+			var filterName = Utility.RandomString(MAX_STREAM_NAME_LENGTH);
+			var key = "policy";
 			var chainName = Paths.Instance.ChainName;
 			var ipPort = Paths.Instance.RPCIP + ":" + Paths.Instance.RPCPort;
 
-			client = new RestClient("http://" + ipPort)
+			var client = new RestClient("http://" + ipPort)
 			{
 				Authenticator = new HttpBasicAuthenticator(Paths.Instance.RPCUserName, Paths.Instance.RPCPassword)
 			};
-			var request = new RestRequest(Method.POST);
-			request.AddHeader("cache-control", "no-cache");
-			request.AddHeader("Connection", "keep-alive");
-			request.AddHeader("Accept-Encoding", "gzip, deflate");
-			request.AddHeader("Host", ipPort);
-			request.AddHeader("Cache-Control", "no-cache");
-			request.AddHeader("Accept", "*/*");
-			request.AddHeader("User-Agent", "PostmanRuntime/7.15.2");
-			request.AddHeader("Content-Type", "application/json");
-			request.AddParameter("undefined", "{\"method\":\"publish\",\"params\":[ \"" + stream + "\", \"" + key + "\", { \"json\":" + jsonPolicyStr + "}],\"chain_name\":\"" + chainName + "\"}", ParameterType.RequestBody);
-			response = client.Execute(request);
 
-			if(response.ErrorException != null)
-			{
-				return StatusCode(500, response.ErrorException);
-			}
+			var response = ExcuteMultichainRPC(client, "{\"method\":\"create\",\"params\":[\"stream\",\"" + stream + "\",false],\"id\":\"44789892-1568698363\",\"chain_name\":\"" + chainName + "\"}");
 
-			dynamic reponseResult = JsonConvert.DeserializeObject(response.Content);
+			Console.WriteLine("Stream Created");
 
-			//Error Handling for Bad submission? 
+			// Deploy policy
+			response = ExcuteMultichainRPC(client, "{\"method\":\"publish\",\"params\":[ \"" + stream + "\", \"" + key + "\", { \"json\":" + jsonPolicyStr + "}],\"chain_name\":\"" + chainName + "\"}");
 
-			var result = new ContentResult
-			{
-				Content = "{\"trans_id\":\"" + reponseResult.result + "\", \"key\" : \"" + key +"\"}"
-			};
+			Console.WriteLine("Policy Deployed to Stream");
 
-			return result;
+			// Create Smart filter 
+			// Should put this on multiple lines but it's very touchy about the \\\" for reasons I can't and Don't want to understand Im sure im just a idiot but I can't figure it out and yes using @ then "" the double quotes didn't work
+			var smartFilter = "function filterstreamitem() { var item=getfilterstreamitem(); if (item.publishers[0] != \\\"" + walletID + "\\\" && item.publishers[0] != \\\"" + brokerWalletID + "\\\") return \\\"Only data subject or data broker can modify policy\\\"; if (item.keys.length > 1 || item.keys.indexOf(\\\"policy\\\") != 0) return \\\"can only change the policy key\\\"; if (Object.keys(item.data.json).length != 1) return \\\"Can Only change the active field: \\\"; if(item.data.json.active != \\\"true\\\" && item.data.json.active != \\\"false\\\") return \\\"Can only set the active field to true or false\\\" }";
+
+			response = ExcuteMultichainRPC(client,"{\"method\":\"create\",\"params\":[\"streamfilter\",\"" + filterName + "\",{},\"" + smartFilter + "\"],\"chain_name\":\"" + chainName + "\"}");
+
+			Console.WriteLine("Smart Filter Created");
+
+			// Apply Smart Filter 
+			response = ExcuteMultichainRPC(client, "{\"method\":\"approvefrom\",\"params\":[\"" + Paths.Instance.AdminAddress + "\",\"" + filterName + "\",{\"for\":\"" + stream + "\",\"approve\":true}],\"chain_name\":\"" + chainName + "\"}");
+
+			Console.WriteLine("Smart Filter Applied");
+
+			dynamic responseContent = JsonConvert.DeserializeObject(response.Content);
+
+			return responseContent.result;
 		}
 	}
 }

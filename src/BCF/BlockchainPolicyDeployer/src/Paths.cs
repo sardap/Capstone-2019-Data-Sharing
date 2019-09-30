@@ -22,6 +22,11 @@ namespace BlockchainPolicyDeployer
 			get; set;
 		}
 
+		public string AdminAddress
+		{
+			get; set;
+		}
+
 		public string StreamName
 		{
 			get; set;

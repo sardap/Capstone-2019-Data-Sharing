@@ -10,6 +10,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using RestSharp;
+using RestSharp.Authenticators;
+using System.Net;
+using System.Net.Http;
 
 namespace BlockchainPolicyDeployer
 {
@@ -18,21 +24,6 @@ namespace BlockchainPolicyDeployer
 		public Startup(IConfiguration configuration)
 		{
 			Configuration = configuration;
-
-			/*
-			if(Environment.GetEnvironmentVariable("HOME") != "HOME=/root")
-			{
-				//For testing outside docker
-				Environment.SetEnvironmentVariable("VALIDATOR_IP", "127.0.0.1");
-				Environment.SetEnvironmentVariable("VALIDATOR_PORT", "5005");
-				Environment.SetEnvironmentVariable("STREAM_NAME", "stream1");
-				Environment.SetEnvironmentVariable("CHAIN_NAME", "chain1");
-				Environment.SetEnvironmentVariable("RPC_PORT", "25565");
-				Environment.SetEnvironmentVariable("RPC_IP", "localhost");
-				Environment.SetEnvironmentVariable("RPC_USERNAME", "multichainrpc");
-				Environment.SetEnvironmentVariable("RPC_PASSWORD", "");
-			}
-			*/
 
 			var paths = new Paths
 			{
@@ -47,6 +38,22 @@ namespace BlockchainPolicyDeployer
 			};
 
 			Paths.Instance = paths;
+
+			var client = new RestClient("http://" + Paths.Instance.RPCIP + ":" + Paths.Instance.RPCPort)
+			{
+				Authenticator = new HttpBasicAuthenticator(Paths.Instance.RPCUserName, Paths.Instance.RPCPassword)
+			};
+			var request = new RestRequest(Method.POST);
+			request.AddHeader("Connection", "keep-alive");
+			request.AddHeader("Accept-Encoding", "gzip, deflate");
+			request.AddHeader("Accept", "*/*");
+			request.AddHeader("Content-Type", "application/json");
+			request.AddParameter("undefined", "{\"method\":\"listpermissions\",\"params\":[\"admin\"],\"chain_name\":\"chain1\"}", ParameterType.RequestBody);
+			IRestResponse response = client.Execute(request);
+
+			dynamic responseContent = JsonConvert.DeserializeObject(response.Content);
+
+			Paths.Instance.AdminAddress = responseContent.result[0].address;
 		}
 
 		public IConfiguration Configuration { get; }
