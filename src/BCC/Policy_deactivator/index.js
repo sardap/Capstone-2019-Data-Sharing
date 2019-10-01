@@ -18,14 +18,15 @@
 const axios = require('axios');
 
 
-function post_data()
+function post_data(wallet_id, location, data)
 {
     axios.post('http://localhost:3000/post', {
         "method":"publishfrom",
         "params":[
-            "<from address / wallet id>",
-            "<stream1/location>","policy", 
-            "<data>"]
+            wallet_id,
+            location,
+            "policy", //policy is a key in a key value pair 
+            data] //the new policy
         ,"chain_name":"Mainchain"}
         ,{
     auth: {
@@ -40,7 +41,7 @@ function post_data()
 }
 
 function main(){
-    post_data();
+    post_data("wallet_id", "xyz_location", {active: "false"});
 }
 
 main();
