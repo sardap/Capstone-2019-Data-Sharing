@@ -10,6 +10,21 @@
 
 <div class="row">
     <div class="col">
-        <partial name="DataSharingPolicyList" model="@Model.Input.DataSharingPolicies">
+        <div id="policies-container"></div>
     </div>
 </div>
+
+<environment names="Development">
+    <!-- 
+    Run:
+    $ npx webpack-dev-server --open 
+    Why?
+    - dsp.bundle.js auto-regen when you make changes and save
+    - make sure you got the port right in case it's not 8080
+    -->
+    <script src="http://localhost:8080/dsp.bundle.js"></script> 
+</environment>
+<environment names="Production">
+    <script src="~/dist/dsp.bundle.js"></script> 
+</environment>
+<link rel="stylesheet" href="~/css/components/data-sharing-policies.css" />

@@ -1,0 +1,56 @@
+{
+  "name": "broker-react-frontend",
+  "version": "1.0.0",
+  "description": "Front-end for Data Broker written react",
+  "private": true,
+  "scripts": {
+    "test": "npm run test:other && npm run test:js",
+    "fix:other": "npm run prettier --write",
+    "fix:js": "npm run test:js --fix",
+    "fix": "npm run fix:js && npm run fix:other",
+    "prettier": "prettier \"**/*.{json,md,scss,yaml,yml}\"",
+    "test:other": "npm run prettier --list-different",
+    "test:js": "eslint --ignore-path .gitignore --ignore-path .prettierignore \"**/*.{js,jsx}\""
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.{json,md,scss,yaml,yml}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "@babel/preset-env": "^7.6.2",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.2.0",
+    "eslint": "6.5.1",
+    "eslint-config-prettier": "6.3.0",
+    "eslint-plugin-prettier": "3.1.1",
+    "husky": "3.0.8",
+    "lint-staged": "9.4.1",
+    "prettier": "1.18.2",
+    "react-flatpickr": "^3.9.1",
+    "react-hot-loader": "^4.12.14",
+    "webpack": "^4.41.0",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.2"
+  },
+  "dependencies": {
+    "moment": "^2.24.0",
+    "react": "^16.10.1",
+    "react-dom": "^16.10.1",
+    "redux": "^4.0.4"
+  }
+}
