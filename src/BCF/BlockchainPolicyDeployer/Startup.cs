@@ -48,8 +48,16 @@ namespace BlockchainPolicyDeployer
 			request.AddHeader("Accept-Encoding", "gzip, deflate");
 			request.AddHeader("Accept", "*/*");
 			request.AddHeader("Content-Type", "application/json");
-			request.AddParameter("undefined", "{\"method\":\"listpermissions\",\"params\":[\"admin\"],\"chain_name\":\"chain1\"}", ParameterType.RequestBody);
+			request.AddParameter("undefined", "{\"method\":\"listpermissions\",\"params\":[\"admin\"],\"chain_name\":\"" + paths.ChainName +"\"}", ParameterType.RequestBody);
 			IRestResponse response = client.Execute(request);
+
+			if(response.StatusCode != HttpStatusCode.OK)
+			{
+				Console.WriteLine("REST ERROR: {0}", response.ErrorException);
+				Console.WriteLine("REST ERROR: {0}", response.ErrorException);
+				Console.WriteLine("REST CONTENT: {0}", response.Content);
+			}
+
 
 			dynamic responseContent = JsonConvert.DeserializeObject(response.Content);
 
