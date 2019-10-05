@@ -86,19 +86,16 @@ namespace BCCDataCustodianSelection.Controllers
             string DataType = Request.Form["Input.DataType"];
             TempData["DataType"] = DataType;
 
-            //todo: fix PolicyCheck 
             if (!TempData.ContainsKey("policy")) throw new Exception("Policy not set. Cannot check or add policy");
             if (CheckPolicy().Result)
-            //if(true)
             {
-                AddPolicy();
                 string custodian = (string)TempData["DataCustodian"];
 
                 if (custodian == "GoogleFit")
                 {
                     return Redirect("https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.body.read%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.activity.read&redirect_uri=https%3A%2F%2Fauthorization.secretwaterfall.club&response_type=token&client_id=446983905302-uuv9ap7s6poee19ksl4fkad4c5r9d0b3.apps.googleusercontent.com");
                 }
-                else if (custodian == "FitBit")
+                else if (custodian == "Fitbit")
                 {
                     return Redirect("https://www.fitbit.com/oauth2/authorize?client_id=22B74V&response_type=token&scope=activity%20heartrate%20nutrition%20sleep%20weight&redirect_uri=https%3A%2F%2Fauthorization.secretwaterfall.club&expires_in=6000");
                 }
@@ -109,13 +106,14 @@ namespace BCCDataCustodianSelection.Controllers
 
         public IActionResult OAuthResult(string access_token, string scope, string token_type, string expires_in, string user_id)
         {
-            //Todo: Put in a database write here that includes this information
-            Console.WriteLine("Successful OAuth");
+            Console.WriteLine("Successful OAuth. Attemping to add policy using gateway");
+
             TempData["access_token"] = access_token;
             TempData["scope"] = scope;
             TempData["token_type"] = token_type;
             TempData["expires_in"] = expires_in;
             TempData["user_id"] = user_id;
+            AddPolicy();
             return View();
         }
 
@@ -143,17 +141,23 @@ namespace BCCDataCustodianSelection.Controllers
 
         public async void AddPolicy()
         {
+            /*
             PolicyModel Policy = JsonConvert.DeserializeObject<PolicyModel>(((string)TempData["policy"]));
             Policy.Wallet_ID = (string)TempData["Wallet_ID"];
             Policy.Data_type = (string)TempData["DataType"];
-            string SerialPolicy = JsonConvert.SerializeObject(Policy);
+            string SerialPolicy = JsonConvert.SerializeObject(Policy);*/
+
+
 
             var Parameters = new Dictionary<string, string>{
-                {"json_policy", SerialPolicy}, 
+                {"json_policy", (string)TempData["policy"]}, 
                 {"policy_creation_token", (string)TempData["policykey"]}, 
                 {"wallet_id", (string)TempData["Wallet_ID"]},
-                {"api_key", (string)TempData["APIKey"]}};
+                {"api_key", (string)TempData["APIKey"]},
+                {"api_key", (string)TempData["access_token"]},
+                {"broker_id", Environment.GetEnvironmentVariable("BrokerID")}};
             var Content = new FormUrlEncodedContent(Parameters);
+
             var Client = new HttpClient();
             //var Uri = Paths.Instance.PolicyGatewayIP + ":" + Paths.Instance.PolicyGatewayPort;
             var policyGatewayIP = Environment.GetEnvironmentVariable("PolicyGatewayIP");
