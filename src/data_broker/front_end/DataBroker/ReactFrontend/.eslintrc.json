@@ -1,18 +1,23 @@
 {
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "es6": true
   },
-  "plugins": ["prettier"],
-  "extends": ["prettier"],
+  "plugins": ["prettier", "react"],
+  "extends": ["prettier", "eslint:recommended", "plugin:react/recommended"],
+  "parser": "babel-eslint",
   "parserOptions": {
     "ecmaVersion": 8,
     "sourceType": "module",
     "ecmaFeatures": {
-      "jsx": true
+      "jsx": true,
+      "modules": true,
+      "experimentalObjectRestSpread": true
     }
   },
   "rules": {
+    "no-console": 2,
     "curly": 2,
     "dot-notation": 2,
     "id-length": 2,
@@ -44,6 +49,8 @@
     "prefer-promise-reject-errors": 2,
     "prettier/prettier": 2,
     "sort-vars": 2,
-    "strict": [2, "global"]
+    "strict": [2, "global"],
+    "react/jsx-uses-react": 2,
+    "react/jsx-uses-vars": 2
   }
 }
