@@ -17,40 +17,42 @@
     }
   },
   "rules": {
-    "no-console": 2,
-    "curly": 2,
-    "dot-notation": 2,
-    "id-length": 2,
-    "no-const-assign": 2,
-    "no-dupe-class-members": 2,
-    "no-else-return": 2,
-    "no-inner-declarations": 2,
-    "no-lonely-if": 2,
+    "no-console": "error",
+    "curly": "error",
+    "dot-notation": "error",
+    "id-length": "off",
+    "no-const-assign": "error",
+    "no-dupe-class-members": "error",
+    "no-else-return": "error",
+    "no-inner-declarations": "error",
+    "no-lonely-if": "error",
     "no-magic-numbers": [
-      2,
+      "error",
       {
         "ignore": [-1, 0, 1]
       }
     ],
-    "no-shadow": 2,
-    "no-unneeded-ternary": 2,
-    "no-unused-expressions": 2,
+    "no-shadow": "error",
+    "no-unneeded-ternary": "error",
+    "no-unused-expressions": "error",
     "no-unused-vars": [
-      2,
+      "error",
       {
         "args": "none"
       }
     ],
-    "no-useless-return": 2,
-    "no-var": 2,
-    "one-var": [2, "never"],
-    "prefer-arrow-callback": 2,
-    "prefer-const": 2,
-    "prefer-promise-reject-errors": 2,
-    "prettier/prettier": 2,
-    "sort-vars": 2,
-    "strict": [2, "global"],
-    "react/jsx-uses-react": 2,
-    "react/jsx-uses-vars": 2
+    "no-useless-return": "error",
+    "no-var": "error",
+    "one-var": ["error", "never"],
+    "prefer-arrow-callback": "error",
+    "prefer-const": "error",
+    "prefer-promise-reject-errors": "error",
+    "prettier/prettier": "error",
+    "sort-vars": "error",
+    "strict": ["error", "global"],
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error",
+    "react/prop-types": 1,
+    "react/no-unescaped-entities": "off"
   }
 }
