@@ -1,11 +1,8 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Security.Claims;
 using DataBroker.Data;
 using DataBroker.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace DataBroker.Controllers
