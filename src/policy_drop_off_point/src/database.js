@@ -1,6 +1,5 @@
 import * as mssql from "mssql";
 import dotenv from "dotenv";
-import uuidv4 from "uuid/v4";
 
 dotenv.config();
 const { DB_NAME, DB_USER, DB_PASS, DB_HOST } = process.env;
@@ -11,24 +10,40 @@ const config = {
   database: DB_NAME
 };
 
-async function add_new_linking_entry_to_user(user, token, location) {
+async function add_new_linking_entry_to_user(token, location) {
   let result = {};
   try {
     let pool = await mssql.connect(config);
-    await pool
+    let query_result = await pool
       .request()
-      .input("Id", mssql.UniqueIdentifier, uuidv4())
-      .input("UserId", mssql.UniqueIdentifier, user)
       .input("Token", mssql.VarChar(100), token)
-      .input("Location", mssql.VarChar(100), location)
       .query(
-        `INSERT INTO UserTokenLinkings (Id, UserId, PolicyCreationToken, PolicyBlockchainLocation) VALUES (@Id, @UserId, @Token, @Location);`
+        `SELECT * FROM UserTokenLinkings WHERE PolicyCreationToken = @Token;`
       );
+    let rows = query_result.recordset || [];
+    if (rows.length == 0) {
+      console.error(
+        "Given token doesn't match any existing linking records..."
+      );
+      result = {
+        success: "failure",
+        msg: "Cannot find any matching data sharing policies..."
+      };
+    } else {
+      let row_to_update = rows[rows.length - 1];
+      await pool
+        .request()
+        .input("Id", mssql.UniqueIdentifier, row_to_update.Id)
+        .input("Location", mssql.VarChar(100), location)
+        .query(
+          `UPDATE UserTokenLinkings SET PolicyBlockchainLocation = @Location WHERE Id = @Id;`
+        );
 
-    result = {
-      result: "success",
-      msg: ""
-    };
+      result = {
+        result: "success",
+        msg: ""
+      };
+    }
   } catch (err) {
     console.trace(err);
     result = {

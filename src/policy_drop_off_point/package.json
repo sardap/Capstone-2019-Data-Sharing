@@ -24,7 +24,6 @@
     "@babel/plugin-transform-runtime": "^7.6.0",
     "@babel/preset-env": "^7.6.0",
     "dotenv": "^8.1.0",
-    "npx": "^10.2.0",
-    "uuid": "^3.3.3"
+    "npx": "^10.2.0"
   }
 }
