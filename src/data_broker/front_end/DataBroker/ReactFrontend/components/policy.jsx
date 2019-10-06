@@ -9,12 +9,13 @@ class Policy extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mode: "EDIT",
+      mode: this.props.mode,
       enabled: true
     };
   }
 
   render() {
+    const { policy, index } = this.props;
     return (
       <div className="card dsp-card mb-3" id="dsp_0">
         <div className="card-header" id="heading_0">
@@ -27,10 +28,10 @@ class Policy extends React.Component {
               aria-expanded="true"
               aria-controls="collapse_0"
             >
-              Data Sharing Policy 0
+              Data Sharing Policy {index}
             </button>
             <div className="badge badge-pill badge-success float-right mt-1">
-              {this.state.enabled ? "Active" : "Disabled"}
+              {policy.active ? "Active" : "Disabled"}
             </div>
           </h4>
         </div>
@@ -42,20 +43,23 @@ class Policy extends React.Component {
           data-parent="#dsp_0"
         >
           <div className="card-body">
-            <PolicyExcludeBuyerInput mode={this.state.mode} />
+            <PolicyExcludeBuyerInput
+              mode={this.state.mode}
+              excluded={policy.excluded}
+            />
 
-            <PolicyPriceInput mode={this.state.mode} />
+            <PolicyPriceInput mode={this.state.mode} price={policy.min_price} />
 
             <DateTimeRangeSelector
               label="Set a time range of your biometric data to share"
               mode={this.state.mode}
-              start={new Date()}
-              end={new Date()}
+              start={policy.start}
+              end={policy.end}
             />
 
             <PolicyToggleButton
-              mode={this.props.mode}
-              enabled={this.state.enabled}
+              mode={this.state.mode}
+              active={policy.active}
               onClick={() => {
                 this.setState({ enabled: !this.state.enabled });
               }}

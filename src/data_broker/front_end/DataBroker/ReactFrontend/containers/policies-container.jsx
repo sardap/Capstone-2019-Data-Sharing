@@ -18,7 +18,7 @@ class PoliciesContainer extends React.Component {
   }
 
   render() {
-    let { isFetching, policies } = this.props;
+    const { isFetching, policies } = this.props;
     return (
       <>
         <PolicyAddition></PolicyAddition>

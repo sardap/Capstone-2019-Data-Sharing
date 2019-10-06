@@ -2,7 +2,7 @@ import React from "react";
 
 export default class PolicyToggleButton extends React.PureComponent {
   render() {
-    return (
+    return this.props.mode === "EDIT" ? (
       <div className="form-group">
         <label>
           Toggle this data sharing policy's status
@@ -14,15 +14,23 @@ export default class PolicyToggleButton extends React.PureComponent {
         <button
           className={
             "btn btn-block " +
-            (this.props.enabled ? "btn-danger" : "btn-success")
+            (this.props.active ? "btn-danger" : "btn-success")
           }
           onClick={this.props.onClick}
         >
-          {this.props.enabled
+          {this.props.active
             ? "Disable data sharing policy"
             : "Activate data sharing policy"}
         </button>
       </div>
+    ) : (
+      <p>
+        Your policy is currently{" "}
+        <strong>{this.props.active ? "active" : "inactive"}</strong>.{" "}
+        {this.props.active
+          ? "All of the conditions above are being respected by the Data Broker."
+          : "The Data Broker will not enforce any of the listed conditions above."}
+      </p>
     );
   }
 }

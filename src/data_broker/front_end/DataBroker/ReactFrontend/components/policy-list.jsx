@@ -3,9 +3,12 @@ import Policy from "./policy";
 
 class PolicyList extends React.Component {
   render() {
+    const { policies } = this.props;
     return (
       <>
-        <Policy />
+        {policies.map((p, i) => (
+          <Policy mode="READ" policy={p} key={p.id} index={i + 1} />
+        ))}
       </>
     );
   }

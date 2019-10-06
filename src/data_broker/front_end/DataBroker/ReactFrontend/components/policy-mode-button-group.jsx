@@ -4,30 +4,19 @@ class PolicyModeButtonGroup extends React.PureComponent {
   render() {
     return this.props.mode === "EDIT" ? (
       <>
-        <button
-          type="button"
-          className="btn btn-primary dsp-edit"
-          id="save-dsp"
-          onClick={this.props.onSave}
-        >
+        <button className="btn btn-primary" onClick={this.props.onSave}>
           Save
         </button>{" "}
-        <button type="button" className="btn btn-light dsp-edit">
+        <button className="btn btn-light" onClick={this.props.onSave}>
           Cancel
         </button>
       </>
     ) : (
       <>
-        <button
-          type="button"
-          className="btn btn-info"
-          onClick={this.props.onEdit}
-        >
+        <button className="btn btn-info" onClick={this.props.onEdit}>
           Edit
         </button>{" "}
-        <button type="button" className="btn btn-danger">
-          Remove
-        </button>
+        <button className="btn btn-danger">Remove</button>
       </>
     );
   }

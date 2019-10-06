@@ -1,5 +1,6 @@
 import React from "react";
 
+const DISPLAY_TWO_DECIMALS = 2;
 export default class PolicyPriceInput extends React.PureComponent {
   render() {
     return this.props.mode === "EDIT" ? (
@@ -12,13 +13,19 @@ export default class PolicyPriceInput extends React.PureComponent {
           <input
             type="number"
             step="0.01"
-            value="0"
+            value={this.props.price}
             className="form-control dsp-edit"
           />
         </div>
       </div>
     ) : (
-      <>You will be paid at least ${0} for your biometric data.</>
+      <p>
+        You will be paid at least{" "}
+        <strong>
+          ${Number(this.props.price).toFixed(DISPLAY_TWO_DECIMALS)}
+        </strong>{" "}
+        for your biometric data.
+      </p>
     );
   }
 }
