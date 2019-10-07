@@ -15,7 +15,7 @@ services:
     container_name: "policy_gateway"
 
   policy_token_gateway:
-    build: ../../policy_token_gateway
+    image: "capstonegroup30/policy_token_gateway:latest"
     ports:
       - "5010:8080"
     environment:
