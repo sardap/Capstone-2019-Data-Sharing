@@ -6,7 +6,7 @@ services:
     #Path to the dockerfile relative to the location of the docker-compose file
     build: ./
     ports:
-      - "8080:8080"
+      - "7080:8080"
     environment:
       - DEBUG=1
       - MYSQL_PASSWORD=mypass
@@ -14,8 +14,6 @@ services:
       - MYSQL_DATABASE=db
       - MYSQL_HOST=db
       - PORT=8080
-    volumes:
-      - ./storage:/usr/src/app/storage
 
 #Database 
   db:
@@ -29,4 +27,6 @@ services:
       - MYSQL_DATABASE=db
       - PUID=1000
       - PGID=1000
-      - SET_DEFAULT_BROKER=true
+      - BROKER_0=mock,foo,bar
+      - BROKER_1=mock,bar,foo
+      - BROKER_2=mock,baz,foobar
