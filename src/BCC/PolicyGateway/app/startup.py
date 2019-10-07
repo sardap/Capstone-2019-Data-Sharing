@@ -8,6 +8,7 @@ import json
 import os
 import re
 import mysql.connector
+import time
 
 _deployer_ip = os.environ['DEPLOYER_IP']
 _fetcher_ip = os.environ['FETCHER_IP']
@@ -18,6 +19,18 @@ _mysql_port = os.environ['MYSQL_PORT']
 _mysql_ip = os.environ['MYSQL_IP']
 
 _app = Flask(__name__)
+
+_mydb = None
+while(_mydb == None):
+    try:
+        _mydb = mysql.connector.connect(
+            host = _mysql_ip,
+            user = _mysql_username,
+            passwd = _mysql_user_password,
+            port = _mysql_port
+        )
+    except:
+        time.sleep(1)
 
 class InvalidUsage(Exception):
     status_code = 400
@@ -34,6 +47,9 @@ class InvalidUsage(Exception):
         rv['message'] = self.message
         return rv
 
+def get_mydb():
+    return _mydb
+    
 def check_add_policy_request(request_json):
     needed_keys = ["json_policy", "policy_creation_token", "wallet_id", "api_key", "cust_type", "data_type"]
     missing_keys = []
@@ -61,14 +77,7 @@ def test_fetch(api_key, cust_type, data_type):
     return json.loads(response.text)['Result'] == True
 
 def get_broker_info(broker_api_key):
-    mydb = mysql.connector.connect(
-        host = _mysql_ip,
-        user = _mysql_username,
-        passwd = _mysql_user_password,
-        port = _mysql_port
-    )
-    
-    cur = mydb.cursor(buffered=True)
+    cur = get_mydb().cursor(buffered=True)
     cur.execute("USE main;")
     cur.execute("SELECT * FROM Broker WHERE DataBrokerAPIKey = \"" + broker_api_key + "\" limit 1;")
     row = cur.fetchone()
@@ -79,7 +88,6 @@ def get_broker_info(broker_api_key):
     broker_id = row[0]
 
     cur.close()
-    mydb.close()
 
     return broker_wallet_id, drop_off_location, broker_id
 
@@ -131,22 +139,15 @@ def check_policy_create_token(token):
     return result['broker_api_key']
 
 def push_to_db(off_chain_policy_id, api_address, data_cust, data_type, on_chain_address, data_broker_id):
-    mydb = mysql.connector.connect(
-        host = _mysql_ip,
-        user = _mysql_username,
-        passwd = _mysql_user_password,
-        port = _mysql_port
-    )
-    cur = mydb.cursor()
+    cur = get_mydb().cursor()
 
     cur.execute("USE main;")
     cur.execute("INSERT INTO Policy(OffChainPolicyID, APIAddress, DataCust, DataType, OnchainAddress, DataBrokerID) \
         VALUES('" + off_chain_policy_id + "', '" + api_address + "', " + data_cust + ", " + data_type + ", '" + on_chain_address + "', '" + str(data_broker_id) + "') \
     ;")
 
-    mydb.commit()
+    get_mydb().commit()
     cur.close()
-    mydb.close()
 
 def send_to_drop_off(creation_token, policy_blockchain_location, drop_off_location):
     url = "http://" + drop_off_location + "/policy_drop_off_point/receivepolicy"
@@ -194,4 +195,5 @@ def add_policy():
 
 if __name__ == "__main__":
     _app.run(host = '0.0.0.0', port = 5000, debug = True)
+    get_mydb().close()
 
