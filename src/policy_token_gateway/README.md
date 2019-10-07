@@ -112,11 +112,11 @@ Postman Tests
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/bcc_policy_token_gateway/newtoken/broker1",
+					"raw": "localhost:7080/bcc_policy_token_gateway/newtoken/broker1",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "7080",
 					"path": [
 						"bcc_policy_token_gateway",
 						"newtoken",
@@ -146,11 +146,11 @@ Postman Tests
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/bcc_policy_token_gateway/newtoken/SpamThisFLOWERToGIVEN0tailPOWER",
+					"raw": "localhost:7080/bcc_policy_token_gateway/newtoken/SpamThisFLOWERToGIVEN0tailPOWER",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "7080",
 					"path": [
 						"bcc_policy_token_gateway",
 						"newtoken",
@@ -181,11 +181,11 @@ Postman Tests
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/bcc_policy_token_gateway/checktoken/8e397dc9-695e-4e7c-b6ad-9002695618ab",
+					"raw": "localhost:7080/bcc_policy_token_gateway/checktoken/8e397dc9-695e-4e7c-b6ad-9002695618ab",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "7080",
 					"path": [
 						"bcc_policy_token_gateway",
 						"checktoken",
@@ -215,11 +215,11 @@ Postman Tests
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/bcc_policy_token_gateway/checktoken/Dota2",
+					"raw": "localhost:7080/bcc_policy_token_gateway/checktoken/Dota2",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "7080",
 					"path": [
 						"bcc_policy_token_gateway",
 						"checktoken",
