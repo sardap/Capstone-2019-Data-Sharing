@@ -56,6 +56,7 @@ Functionality to test:
    1. Returns success with a token
    2. Returns failure with an invalid token
 3. State persistance 
+   1. When using the Docker compose file to test, uncomment the /#volumes section to restore persistance
 
 All testing procedures documented below assume testing is done locally using the Docker Compose yml file in this directory.  
 This component depends on a remote database to query broker APIs.  

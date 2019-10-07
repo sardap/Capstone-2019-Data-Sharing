@@ -14,6 +14,8 @@ services:
       - MYSQL_DATABASE=db
       - MYSQL_HOST=db
       - PORT=8080
+#    volumes: 
+#      - ./storage:/usr/src/app/storage 
 
 #Database 
   db:
