@@ -91,7 +91,7 @@ SERVER.get("/bcc_policy_token_gateway/newtoken/:brokerapikey", (request, respons
             data.token = UUIDv4();
             data.broker_api_key = broker_key;
             database.insert(data);
-            
+
             response.json({
                 status: "success",
                 policy_creation_token: data.token
@@ -115,7 +115,8 @@ SERVER.get("/bcc_policy_token_gateway/checktoken/:token", (request, response) =>
         if(docs.length == 1){
             response.json({
                 status: "success",
-                msg: "token valid"
+                msg: "token valid",
+                broker_api_key:  docs[0].broker_api_key
             });
         } else {
             response.status(401).send("Token is not valid");
