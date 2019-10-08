@@ -3,7 +3,7 @@
 
 
 //example data
-//{"method":"publishfrom","params":["<from address / wallet id>","<stream1/location">,"policy", <data>],"chain_name":"Mainchain"}
+//{"method":"publishfrom","params":["<from address / wallet id>","<stream1/stream_id">,"policy", <data>],"chain_name":"Mainchain"}
     //all calls are POSTS, the method is the method called on the chain
 
 
@@ -14,23 +14,23 @@ const fs = require('fs');
 
 
 //Make the HTTP post to the multichain RPC
-function post_data(address, username, password, wallet_id, location, data)
+function post_data(address, username, password, wallet_id, stream_id)
 {
-    axios.post("http://" + address + "/post", {
+    axios.post("http://" + address, {
         "method":"publishfrom",
         "params":[
             wallet_id,
-            location,
+            stream_id,
             "policy", //policy is a key in a key value pair 
-            data] //the new policy
-        ,"chain_name":"Mainchain"}
+            {"json":{"active":[false]}}] //the new policy
+        ,"chain_name":"chain1"}
         ,{
     auth: {
         username: username,
         password: password
       }
   }).then(function (response) {
-    console.log(response.config.data);
+    console.log(response.data);
   }).catch(function (error) {
     console.error(error);
   });
@@ -53,9 +53,9 @@ function help(message, code)
     }
 
     out("Usage:");
-    out("\t$deactivator <address:port> <username> <password> <wallet_id> <location> <data_filename>");
+    out("\t$deactivator <address:port/path> <username> <password> <wallet_id> <streamid>");
     out("example:")
-    out("\t$deactivator 127.0.0.1:3000 some_username abc123 ABcDXyZ ffg222323323232 data.json");
+    out("\t$deactivator 127.0.0.1:3000/post some_username abc123 ABcDXyZ ffg222323323232");
 
     process.exit(code);
 }
@@ -70,7 +70,7 @@ function main(){
         help(null, 0);
     }
 
-    if(args.length != 7){
+    if(args.length != 6){
         help("incorrect number of arguments", 1);
     }
 
@@ -80,13 +80,9 @@ function main(){
     let username = args[2];
     let password = args[3];
     let wallet_id = args[4];
-    let location = args[5];
-    let filename = args[6];
+    let stream_id = args[5];
 
-    let data_string = fs.readFileSync(filename, 'utf8');
-    let data = JSON.parse(data_string);
-
-    post_data(address, username, password, wallet_id, location, data);
+    post_data(address, username, password, wallet_id, stream_id);
 
 }
 
