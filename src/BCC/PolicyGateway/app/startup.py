@@ -8,6 +8,7 @@ import json
 import os
 import re
 import mysql.connector
+import time
 
 _deployer_ip = os.environ['DEPLOYER_IP']
 _fetcher_ip = os.environ['FETCHER_IP']
@@ -18,6 +19,18 @@ _mysql_port = os.environ['MYSQL_PORT']
 _mysql_ip = os.environ['MYSQL_IP']
 
 _app = Flask(__name__)
+
+_mydb = None
+while(_mydb == None):
+    try:
+        _mydb = mysql.connector.connect(
+            host = _mysql_ip,
+            user = _mysql_username,
+            passwd = _mysql_user_password,
+            port = _mysql_port
+        )
+    except:
+        time.sleep(1)
 
 class InvalidUsage(Exception):
     status_code = 400
@@ -34,8 +47,11 @@ class InvalidUsage(Exception):
         rv['message'] = self.message
         return rv
 
+def get_mydb():
+    return _mydb
+    
 def check_add_policy_request(request_json):
-    needed_keys = ["json_policy", "policy_creation_token", "wallet_id", "api_key", "broker_id", "cust_type", "data_type"]
+    needed_keys = ["json_policy", "policy_creation_token", "wallet_id", "api_key", "cust_type", "data_type"]
     missing_keys = []
 
     for key in needed_keys:
@@ -43,25 +59,6 @@ def check_add_policy_request(request_json):
             missing_keys.append(key)
 
     return missing_keys
-
-def check_broker_id(broker_id):
-    mydb = mysql.connector.connect(
-        host = _mysql_ip,
-        user = _mysql_username,
-        passwd = _mysql_user_password,
-        port = _mysql_port
-    )
-    
-    cur = mydb.cursor(buffered=True)
-    cur.execute("USE main;")
-    cur.execute("SELECT * FROM Broker WHERE ID = " + str(broker_id) + ";")
-    
-    result = cur.rowcount > 0
-
-    cur.close()
-    mydb.close()
-
-    return result
 
 def test_fetch(api_key, cust_type, data_type):
     url = "http://" + _fetcher_ip + "/fetcher/testfetch/" + api_key + "/" + cust_type + "/" + data_type
@@ -79,27 +76,20 @@ def test_fetch(api_key, cust_type, data_type):
 
     return json.loads(response.text)['Result'] == True
 
-def get_broker_info(broker_id):
-    mydb = mysql.connector.connect(
-        host = _mysql_ip,
-        user = _mysql_username,
-        passwd = _mysql_user_password,
-        port = _mysql_port
-    )
-    
-    cur = mydb.cursor(buffered=True)
+def get_broker_info(broker_api_key):
+    cur = get_mydb().cursor(buffered=True)
     cur.execute("USE main;")
-    cur.execute("SELECT * FROM Broker WHERE ID = " + str(broker_id) + " limit 1;")
+    cur.execute("SELECT * FROM Broker WHERE DataBrokerAPIKey = \"" + broker_api_key + "\" limit 1;")
     row = cur.fetchone()
 
     # Fetches the Drop off location col named values aren't working
-    drop_off_location = row[3]
     broker_wallet_id = row[4] 
+    drop_off_location = row[3]
+    broker_id = row[0]
 
     cur.close()
-    mydb.close()
 
-    return broker_wallet_id, drop_off_location
+    return broker_wallet_id, drop_off_location, broker_id
 
 def deploy_policy(json_policy, wallet_id, broker_wallet_id):
     import requests
@@ -141,25 +131,23 @@ def check_policy_create_token(token):
 
     response = requests.request("GET", url, headers=headers)
 
-    return response.status_code == 200 and json.loads(response.text)['status'] == "success"
+    result = json.loads(response.text)
+
+    if(response.status_code != 200 and result['status'] == "success"):
+        return None
+    
+    return result['broker_api_key']
 
 def push_to_db(off_chain_policy_id, api_address, data_cust, data_type, on_chain_address, data_broker_id):
-    mydb = mysql.connector.connect(
-        host = _mysql_ip,
-        user = _mysql_username,
-        passwd = _mysql_user_password,
-        port = _mysql_port
-    )
-    cur = mydb.cursor()
+    cur = get_mydb().cursor()
 
     cur.execute("USE main;")
     cur.execute("INSERT INTO Policy(OffChainPolicyID, APIAddress, DataCust, DataType, OnchainAddress, DataBrokerID) \
         VALUES('" + off_chain_policy_id + "', '" + api_address + "', " + data_cust + ", " + data_type + ", '" + on_chain_address + "', '" + str(data_broker_id) + "') \
     ;")
 
-    mydb.commit()
+    get_mydb().commit()
     cur.close()
-    mydb.close()
 
 def send_to_drop_off(creation_token, policy_blockchain_location, drop_off_location):
     url = "http://" + drop_off_location + "/policy_drop_off_point/receivepolicy"
@@ -179,29 +167,25 @@ def add_policy():
     if(len(missing_keys) > 0):
         raise BadRequest("Missing Keys: " + str(missing_keys))
 
-    if(not check_policy_create_token(body['policy_creation_token'])):
+    broker_api_key = check_policy_create_token(body['policy_creation_token'])
+    if(broker_api_key == None):
         raise BadRequest("Invalid policy creation token")
     else:
         _app.logger.info("Policy Creation Token Valid")
     
-    if(not check_broker_id(body['broker_id'])):
-        raise BadRequest("Invalid Broker ID")
-    else:
-        _app.logger.info("Broker ID is valid")
-
     if(not test_fetch(body['api_key'], body['cust_type'], body['data_type'])):
         raise BadRequest("Failed test fetch")   
     else:
         _app.logger.info("Test Fetch successful")
 
-    broker_wallet_id, drop_off_location = get_broker_info(body['broker_id'])
+    broker_wallet_id, drop_off_location, broker_id = get_broker_info(broker_api_key)
 
     dep_response_text = deploy_policy(body['json_policy'], body['wallet_id'], broker_wallet_id)
     _app.logger.info("Policy Deployed on blockchain")
 
     dep_response = json.loads(dep_response_text)
 
-    push_to_db(dep_response['key'], body['api_key'], body['cust_type'], body['data_type'], dep_response['trans_id'], body['broker_id'])
+    push_to_db(dep_response['key'], body['api_key'], body['cust_type'], body['data_type'], dep_response['trans_id'], broker_id)
     _app.logger.info("Policy Pushed to DB")
     
     send_to_drop_off(body['policy_creation_token'], dep_response['trans_id'], drop_off_location)
@@ -211,4 +195,5 @@ def add_policy():
 
 if __name__ == "__main__":
     _app.run(host = '0.0.0.0', port = 5000, debug = True)
+    get_mydb().close()
 
