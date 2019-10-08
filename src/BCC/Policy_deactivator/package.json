@@ -2,7 +2,7 @@
   "name": "policy_deactivator",
   "version": "0.0.1",
   "description": "CLI tool to remove policies",
-  "main": "index.js",
+  "main": "deactivator.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
