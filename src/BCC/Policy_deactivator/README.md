@@ -31,3 +31,273 @@ Copy the `key` into the postman variable `streamid`
 7. Re-run `Pull policy` look at the bottom active field, it should now be false.  
 8. [OPTIONAL] Run `Set Policy True`.  This will change the active field back to true.  Now re-run steps 5 --> 7 
 
+Postman JSON
+````
+{
+	"info": {
+		"_postman_id": "2ac48821-80e5-4c1b-ad99-ec9b4e2e0f6e",
+		"name": "deactivator",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "RPC Get Address",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "mypass",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "multichainrpc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"method\":\"getaddresses\",\"params\":[],\"id\":\"98580176-1569033970\",\"chain_name\":\"chain1\"}"
+				},
+				"url": {
+					"raw": "localhost:7090",
+					"host": [
+						"localhost"
+					],
+					"port": "7090"
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Policy Creation Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f21fb2ff-3fae-47f8-aef4-06cbfc06aede",
+						"exec": [
+							"pm.test(\"Status Test\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(\"success\");",
+							"});",
+							"",
+							"pm.test(\"Policy token Created Test\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.policy_creation_token).not.eql(null);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:5010/bcc_policy_token_gateway/newtoken/broker0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5010",
+					"path": [
+						"bcc_policy_token_gateway",
+						"newtoken",
+						"broker0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2f6c872f-39a1-4be8-a140-7eca95c587be",
+						"exec": [
+							"pm.test(\"Your test name\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.result).to.eql(\"success\");",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"json_policy\" : \"{\\\"excluded_categories\\\":[0],\\\"min_price\\\":10,\\\"time_period\\\":{\\\"start\\\":-4785955200,\\\"end\\\":693705600},\\\"data_type\\\":\\\"heart rate\\\",\\\"wallet_ID\\\":\\\"{{address}}\\\",\\\"active\\\":[true, false],\\\"report_log\\\":[{\\\"data\\\":\\\"123\\\",\\\"hash\\\":\\\"321\\\"}]}\",\n\t\"policy_creation_token\" : \"{{create_token}}\",\n\t\"wallet_id\" : \"{{address}}\",\n    \"cust_type\" : \"1\",\n    \"data_type\" : \"1\",\n\t\"api_key\" : \"GOOGLE API KEY HERE\",\n\t\"broker_id\" : 1\n} "
+				},
+				"url": {
+					"raw": "http://localhost:6010/addpolicy",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "6010",
+					"path": [
+						"addpolicy"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Subscribe",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "mypass",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "multichainrpc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"method\":\"subscribe\",\"params\":[\"WXvrKVce9gMYjTBV8Q7CVgtwzMfuXx3o\"],\"chain_name\":\"chain1\"}"
+				},
+				"url": {
+					"raw": "localhost:7090",
+					"host": [
+						"localhost"
+					],
+					"port": "7090"
+				},
+				"description": "Request that the node subscribe to a streamid and cache its information.  This makes pulling that information with RPC work"
+			},
+			"response": []
+		},
+		{
+			"name": "Pull policy",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "mypass",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "multichainrpc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"method\":\"liststreamitems\",\"params\":[\"{{streamid}}\"],\"chain_name\":\"chain1\"}"
+				},
+				"url": {
+					"raw": "localhost:7090",
+					"host": [
+						"localhost"
+					],
+					"port": "7090"
+				},
+				"description": "A request to get a policy"
+			},
+			"response": []
+		},
+		{
+			"name": "Set Policy True",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "mypass",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "multichainrpc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"method\":\"publishfrom\",\"params\":[\"{{address}}\", \"{{streamid}}\",\"policy\",{\"json\":{\"active\":[true]}}],\"chain_name\":\"chain1\"}"
+				},
+				"url": {
+					"raw": "localhost:7090",
+					"host": [
+						"localhost"
+					],
+					"port": "7090"
+				}
+			},
+			"response": []
+		}
+	]
+}
+````
+
