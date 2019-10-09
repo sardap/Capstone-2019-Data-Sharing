@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using BCCDataCustodianSelection.Models;
+using RestSharp;
+using System.Collections.Specialized;
+using System.Text;
 
 namespace BCCDataCustodianSelection.Controllers
 {
@@ -40,9 +43,9 @@ namespace BCCDataCustodianSelection.Controllers
             string APIKey = Request.Form["Input.APIKey"];
             string BrokerID = Request.Form["Input.BrokerID"];
 
-            TempData["APIKey"] = APIKey;
+            //TempData["APIKey"] = APIKey;
             TempData["Wallet_ID"] = Wallet_ID;
-            TempData["BrokerID"] = BrokerID;
+            //TempData["BrokerID"] = BrokerID;
 
             if (Wallet_ID == null || APIKey == null)
             {
@@ -86,14 +89,22 @@ namespace BCCDataCustodianSelection.Controllers
             string DataType = Request.Form["Input.DataType"];
             TempData["DataType"] = DataType;
 
+            AddPolicy();
+
             if (!TempData.ContainsKey("policy")) throw new Exception("Policy not set. Cannot check or add policy");
             if (CheckPolicy().Result)
+            //if (true)
             {
                 string custodian = (string)TempData["DataCustodian"];
 
                 if (custodian == "GoogleFit")
                 {
                     return Redirect("https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.body.read%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.activity.read&redirect_uri=https%3A%2F%2Fauthorization.secretwaterfall.club&response_type=token&client_id=446983905302-uuv9ap7s6poee19ksl4fkad4c5r9d0b3.apps.googleusercontent.com");
+                    /*OAuthResult("ya29.ImGbB42QCmHBJQZjbCxATQrtXjylVXvZHqjxC8mL_iEtU9XC99CdD_kSGNHmrDeA7qeNOoVOmA5nvjRHaiBN9gF7NpT-7S78q4gY2JEWGKbGE8yhvkZxfOsgVHBueFKRblYP",
+                                "test_scope",
+                                "test_token_type",
+                                "test_expires_in",
+                                "test_user_id");*/
                 }
                 else if (custodian == "Fitbit")
                 {
@@ -113,7 +124,10 @@ namespace BCCDataCustodianSelection.Controllers
             TempData["token_type"] = token_type;
             TempData["expires_in"] = expires_in;
             TempData["user_id"] = user_id;
+
+            //This method will attempt to contact the Policy gateway and pass in all required fields
             AddPolicy();
+
             return View();
         }
 
@@ -141,32 +155,84 @@ namespace BCCDataCustodianSelection.Controllers
 
         public async void AddPolicy()
         {
-            /*
-            PolicyModel Policy = JsonConvert.DeserializeObject<PolicyModel>(((string)TempData["policy"]));
-            Policy.Wallet_ID = (string)TempData["Wallet_ID"];
-            Policy.Data_type = (string)TempData["DataType"];
-            string SerialPolicy = JsonConvert.SerializeObject(Policy);*/
 
-
-
-            var Parameters = new Dictionary<string, string>{
-                {"json_policy", (string)TempData["policy"]}, 
-                {"policy_creation_token", (string)TempData["policykey"]}, 
-                {"wallet_id", (string)TempData["Wallet_ID"]},
-                {"api_key", (string)TempData["APIKey"]},
-                {"api_key", (string)TempData["access_token"]},
-                {"broker_id", Environment.GetEnvironmentVariable("BrokerID")}};
-            var Content = new FormUrlEncodedContent(Parameters);
-
-            var Client = new HttpClient();
-            //var Uri = Paths.Instance.PolicyGatewayIP + ":" + Paths.Instance.PolicyGatewayPort;
             var policyGatewayIP = Environment.GetEnvironmentVariable("PolicyGatewayIP");
             var policyGatewayPort = Environment.GetEnvironmentVariable("PolicyGatewayPort");
             var Uri = policyGatewayIP + ":" + policyGatewayPort;
 
+            System.Console.WriteLine("-----**********------------   YO WHAT DA -------------");
             System.Console.WriteLine("Policy Gateway: " + Uri);
+                                          
+            
+            var client = new RestClient(policyGatewayIP + ":" + policyGatewayPort + "/addpolicy");
+            var request = new RestRequest(Method.POST);
+            //request.AddHeader("Postman-Token", "c83b2e98-6298-4957-8b02-90357f5ebf23");
+            //request.AddHeader("cache-control", "no-cache");
+            request.AddHeader("Content-Type", "application/json");
+            request.AddParameter("undefined",
+                "{\n\t\"json_policy\" : \"" + (string)TempData["policy"] + "\",\n" +
+                "\"policy_creation_token\" : \"" + (string)TempData["policykey"] + "\",\n" +
+                "\"wallet_id\" : \"" + (string)TempData["Wallet_ID"] + "\",\n" +
+                "\"cust_type\" : \"1\",\n" +
+                "\"data_type\" : \"1\",\n" +
+                "\api_key\" : \"" + TempData["access_token"] + "\",\n" + 
+                "\"broker_id\" : 1\n}", ParameterType.RequestBody);
 
-            var Response = await Client.PostAsync("http://" + Uri + "/addpolicy/", Content);
+            IRestResponse response = client.Execute(request);
+                      
+
+            /*
+            using (var wb = new WebClient())
+            {
+                var data = new NameValueCollection();
+                data["json_policy"] = "myUser";
+                data["password"] = "myPassword";
+
+                var response = wb.UploadValues(Uri, "POST", data);
+                string responseInString = Encoding.UTF8.GetString(response);
+            }*/
+
+            if (!response.IsSuccessful)
+            {
+                System.Console.WriteLine("ERROR: Gateway has returned an error: " + response.StatusCode + " | " + response.Content.ToString());
+                System.Console.WriteLine(Response.ToString());
+            }
+            else
+                System.Console.WriteLine("SUCCESS: " + response.Content.ToString());
+
+            /*
+            var Parameters = new Dictionary<string, string>{
+                {"json_policy", (string)TempData["policy"]}, 
+                {"policy_creation_token", (string)TempData["policykey"]}, 
+                {"wallet_id", (string)TempData["Wallet_ID"]},
+                {"api_key", (string)TempData["access_token"]},
+                {"cust_type", "1" },
+                {"data_type", "1" },
+                //{"api_key", "ya29.ImGbB42QCmHBJQZjbCxATQrtXjylVXvZHqjxC8mL_iEtU9XC99CdD_kSGNHmrDeA7qeNOoVOmA5nvjRHaiBN9gF7NpT-7S78q4gY2JEWGKbGE8yhvkZxfOsgVHBueFKRblYP"},
+                {"broker_id", Environment.GetEnvironmentVariable("BrokerID").ToString()}};
+
+            var Content = new FormUrlEncodedContent(Parameters);
+
+            var Client = new HttpClient();
+            /*
+            var policyGatewayIP = Environment.GetEnvironmentVariable("PolicyGatewayIP");
+            var policyGatewayPort = Environment.GetEnvironmentVariable("PolicyGatewayPort");
+
+            var Uri = policyGatewayIP + ":" + policyGatewayPort;
+
+            System.Console.WriteLine("Policy Gateway: " + Uri);
+            System.Console.WriteLine("Content: " + Content);
+
+            var Response = await Client.PostAsync("http://" + Uri + "/addpolicy", Content);
+            
+            if (!Response.IsSuccessStatusCode)
+            {
+                System.Console.WriteLine("ERROR: Gateway has returned an error: " + Response.StatusCode +" | " + Response.ReasonPhrase + " | " + Response.Content.ReadAsStringAsync());
+                System.Console.WriteLine(Response.ToString());
+            }
+            else
+                System.Console.WriteLine("SUCCESS");*/
+
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
