@@ -1,0 +1,17 @@
+{
+  "name": "bcc_policy_gateway",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql": "^2.17.1",
+    "nedb": "^1.8.0",
+    "uuid": "^3.3.2"
+  }
+}

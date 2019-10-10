@@ -1,0 +1,10 @@
+version: '3'
+services:
+  multichain:
+    build: .
+    environment:
+      - STREAM_NAME="stream1"
+    ports:
+      - "7090:25565"
+    container_name: "multichain"
+
