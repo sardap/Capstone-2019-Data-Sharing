@@ -2,17 +2,18 @@
 
 @{
     ViewData["Title"] = "BCC";
+    if (ViewData["CreateInfo"] == null) 
+    {
+        ViewData["CreateInfo"] = new PolicyCreation();
+    }
+
+    var createInfo = ViewData["CreateInfo"] as PolicyCreation;
+
 }
 
-<form method="post" action="/Home/CustodianSelection">
+<form method="post" action="/Home/CustodianSelection?policy=@createInfo.Policy&policyToken=@createInfo.PolicyToken">
     <label>Wallet ID</label>
     <input asp-for="Input.Wallet_ID" class="form-control" />
-    <br />
-    <label>API key</label>
-    <input asp-for="Input.APIKey" class="form-control" />
-    <br />
-    <label>Broker ID</label>
-    <input asp-for="Input.BrokerID" class="form-control" onkeyup="IntegerOnly(this)"/>
     <br />
     <button type="submit">Submit</button>
 </form>

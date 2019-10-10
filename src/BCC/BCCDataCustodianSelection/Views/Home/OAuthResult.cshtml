@@ -2,24 +2,11 @@
 
 @{
     ViewData["Title"] = "BCC";
-    var access_token = TempData["access_token"];
-    var scope = TempData["scope"];
-    var token_type = TempData["token_type"];
-    var expires_in = TempData["expires_in"];
-    var user_id = TempData["user_id"];
+   
+    var createInfo = ViewData["CreateInfo"] as PolicyCreation;
 }
 
 <label>Access Token</label>
-<input class="form-control" value=@access_token readonly />
+<input class="form-control" value=@createInfo.AccessToken readonly />
 
-<label>Scope</label>
-<input class="form-control" value=@scope readonly />
-
-<label>Token type</label>
-<input class="form-control" value=@token_type readonly />
-
-<label>Expires in</label>
-<input class="form-control" value=@expires_in readonly />
-
-<label>User ID</label>
-<input class="form-control" value=@user_id readonly />
+<label>Complete</label>

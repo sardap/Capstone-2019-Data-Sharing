@@ -2,9 +2,10 @@
 
 @{
     ViewData["Title"] = "BCC";
+    var createInfo = ViewData["CreateInfo"] as PolicyCreation;
 }
 
-<form method="post" action="/Home/Idle">
+<form method="post" action="/Home/Idle?policy=@createInfo.Policy&policyToken=@createInfo.PolicyToken&walletID=@createInfo.WalletID">
     <label>Data type</label>
     <div id="fitbit">
         <select id="fitbitselect" class="form-control" asp-for="Input.DataType">

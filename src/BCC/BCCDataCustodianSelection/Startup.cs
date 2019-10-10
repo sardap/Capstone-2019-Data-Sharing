@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BCCDataCustodianSelection.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,7 +25,8 @@ namespace BCCDataCustodianSelection
                 ValidatorIP = Environment.GetEnvironmentVariable("ValidatorIP"),
                 ValidatorPort = Environment.GetEnvironmentVariable("ValidatorPort"),
                 PolicyGatewayIP = Environment.GetEnvironmentVariable("PolicyGatewayIP"),
-                PolicyGatewayPort = Environment.GetEnvironmentVariable("PolicyGatewayPort")
+                RedirectURI = Environment.GetEnvironmentVariable("REDIRECT_URI"),
+                GoogletClientID = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID")
             };
 
             Paths.Instance = paths;
@@ -40,6 +43,9 @@ namespace BCCDataCustodianSelection
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
+            services.AddDbContext<PolicyCreationContex>(opt =>
+               opt.UseInMemoryDatabase("PolicyCreation"));
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -61,7 +67,6 @@ namespace BCCDataCustodianSelection
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCookiePolicy();
 
             app.UseMvc(routes =>
             {
@@ -69,6 +74,8 @@ namespace BCCDataCustodianSelection
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            
+            app.UseCookiePolicy();
         }
     }
 }

@@ -27,9 +27,14 @@ namespace BCCDataCustodianSelection
             get; set;
         }
 
-        public string PolicyGatewayPort
-        {
-            get; set;
-        }
+		public string RedirectURI
+		{
+			get; set;
+		}
+
+		public string GoogletClientID
+		{
+			get; set;
+		}
 	}
 }

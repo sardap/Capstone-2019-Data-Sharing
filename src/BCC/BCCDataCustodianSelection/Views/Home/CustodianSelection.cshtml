@@ -2,9 +2,10 @@
 
 @{
     ViewData["Title"] = "BCC";
+    var createInfo = ViewData["CreateInfo"] as PolicyCreation;
 }
 
-<form method="post" action="/Home/DataTypeSelection">
+<form method="post" action="/Home/DataTypeSelection?policy=@createInfo.Policy&policyToken=@createInfo.PolicyToken&walletID=@createInfo.WalletID">
     <label>Data custodian</label>
         <select id="custSelect" class="form-control" asp-for="Input.DataCustodian">
             <option value="">Select Data Custodian</option>
