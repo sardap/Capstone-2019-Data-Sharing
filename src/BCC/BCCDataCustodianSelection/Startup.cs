@@ -27,7 +27,12 @@ namespace BCCDataCustodianSelection
                 PolicyGatewayIP = Environment.GetEnvironmentVariable("PolicyGatewayIP"),
                 RedirectURI = Environment.GetEnvironmentVariable("REDIRECT_URI"),
                 GoogleClientID = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID"),
-                GoogleSecert = Environment.GetEnvironmentVariable("GOOGLE_API_CLIENT_SECRET")
+                GoogleSecert = Environment.GetEnvironmentVariable("GOOGLE_API_CLIENT_SECRET"),
+                MysqlUsername = Environment.GetEnvironmentVariable("MYSQL_USERNAME"),
+                MysqlUserPassword = Environment.GetEnvironmentVariable("MYSQL_USER_PASSWORD"),
+                MysqlPort = Environment.GetEnvironmentVariable("MYSQL_PORT"),
+                MysqlIP = Environment.GetEnvironmentVariable("MYSQL_IP"),
+                MysqlDatabase = Environment.GetEnvironmentVariable("MYSQL_DATABASE")
             };
 
             Paths.Instance = paths;

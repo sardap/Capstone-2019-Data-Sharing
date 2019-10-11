@@ -41,5 +41,30 @@ namespace BCCDataCustodianSelection
 		{
 			get; set;
 		}
+
+		public string MysqlUsername
+		{
+			get; set;
+		}
+
+		public string MysqlUserPassword
+		{
+			get; set;
+		}
+
+		public string MysqlPort
+		{
+			get; set;
+		}
+
+		public string MysqlIP
+		{
+			get; set;
+		}
+
+		public string MysqlDatabase
+		{
+			get; set;
+		}
 	}
 }

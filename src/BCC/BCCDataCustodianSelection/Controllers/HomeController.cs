@@ -12,6 +12,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using BCCDataCustodianSelection.Models;
 using RestSharp;
+using MySql.Data;
+using MySql.Data.MySqlClient;
 
 namespace BCCDataCustodianSelection.Controllers
 {
@@ -136,12 +138,12 @@ namespace BCCDataCustodianSelection.Controllers
 
         public IActionResult OAuthResult(string code, string access_token, string scope, string token_type, string expires_in, string user_id, string state)
         {
+            var createInfo = JsonConvert.DeserializeObject<PolicyCreation>(Base64Decode(state));
+
             if(access_token == null)
             {
-                access_token = WebUtility.UrlEncode(GetRefreshToken(code));
+                access_token = WebUtility.UrlEncode(GetRefreshToken(code, createInfo.WalletID, scope));
             }
-
-            var createInfo = JsonConvert.DeserializeObject<PolicyCreation>(Base64Decode(state));
 
             createInfo.AccessToken = access_token;
             
@@ -157,7 +159,7 @@ namespace BCCDataCustodianSelection.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private string GetRefreshToken(string access_token)
+        private string GetRefreshToken(string access_token, string walletID, string scope)
         {
             var client = new RestClient("https://www.googleapis.com/oauth2/v4/token");
             var request = new RestRequest(Method.POST);
@@ -172,7 +174,41 @@ namespace BCCDataCustodianSelection.Controllers
             Console.WriteLine("Refresh Token: " + response.Content);
 
             dynamic responseParsed = JsonConvert.DeserializeObject(response.Content);
-            return responseParsed.refresh_token;
+
+            var refreshToken = responseParsed.refresh_token;
+
+            string connStr = "server=" + Paths.Instance.MysqlIP + ";user=" + Paths.Instance.MysqlUsername + ";database=" + Paths.Instance.MysqlDatabase + ";port=" + Paths.Instance.MysqlPort +";password=" + Paths.Instance.MysqlUserPassword;
+            MySqlConnection conn = new MySqlConnection(connStr);
+
+            try
+            {
+                Console.WriteLine("Connecting to MySQL...");
+                conn.Open();
+
+                if(refreshToken == null && responseParsed.access_token != null)
+                {
+                    string sql = "SELECT APIAddress FROM Token WHERE WalletID=\"" +  walletID  + "\" AND Scope=\"" + scope + "\"";
+                    MySqlCommand cmd = new MySqlCommand(sql, conn);
+                    MySqlDataReader rdr = cmd.ExecuteReader();
+                    rdr.Read();
+                    refreshToken = rdr[0];
+                    rdr.Close();
+                }
+                else
+                {
+                    string sql = "INSERT INTO Token (WalletID, Scope, APIAddress) VALUES ('" + walletID + "','" + scope + "', '" + refreshToken + "')";
+                    MySqlCommand cmd = new MySqlCommand(sql, conn);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            conn.Close();
+
+            return refreshToken;
         }
 
         private string AddPolicy(string walletID, string dataType, string apiKey, string policyStr, string policyToken)
