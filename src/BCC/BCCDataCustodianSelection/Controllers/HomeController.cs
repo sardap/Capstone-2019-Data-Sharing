@@ -120,7 +120,11 @@ namespace BCCDataCustodianSelection.Controllers
             var encodedRedirectUri = HttpUtility.HtmlEncode(Paths.Instance.RedirectURI);
             if((string)TempData["DataCustodian"] == "GoogleFit")
             {
-                return Redirect("https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.body.read%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.activity.read&redirect_uri=" + encodedRedirectUri + "&response_type=token&client_id=" + Paths.Instance.GoogletClientID + "&state=" + encodedData);
+                var scope = "https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.body.read";
+
+                return Redirect("https://accounts.google.com/o/oauth2/v2/auth?client_id=" + Paths.Instance.GoogleClientID + "&redirect_uri=" + encodedRedirectUri + "&scope=" + scope + "&state=" + encodedData + "&access_type=offline&response_type=code");
+
+                //http://lvh.me/?state=&code=&scope=
             }
             else
             {
@@ -130,30 +134,21 @@ namespace BCCDataCustodianSelection.Controllers
             //return Error();
         }
 
-        public IActionResult OAuthResult(string access_token, string scope, string token_type, string expires_in, string user_id, string state)
+        public IActionResult OAuthResult(string code, string access_token, string scope, string token_type, string expires_in, string user_id, string state)
         {
+            if(access_token == null)
+            {
+                access_token = WebUtility.UrlEncode(GetRefreshToken(code));
+            }
+
             var createInfo = JsonConvert.DeserializeObject<PolicyCreation>(Base64Decode(state));
 
             createInfo.AccessToken = access_token;
             
             ViewData["CreateInfo"] = createInfo;
 
-            AddPolicy(createInfo.WalletID, "1", access_token, createInfo.Policy, createInfo.PolicyToken);
+            ViewData["PolicyGatewayResponse"] = AddPolicy(createInfo.WalletID, "1", access_token, createInfo.Policy, createInfo.PolicyToken);
             return View();
-        }
-
-        public async Task<bool> CheckPolicy()
-        {
-            //Check if policy is valid
-            //checkjsonpart/{jsonpolicy}
-            PolicyModel Policy = JsonConvert.DeserializeObject<PolicyModel>(((string)TempData["policy"]));
-            Policy.Wallet_ID = Request.Form["Input.Wallet_ID"];
-
-            var Client = new HttpClient();
-            var Uri = Paths.Instance.ValidatorIP + ":" + Paths.Instance.ValidatorPort;
-            var Response = await Client.GetAsync("http://" + Uri + "/checkjsonpart/" + Policy);
-
-            return Response.IsSuccessStatusCode;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -162,14 +157,30 @@ namespace BCCDataCustodianSelection.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private void AddPolicy(string walletID, string dataType, string apiKey, string policyStr, string policyToken)
+        private string GetRefreshToken(string access_token)
+        {
+            var client = new RestClient("https://www.googleapis.com/oauth2/v4/token");
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("Connection", "keep-alive");
+            request.AddHeader("Accept-Encoding", "gzip, deflate");
+            request.AddHeader("Host", "www.googleapis.com");
+            request.AddHeader("Accept", "*/*");
+            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.AddParameter("undefined", "code=" + access_token + "&client_id=" + Paths.Instance.GoogleClientID + "&client_secret=" + Paths.Instance.GoogleSecert + "&redirect_uri=" + Paths.Instance.RedirectURI + "&grant_type=authorization_code", ParameterType.RequestBody);
+            IRestResponse response = client.Execute(request);
+
+            Console.WriteLine("Refresh Token: " + response.Content);
+
+            dynamic responseParsed = JsonConvert.DeserializeObject(response.Content);
+            return responseParsed.refresh_token;
+        }
+
+        private string AddPolicy(string walletID, string dataType, string apiKey, string policyStr, string policyToken)
         {
 
-            Console.WriteLine("FUCK YOU WORK: " + policyStr + " " + policyToken + " " + walletID);
-
-            PolicyModel policy = JsonConvert.DeserializeObject<PolicyModel>(policyStr);
-            policy.Wallet_ID = walletID;
-            policy.Data_type = dataType;
+            dynamic policy = JsonConvert.DeserializeObject(policyStr);
+            policy.wallet_ID = walletID;
+            policy.data_type = dataType;
             string jsonPolicy = JsonConvert.SerializeObject(policy);
 
             var url = "http://" + Paths.Instance.PolicyGatewayIP + "/addpolicy";
@@ -181,10 +192,13 @@ namespace BCCDataCustodianSelection.Controllers
             var body = "{\"json_policy\":\"" + jsonPolicy.Replace("\"", "\\\"") + "\",\"policy_creation_token\":\"" + policyToken + "\",\"wallet_id\":\"" + walletID + "\",\"cust_type\":\"1\",\"data_type\":\"1\",\"api_key\":\"" + apiKey + "\"} ";
             Console.WriteLine("REQUEST STRING: " + body);
 
+            ViewData["RequestBody"] = body;
+
             request.AddParameter("undefined", body, ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
-
+            
             Console.WriteLine("Policy Gateway: " + response.Content);
+            return response.Content;
         }
         
         public static string Base64Encode(string plainText) 

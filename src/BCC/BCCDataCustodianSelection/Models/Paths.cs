@@ -32,7 +32,12 @@ namespace BCCDataCustodianSelection
 			get; set;
 		}
 
-		public string GoogletClientID
+		public string GoogleClientID
+		{
+			get; set;
+		}
+
+		public string GoogleSecert
 		{
 			get; set;
 		}

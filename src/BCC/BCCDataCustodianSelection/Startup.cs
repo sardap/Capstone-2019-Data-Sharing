@@ -26,7 +26,8 @@ namespace BCCDataCustodianSelection
                 ValidatorPort = Environment.GetEnvironmentVariable("ValidatorPort"),
                 PolicyGatewayIP = Environment.GetEnvironmentVariable("PolicyGatewayIP"),
                 RedirectURI = Environment.GetEnvironmentVariable("REDIRECT_URI"),
-                GoogletClientID = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID")
+                GoogleClientID = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID"),
+                GoogleSecert = Environment.GetEnvironmentVariable("GOOGLE_API_CLIENT_SECRET")
             };
 
             Paths.Instance = paths;
