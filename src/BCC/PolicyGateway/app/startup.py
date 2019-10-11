@@ -74,7 +74,9 @@ def test_fetch(api_key, cust_type, data_type):
 
     response = requests.request("GET", url, headers=headers)
 
-    return json.loads(response.text)['Result'] == True
+    _app.logger.info("Test Fetch Response: " +  str(response.content))
+
+    return response.status_code == 200 and json.loads(response.text)['Result'] == True
 
 def get_broker_info(broker_api_key):
     cur = get_mydb().cursor(buffered=True)
@@ -98,7 +100,9 @@ def deploy_policy(json_policy, wallet_id, broker_wallet_id):
 
     json_policy = re.sub(r'\"', '\\\"', json_policy)
    
-    payload = "{\n\"json_policy\":\"" + json_policy + "\",\n \"wallet_id\": \"" + wallet_id + "\"\n, \"broker_wallet_id\":\"" + broker_wallet_id + "\"}"
+    payload = "{\"json_policy\":\"" + json_policy + "\", \"wallet_id\": \"" + wallet_id + "\", \"broker_wallet_id\":\"" + broker_wallet_id + "\"}"
+
+    _app.logger.info("Payload " + payload)
     
     headers = {
         'Content-Type': "application/json",
@@ -172,7 +176,7 @@ def add_policy():
         raise BadRequest("Invalid policy creation token")
     else:
         _app.logger.info("Policy Creation Token Valid")
-    
+
     if(not test_fetch(body['api_key'], body['cust_type'], body['data_type'])):
         raise BadRequest("Failed test fetch")   
     else:
