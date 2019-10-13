@@ -101,13 +101,11 @@ namespace BCCDataCustodianSelection.Controllers
 
         public IActionResult Idle(string policy, string policyToken, string walletID)
         {
-            string dataType = Request.Form["Input.DataType"];
+            string scope = Request.Form["Input.DataType"];
 
-            //todo: fix PolicyCheck 
-            //bool? policyResult = CheckPolicy().Result;
-            //if (policyResult == null) Console.WriteLine("PolicyCheck is returning Null. //todo something about that");
-            //if(policyResult != null)
-            //{ 
+            var googleFit = (string)TempData["DataCustodian"] == "GoogleFit";
+            // We need to Get the custType from the fetcher But I just don't have time
+            var custType = googleFit ? "1" : "2";
             
             var encodedData = Base64Encode(JsonConvert.SerializeObject
             (
@@ -115,24 +113,22 @@ namespace BCCDataCustodianSelection.Controllers
                 {
                     Policy = policy,
                     PolicyToken = policyToken,
-                    WalletID = walletID
+                    WalletID = walletID,
+                    DataType = ScopeToDataType(custType, scope),
+                    CustType = custType
                 }
             ));
             var encodedRedirectUri = HttpUtility.HtmlEncode(Paths.Instance.RedirectURI);
-            if((string)TempData["DataCustodian"] == "GoogleFit")
+            if(custType == "1")
             {
-                var scope = "https://www.googleapis.com/auth/" + dataType;
+                var fullScope = "https://www.googleapis.com/auth/" + scope;
 
-                return Redirect("https://accounts.google.com/o/oauth2/v2/auth?client_id=" + Paths.Instance.GoogleClientID + "&redirect_uri=" + encodedRedirectUri + "&scope=" + scope + "&state=" + encodedData + "&access_type=offline&response_type=code");
-
-                //http://lvh.me/?state=&code=&scope=
+                return Redirect("https://accounts.google.com/o/oauth2/v2/auth?client_id=" + Paths.Instance.GoogleClientID + "&redirect_uri=" + encodedRedirectUri + "&scope=" + fullScope + "&state=" + encodedData + "&access_type=offline&response_type=code");
             }
             else
             {
-                return Redirect("https://www.fitbit.com/oauth2/authorize?client_id=22B74V&response_type=token&scope=activity%20heartrate%20nutrition%20sleep%20weight&redirect_uri=" + encodedRedirectUri + "&expires_in=6000");
+                return Redirect("https://www.fitbit.com/oauth2/authorize?client_id=22B74V&response_type=token&scope=activity%20" +  scope + "%20nutrition%20sleep%20weight&redirect_uri=" + encodedRedirectUri + "&expires_in=6000");
             }
-            //}
-            //return Error();
         }
 
         public IActionResult OAuthResult(string code, string access_token, string scope, string token_type, string expires_in, string user_id, string state)
@@ -148,7 +144,16 @@ namespace BCCDataCustodianSelection.Controllers
             
             ViewData["CreateInfo"] = createInfo;
 
-            ViewData["PolicyGatewayResponse"] = AddPolicy(createInfo.WalletID, "1", access_token, createInfo.Policy, createInfo.PolicyToken);
+            ViewData["PolicyGatewayResponse"] = AddPolicy
+            (
+                createInfo.WalletID, 
+                createInfo.DataType, 
+                access_token, 
+                createInfo.Policy, 
+                createInfo.PolicyToken,
+                createInfo.CustType
+            );
+
             return View();
         }
 
@@ -213,7 +218,31 @@ namespace BCCDataCustodianSelection.Controllers
             return refreshToken;
         }
 
-        private string AddPolicy(string walletID, string dataType, string apiKey, string policyStr, string policyToken)
+        // Link to fetcher version later
+        private static Dictionary<string, string> _googleFitDataTypeDict = new Dictionary<string, string>()
+        {
+            {"fitness.body.read", "1"}
+        };
+
+        private static Dictionary<string, string> _fitbitDataTypeDict = new Dictionary<string, string>()
+        {
+            {"heartRate", "0"}
+        };
+
+
+        private string ScopeToDataType(string custType, string scope)
+        {
+            if(custType == "1")
+            {
+                return _googleFitDataTypeDict[scope];
+            }
+            else
+            {
+                return _fitbitDataTypeDict[scope];
+            }
+        }
+
+        private string AddPolicy(string walletID, string dataType, string apiKey, string policyStr, string policyToken, string custType)
         {
 
             dynamic policy = JsonConvert.DeserializeObject(policyStr);
@@ -227,7 +256,7 @@ namespace BCCDataCustodianSelection.Controllers
             var request = new RestRequest(Method.POST);
             request.AddHeader("Content-Type", "application/json");
 
-            var body = "{\"json_policy\":\"" + jsonPolicy.Replace("\"", "\\\"") + "\",\"policy_creation_token\":\"" + policyToken + "\",\"wallet_id\":\"" + walletID + "\",\"cust_type\":\"1\",\"data_type\":\"1\",\"api_key\":\"" + apiKey + "\"} ";
+            var body = "{\"json_policy\":\"" + jsonPolicy.Replace("\"", "\\\"") + "\",\"policy_creation_token\":\"" + policyToken + "\",\"wallet_id\":\"" + walletID + "\",\"cust_type\":\"" + custType + "\",\"data_type\":\"" + dataType + "\",\"api_key\":\"" + apiKey + "\"} ";
             Console.WriteLine("REQUEST STRING: " + body);
 
             ViewData["RequestBody"] = body;

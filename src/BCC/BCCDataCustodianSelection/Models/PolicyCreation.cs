@@ -7,5 +7,9 @@ namespace BCCDataCustodianSelection.Models
         public string WalletID { get; set; }
 
         public string AccessToken { get; set; }
+
+        public string DataType { get; set; }
+        
+        public string CustType { get; set; }
     }
 }
