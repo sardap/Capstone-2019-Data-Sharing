@@ -21,16 +21,6 @@ _mysql_ip = os.environ['MYSQL_IP']
 _app = Flask(__name__)
 
 _mydb = None
-while(_mydb == None):
-    try:
-        _mydb = mysql.connector.connect(
-            host = _mysql_ip,
-            user = _mysql_username,
-            passwd = _mysql_user_password,
-            port = _mysql_port
-        )
-    except:
-        time.sleep(1)
 
 class InvalidUsage(Exception):
     status_code = 400
@@ -47,8 +37,33 @@ class InvalidUsage(Exception):
         rv['message'] = self.message
         return rv
 
+def connect_to_mysql():
+    global _mydb
+    if(_mydb != None):
+        _mydb.close()
+        _mydb = None
+
+    _app.logger.info("MYSQL CONNECTING")
+
+    while(_mydb == None):
+        try:
+            _mydb = mysql.connector.connect(
+                host = _mysql_ip,
+                user = _mysql_username,
+                passwd = _mysql_user_password,
+                port = _mysql_port
+            )
+        except:
+            time.sleep(1)
+
 def get_mydb():
+    global _mydb
+    if(not _mydb.is_connected()):
+        _app.logger.info("MYSQL CONNECTION CLOSED")
+        connect_to_mysql()
+
     return _mydb
+
     
 def check_add_policy_request(request_json):
     needed_keys = ["json_policy", "policy_creation_token", "wallet_id", "api_key", "cust_type", "data_type"]
@@ -198,6 +213,7 @@ def add_policy():
     return {"result" : "success"}
 
 if __name__ == "__main__":
+    connect_to_mysql()
     _app.run(host = '0.0.0.0', port = 5000, debug = True)
     get_mydb().close()
 
