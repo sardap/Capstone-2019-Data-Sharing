@@ -2,6 +2,9 @@
 
 # Docker Info
 
+## license
+This com is under GPLv2 refer to the license file in this dir
+
 ### Building Image
 Change into this dir
 `docker build --rm . -t BCCDataCustodianSelection:dev;`
