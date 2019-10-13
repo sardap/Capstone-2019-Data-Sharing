@@ -102,7 +102,6 @@ namespace BCCDataCustodianSelection.Controllers
         public IActionResult Idle(string policy, string policyToken, string walletID)
         {
             string dataType = Request.Form["Input.DataType"];
-            TempData["DataType"] = dataType;
 
             //todo: fix PolicyCheck 
             //bool? policyResult = CheckPolicy().Result;
@@ -122,7 +121,7 @@ namespace BCCDataCustodianSelection.Controllers
             var encodedRedirectUri = HttpUtility.HtmlEncode(Paths.Instance.RedirectURI);
             if((string)TempData["DataCustodian"] == "GoogleFit")
             {
-                var scope = "https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffitness.body.read";
+                var scope = "https://www.googleapis.com/auth/" + dataType;
 
                 return Redirect("https://accounts.google.com/o/oauth2/v2/auth?client_id=" + Paths.Instance.GoogleClientID + "&redirect_uri=" + encodedRedirectUri + "&scope=" + scope + "&state=" + encodedData + "&access_type=offline&response_type=code");
 
@@ -172,6 +171,9 @@ namespace BCCDataCustodianSelection.Controllers
             IRestResponse response = client.Execute(request);
 
             Console.WriteLine("Refresh Token: " + response.Content);
+
+            // Refresh Tokens are only returned on the first request 
+            // which means that we need to store them if that scope has already been granted to our service
 
             dynamic responseParsed = JsonConvert.DeserializeObject(response.Content);
 
@@ -237,13 +239,13 @@ namespace BCCDataCustodianSelection.Controllers
             return response.Content;
         }
         
-        public static string Base64Encode(string plainText) 
+        private static string Base64Encode(string plainText) 
         {
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
             return System.Convert.ToBase64String(plainTextBytes);
         }
 
-        public static string Base64Decode(string base64EncodedData) 
+        private static string Base64Decode(string base64EncodedData) 
         {
             var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
             return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
