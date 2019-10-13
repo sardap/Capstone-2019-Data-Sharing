@@ -9,6 +9,7 @@ services:
       - ValidatorPort=7080
       - ValidatorIP=${DOCKER_HOST_IP}
       - PolicyGatewayIP=${DOCKER_HOST_IP}:6010
+      - POLICY_TOKEN_CHECKER=${DOCKER_HOST_IP}:5010
       - REDIRECT_URI=http://lvh.me/Home/OAuthResult
       - GOOGLE_CLIENT_ID=${GOOGLE_API_CLIENT_ID}
       - GOOGLE_API_CLIENT_SECRET=${GOOGLE_API_CLIENT_SECRET}

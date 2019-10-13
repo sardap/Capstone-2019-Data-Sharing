@@ -42,6 +42,11 @@ namespace BCCDataCustodianSelection
 			get; set;
 		}
 
+		public string PolicyTokenCheckerLocation
+		{
+			get; set;
+		}
+
 		public string MysqlUsername
 		{
 			get; set;

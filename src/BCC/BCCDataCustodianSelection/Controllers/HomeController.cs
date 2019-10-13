@@ -28,8 +28,10 @@ namespace BCCDataCustodianSelection.Controllers
         [Route("{policy}/{policyToken}")]
         public IActionResult Index(string policy, string policyToken)
         {
-            TempData["policy"] = policy;
-            TempData["policyToken"] = policyToken;
+            if(!CheckPolicyToken(policyToken))
+            {
+                return Error();
+            }
 
             ViewData["CreateInfo"] = new PolicyCreation()
             {
@@ -42,6 +44,11 @@ namespace BCCDataCustodianSelection.Controllers
 
         public IActionResult CustodianSelection(string policy, string policyToken)
         {
+            if(!CheckPolicyToken(policyToken))
+            {
+                return Error();
+            }
+
             string walletID = Request.Form["Input.Wallet_ID"];
 
             TempData["Wallet_ID"] = walletID;
@@ -63,6 +70,11 @@ namespace BCCDataCustodianSelection.Controllers
 
         public IActionResult DataTypeSelection(string policy, string policyToken, string walletID)
         {
+            if(!CheckPolicyToken(policyToken))
+            {
+                return Error();
+            }
+
             //Data type selection based on custodian
             string DataCustodian = Request.Form["Input.DataCustodian"];
             TempData["DataCustodian"] = DataCustodian;
@@ -101,6 +113,12 @@ namespace BCCDataCustodianSelection.Controllers
 
         public IActionResult Idle(string policy, string policyToken, string walletID)
         {
+
+            if(!CheckPolicyToken(policyToken))
+            {
+                return Error();
+            }
+
             string scope = Request.Form["Input.DataType"];
 
             var googleFit = (string)TempData["DataCustodian"] == "GoogleFit";
@@ -140,6 +158,11 @@ namespace BCCDataCustodianSelection.Controllers
                 access_token = WebUtility.UrlEncode(GetRefreshToken(code, createInfo.WalletID, scope));
             }
 
+            if(!CheckPolicyToken(createInfo.PolicyToken))
+            {
+                return Error();
+            }
+
             createInfo.AccessToken = access_token;
             
             ViewData["CreateInfo"] = createInfo;
@@ -161,6 +184,15 @@ namespace BCCDataCustodianSelection.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private bool CheckPolicyToken(string policyToken)
+        {
+            var client = new RestClient("http://" + Paths.Instance.PolicyTokenCheckerLocation + "/bcc_policy_token_gateway/checktoken/" + policyToken);
+            var request = new RestRequest(Method.GET);
+            IRestResponse response = client.Execute(request);
+
+            return response.StatusCode == HttpStatusCode.OK;
         }
 
         private string GetRefreshToken(string access_token, string walletID, string scope)
