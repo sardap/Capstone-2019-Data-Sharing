@@ -133,7 +133,7 @@ def deploy_policy(json_policy, wallet_id, broker_wallet_id):
     response = requests.request("POST", url, data=payload, headers=headers)
            
     _app.logger.info(response.text)
-
+    print(response.text, flush=True)
     return response.text
     
 def check_policy_create_token(token):
