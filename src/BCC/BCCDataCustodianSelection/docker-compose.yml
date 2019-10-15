@@ -1,0 +1,103 @@
+version: '3'
+services:
+  bcc_selector:
+    build: .
+    ports:
+     - "443:443"
+     - "80:80"
+    environment:
+      - ValidatorPort=7080
+      - ValidatorIP=${DOCKER_HOST_IP}
+      - PolicyGatewayIP=${DOCKER_HOST_IP}:6010
+      - POLICY_TOKEN_CHECKER=${DOCKER_HOST_IP}:5010
+      - REDIRECT_URI=http://lvh.me/Home/OAuthResult
+      - GOOGLE_CLIENT_ID=${GOOGLE_API_CLIENT_ID}
+      - GOOGLE_API_CLIENT_SECRET=${GOOGLE_API_CLIENT_SECRET}
+      - ASPNETCORE_ENVIRONMENT=Development
+      - MYSQL_USERNAME=user
+      - MYSQL_USER_PASSWORD=mypass
+      - MYSQL_PORT=32233
+      - MYSQL_IP=${DOCKER_HOST_IP}
+      - MYSQL_DATABASE=main
+
+
+  multichain:
+    image: "capstonegroup30/multichain-con:latest"
+    ports:
+      - "7090:25565"
+
+  deployer:
+    build: ../../BCF/BlockchainPolicyDeployer
+    ports:
+      - "6080:80"
+      - "6443:443"
+    depends_on:
+      - "multichain"
+    environment:
+      - VALIDATOR_IP=${DOCKER_HOST_IP}
+      - VALIDATOR_PORT=7080
+      - CHAIN_NAME=chain1
+      - RPC_IP=${DOCKER_HOST_IP}
+      - RPC_PORT=7090
+      - RPC_USERNAME=multichainrpc
+      - RPC_PASSWORD=mypass
+
+  policy-validator:
+    image: "capstonegroup30/policy-validator:latest"
+    ports:
+      - "7080:80"
+
+  mock_policy_drop_off:
+    image: "capstonegroup30/mock-policy-drop-off:dev"
+    ports:
+      - "7091:5000"
+
+  bccdb:
+    build: ../BCCDB
+    ports:
+      - "32233:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=mypass
+      - MYSQL_PASSWORD=mypass
+      - MYSQL_USER=user
+      - MYSQL_DATABASE=main
+      - PUID=1000
+      - PGID=1000
+      - BROKER_0=mock,${DOCKER_HOST_IP}:7091,minecraftisgood
+
+  policy_token_gateway:
+    image: "capstonegroup30/policy_token_gateway:latest"
+    ports:
+      - "5010:8080"
+    environment:
+      - DEBUG=1
+      - MYSQL_PASSWORD=mypass
+      - MYSQL_USER=user
+      - MYSQL_DATABASE=main
+      - MYSQL_HOST=bccdb
+      - PORT=8080
+
+  fetcher:
+    image: "capstonegroup30/fetcher:latest"
+    ports:
+      - "5080:80"
+      - "5443:443"
+    environment:
+      - GOOGLE_API_CLIENT_ID=${GOOGLE_API_CLIENT_ID}
+      - GOOGLE_API_CLIENT_SECRET=${GOOGLE_API_CLIENT_SECRET}
+      - FITBIT_API_CLIENT_ID=${FITBIT_API_CLIENT_ID}
+      - FITBIT_API_CLIENT_SECRET=${FITBIT_API_CLIENT_SECRET}
+
+  policy_gateway:
+    build: ../PolicyGateway
+    ports:
+      - "6010:5000"
+    environment:
+      - DEPLOYER_IP=${DOCKER_HOST_IP}:6080
+      - FETCHER_IP=${DOCKER_HOST_IP}:5080
+      - POLICY_TOKEN_IP=${DOCKER_HOST_IP}:5010
+      - MYSQL_USERNAME=user
+      - MYSQL_USER_PASSWORD=mypass
+      - MYSQL_PORT=32233
+      - MYSQL_IP=${DOCKER_HOST_IP}
+      - MYSQL_DATABASE=main

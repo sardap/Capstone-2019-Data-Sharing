@@ -21,16 +21,6 @@ _mysql_ip = os.environ['MYSQL_IP']
 _app = Flask(__name__)
 
 _mydb = None
-while(_mydb == None):
-    try:
-        _mydb = mysql.connector.connect(
-            host = _mysql_ip,
-            user = _mysql_username,
-            passwd = _mysql_user_password,
-            port = _mysql_port
-        )
-    except:
-        time.sleep(1)
 
 class InvalidUsage(Exception):
     status_code = 400
@@ -47,8 +37,33 @@ class InvalidUsage(Exception):
         rv['message'] = self.message
         return rv
 
+def connect_to_mysql():
+    global _mydb
+    if(_mydb != None):
+        _mydb.close()
+        _mydb = None
+
+    _app.logger.info("MYSQL CONNECTING")
+
+    while(_mydb == None):
+        try:
+            _mydb = mysql.connector.connect(
+                host = _mysql_ip,
+                user = _mysql_username,
+                passwd = _mysql_user_password,
+                port = _mysql_port
+            )
+        except:
+            time.sleep(1)
+
 def get_mydb():
+    global _mydb
+    if(not _mydb.is_connected()):
+        _app.logger.info("MYSQL CONNECTION CLOSED")
+        connect_to_mysql()
+
     return _mydb
+
     
 def check_add_policy_request(request_json):
     needed_keys = ["json_policy", "policy_creation_token", "wallet_id", "api_key", "cust_type", "data_type"]
@@ -74,7 +89,9 @@ def test_fetch(api_key, cust_type, data_type):
 
     response = requests.request("GET", url, headers=headers)
 
-    return json.loads(response.text)['Result'] == True
+    _app.logger.info("Test Fetch Response: " +  str(response.content))
+
+    return response.status_code == 200 and json.loads(response.text)['Result'] == True
 
 def get_broker_info(broker_api_key):
     cur = get_mydb().cursor(buffered=True)
@@ -98,7 +115,9 @@ def deploy_policy(json_policy, wallet_id, broker_wallet_id):
 
     json_policy = re.sub(r'\"', '\\\"', json_policy)
    
-    payload = "{\n\"json_policy\":\"" + json_policy + "\",\n \"wallet_id\": \"" + wallet_id + "\"\n, \"broker_wallet_id\":\"" + broker_wallet_id + "\"}"
+    payload = "{\"json_policy\":\"" + json_policy + "\", \"wallet_id\": \"" + wallet_id + "\", \"broker_wallet_id\":\"" + broker_wallet_id + "\"}"
+
+    _app.logger.info("Payload " + payload)
     
     headers = {
         'Content-Type': "application/json",
@@ -114,7 +133,7 @@ def deploy_policy(json_policy, wallet_id, broker_wallet_id):
     response = requests.request("POST", url, data=payload, headers=headers)
            
     _app.logger.info(response.text)
-
+    print(response.text, flush=True)
     return response.text
     
 def check_policy_create_token(token):
@@ -172,7 +191,7 @@ def add_policy():
         raise BadRequest("Invalid policy creation token")
     else:
         _app.logger.info("Policy Creation Token Valid")
-    
+
     if(not test_fetch(body['api_key'], body['cust_type'], body['data_type'])):
         raise BadRequest("Failed test fetch")   
     else:
@@ -194,6 +213,7 @@ def add_policy():
     return {"result" : "success"}
 
 if __name__ == "__main__":
+    connect_to_mysql()
     _app.run(host = '0.0.0.0', port = 5000, debug = True)
     get_mydb().close()
 

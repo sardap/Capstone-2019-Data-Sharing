@@ -51,6 +51,13 @@ def main():
 		PRIMARY KEY (OffChainPolicyID, DataBrokerID), \
 		FOREIGN KEY (DataBrokerID) REFERENCES Broker(ID) \
 	) ENGINE = InnoDB;")
+	cur.execute("CREATE TABLE IF NOT EXISTS Token ( \
+		WalletID varchar(255) NOT NULL, \
+		Scope varchar(500) NOT NULL, \
+		APIAddress varchar(255) NOT NULL, \
+		PRIMARY KEY (WalletID, Scope) \
+	) ENGINE = InnoDB;")
+
 
 	cur.execute("SELECT * FROM Broker;")
 	data = cur.fetchone()

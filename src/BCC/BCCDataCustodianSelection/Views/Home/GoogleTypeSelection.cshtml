@@ -1,0 +1,23 @@
+@model DataCustodianModel
+
+@{
+    ViewData["Title"] = "BCC";
+    var createInfo = ViewData["CreateInfo"] as PolicyCreation;
+}
+
+<form method="post" action="/Home/Idle?policy=@createInfo.Policy&policyToken=@createInfo.PolicyToken&walletID=@createInfo.WalletID">
+    <label>Data type</label>
+    <div id="googlefit">
+        <select id="googlefitselect" class="form-control" asp-for="Input.DataType">
+            <option value="fitness.body.read">Your Body information</option>
+            <!-- <option value="fitness.activity.read">View your activity information in Google Fit</option>
+            <option value="fitness.blood_glucose.read">View blood glucose data in Google Fit</option>
+            <option value="fitness.blood_pressure.read">View blood pressure data in Google Fit</option>
+            <option value="fitness.body_temperature.read">View body temperature data in Google Fit</option>
+            <option value="fitness.location.read">View your stored location data in Google Fit</option>
+            <option value="fitness.nutrition.read">View nutrition information in Google Fit</option>
+            <option value="fitness.oxygen_saturation.read">View oxygen saturation data in Google Fit</option>
+            <option value="fitness.reproductive_health.read">View reproductive health data in Google Fit</option> -->
+        </select>
+    <button type="submit">Submit</button>
+</form>

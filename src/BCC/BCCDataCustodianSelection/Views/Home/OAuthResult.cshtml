@@ -1,0 +1,18 @@
+@model DataCustodianModel
+
+@{
+    ViewData["Title"] = "BCC";
+   
+    var createInfo = ViewData["CreateInfo"] as PolicyCreation;
+    var response = ViewData["PolicyGatewayResponse"];
+    var body = ViewData["RequestBody"];
+}
+
+<label>Access Token</label>
+<input class="form-control" value=@createInfo.AccessToken readonly />
+
+<label>Complete</label> <br>
+<p>@response</p>
+
+<label>RequestBody</label> <br>
+<p>@body</p>
