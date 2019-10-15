@@ -31,6 +31,8 @@ services:
     ports:
       - "6080:80"
       - "6443:443"
+    depends_on:
+      - "multichain"
     environment:
       - VALIDATOR_IP=${DOCKER_HOST_IP}
       - VALIDATOR_PORT=7080
