@@ -4,29 +4,46 @@ import PolicyModeButtonGroup from "./policy-mode-button-group";
 import PolicyToggleButton from "./policy-toggle-button";
 import PolicyPriceInput from "./policy-price-input";
 import PolicyExcludeBuyerInput from "./policy-exclude-buyer-input";
+import { connect } from "react-redux";
+import { addNewPolicy } from "../actions/policy-action";
 
 class Policy extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mode: this.props.mode,
-      enabled: true
+      mode: props.mode,
+      policy: props.policy
     };
   }
 
+  onSavePolicy() {
+    this.setState({ mode: "READ" });
+    if (this.props.policy.id === "") {
+      this.props.addNewPolicy(this.state.policy);
+    }
+  }
+
+  onPriceChange(e) {
+    this.setState({
+      policy: { ...this.state.policy, minPrice: e.target.value }
+    });
+    console.log("STATE", this.state);
+    console.log("PROPS", this.props);
+  }
+
   render() {
-    const { policy, index } = this.props;
+    const { index } = this.props;
+    const { policy } = this.state;
     return (
-      <div className="card dsp-card mb-3" id="dsp_0">
-        <div className="card-header" id="heading_0">
+      <div className="card dsp-card mb-3" id={"dsp_" + index}>
+        <div className="card-header" id={"heading_" + index}>
           <h4 className="mb-0">
             <button
               className="btn btn-link"
-              type="button"
               data-toggle="collapse"
-              data-target="#collapse_0"
+              data-target={"#collapse_" + index}
               aria-expanded="true"
-              aria-controls="collapse_0"
+              aria-controls={"collapse_" + index}
             >
               Data Sharing Policy {index}
             </button>
@@ -37,10 +54,10 @@ class Policy extends React.Component {
         </div>
 
         <div
-          id="collapse_0"
+          id={"collapse_" + index}
           className="collapse show"
-          aria-labelledby="heading_0"
-          data-parent="#dsp_0"
+          aria-labelledby={"heading_" + index}
+          data-parent={"#dsp_" + index}
         >
           <div className="card-body">
             <PolicyExcludeBuyerInput
@@ -48,7 +65,11 @@ class Policy extends React.Component {
               excluded={policy.excluded}
             />
 
-            <PolicyPriceInput mode={this.state.mode} price={policy.min_price} />
+            <PolicyPriceInput
+              mode={this.state.mode}
+              price={policy.minPrice}
+              onChange={e => this.onPriceChange(e)}
+            />
 
             <DateTimeRangeSelector
               label="Set a time range of your biometric data to share"
@@ -67,7 +88,7 @@ class Policy extends React.Component {
 
             <PolicyModeButtonGroup
               mode={this.state.mode}
-              onSave={() => this.setState({ mode: "READ" })}
+              onSave={() => this.onSavePolicy()}
               onEdit={() => this.setState({ mode: "EDIT" })}
             />
           </div>
@@ -77,4 +98,13 @@ class Policy extends React.Component {
   }
 }
 
-export default Policy;
+const mapDispatchToProps = dispatch => {
+  return {
+    addNewPolicy: policy => dispatch(addNewPolicy(policy))
+  };
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(Policy);

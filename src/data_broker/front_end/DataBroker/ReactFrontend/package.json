@@ -4,21 +4,14 @@
   "description": "Front-end for Data Broker written react",
   "private": true,
   "scripts": {
-    "test": "npm run test:other && npm run test:js",
-    "fix:other": "npm run prettier --write",
+    "test": "npm run test:js",
     "fix:js": "npm run test:js --fix",
     "fix": "npm run fix:js && npm run fix:other",
-    "prettier": "prettier \"**/*.{json,md,scss,yaml,yml}\"",
-    "test:other": "npm run prettier --list-different",
     "test:js": "eslint --ignore-path .gitignore --ignore-path .prettierignore \"**/*.{js,jsx}\""
   },
   "lint-staged": {
     "*.{js,jsx}": [
       "eslint --fix",
-      "git add"
-    ],
-    "*.{json,md,scss,yaml,yml}": [
-      "prettier --write",
       "git add"
     ]
   },

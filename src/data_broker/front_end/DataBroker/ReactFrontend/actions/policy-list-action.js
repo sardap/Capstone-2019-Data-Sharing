@@ -10,7 +10,9 @@ export const requestPolicies = () => ({
 export const receivePolicies = json => ({
   type: RECEIVE_POLICIES,
   policies: json.data.map(policy => ({
-    ...policy,
+    id: policy.id,
+    active: policy.active,
+    minPrice: policy.min_price,
     start: moment(policy.start),
     end: moment(policy.end),
     excluded: policy.excluded.split(",")
@@ -21,8 +23,5 @@ export const fetchPolicies = () => dispatch => {
   dispatch(requestPolicies());
   return fetch(`https://localhost:5001/api/GetAllPolicies`)
     .then(response => response.json())
-    .then(json => {
-      console.log("fetchPolicies", json);
-      dispatch(receivePolicies(json));
-    });
+    .then(json => dispatch(receivePolicies(json)));
 };

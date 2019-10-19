@@ -38,6 +38,9 @@ namespace DataBroker.Controllers
 			public decimal MinPrice { get; set; }
 			[JsonProperty("active")]
 			public bool Active { get; set; }
+			
+			[JsonProperty("id")]
+			public Guid Id { get; }
 		}
 
 		[HttpPost("/api/AddPolicy")]
@@ -61,6 +64,29 @@ namespace DataBroker.Controllers
 			// TODO: Send request to policy drop off point
 			
 			return Json(new {success = true, message = "Successfully added new policy!"});
+		}
+		
+		[HttpPost("/api/UpdatePolicy")]
+		public IActionResult Update(DspPoco policy)
+		{
+			var user = _context.ApplicationUsers.SingleOrDefault(z => z.Email.Equals(User.Identity.Name));
+			if (user == null) return Json(new {success = false, message = "Invalid user"});
+
+			var existingPolicy = _context.DataSharingPolicies.SingleOrDefault(p => p.Id.Equals(policy.Id));
+
+			if (existingPolicy == null) return Json(new {success = false, message = "Can't update policy"});
+
+			existingPolicy.ExcludedBuyers = policy.ExcludedBuyers;
+			existingPolicy.Start = DateTime.Parse(policy.Start);
+			existingPolicy.End = DateTime.Parse(policy.End);
+			existingPolicy.MinPrice = policy.MinPrice;
+
+			_context.DataSharingPolicies.Update(existingPolicy);
+			_context.SaveChanges();
+			
+			// TODO: Send request to policy drop off point
+			
+			return Json(new {success = true, message = "Successfully updated policy!"});
 		}
 	}
 }

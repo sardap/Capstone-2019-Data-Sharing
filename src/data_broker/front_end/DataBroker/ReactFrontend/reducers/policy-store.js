@@ -20,8 +20,7 @@ export const policies = (
       return {
         ...state,
         isFetching: false,
-        policies: action.policies,
-        blob: "Hello"
+        policies: action.policies
       };
     default:
       return state;

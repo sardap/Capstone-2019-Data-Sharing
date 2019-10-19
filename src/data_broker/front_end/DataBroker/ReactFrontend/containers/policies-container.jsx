@@ -3,6 +3,7 @@ import PolicyAddition from "../components/policy-addition";
 import PolicyList from "../components/policy-list";
 import { connect } from "react-redux";
 import { fetchPolicies } from "../actions/policy-list-action";
+import moment from "moment";
 
 class PoliciesContainer extends React.Component {
   constructor(props) {
@@ -12,9 +13,22 @@ class PoliciesContainer extends React.Component {
       policies: []
     };
   }
+
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch(fetchPolicies());
+  }
+
+  onClickPolicyAddition() {
+    const newPolicy = {
+      id: "",
+      active: false,
+      minPrice: 0.1,
+      start: moment(),
+      end: moment(),
+      excluded: ["None"]
+    };
+    this.setState({ policies: [newPolicy, ...this.state.policies] });
   }
 
   render() {
