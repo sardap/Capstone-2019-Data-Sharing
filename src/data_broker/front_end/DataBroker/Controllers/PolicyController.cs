@@ -43,6 +43,8 @@ namespace DataBroker.Controllers
 			var user = _context.ApplicationUsers.SingleOrDefault(z => z.Email.Equals(User.Identity.Name));
 			if (user == null) return Json(new {success = false, message = "Invalid user"});
 
+			// TODO: Link to Data Custodian
+
 			var newPolicy = new DataSharingPolicy
 			{
 				UserId = user.Id,
@@ -94,6 +96,46 @@ namespace DataBroker.Controllers
 			if (existingPolicy == null) return Json(new {success = false, message = "Can't remove policy"});
 
 			_context.DataSharingPolicies.Remove(existingPolicy);
+			_context.SaveChanges();
+
+			// TODO: Send request to policy drop off point
+
+			return Json(new {success = true, message = "Successfully updated policy!"});
+		}
+
+		[HttpPost("/api/ActivatePolicy")]
+		public IActionResult ActivatePolicy(DspPoco policy)
+		{
+			var user = _context.ApplicationUsers.SingleOrDefault(z => z.Email.Equals(User.Identity.Name));
+			if (user == null) return Json(new {success = false, message = "Invalid user"});
+
+			var existingPolicy = _context.DataSharingPolicies.SingleOrDefault(p => p.Id.ToString().Equals(policy.Id));
+
+			if (existingPolicy == null) return Json(new {success = false, message = "Can't update policy"});
+
+			existingPolicy.Active = true;
+
+			_context.DataSharingPolicies.Update(existingPolicy);
+			_context.SaveChanges();
+
+			// TODO: Send request to policy drop off point
+
+			return Json(new {success = true, message = "Successfully updated policy!"});
+		}
+
+		[HttpPost("/api/DeactivatePolicy")]
+		public IActionResult DeactivatePolicy(DspPoco policy)
+		{
+			var user = _context.ApplicationUsers.SingleOrDefault(z => z.Email.Equals(User.Identity.Name));
+			if (user == null) return Json(new {success = false, message = "Invalid user"});
+
+			var existingPolicy = _context.DataSharingPolicies.SingleOrDefault(p => p.Id.ToString().Equals(policy.Id));
+
+			if (existingPolicy == null) return Json(new {success = false, message = "Can't update policy"});
+
+			existingPolicy.Active = false;
+
+			_context.DataSharingPolicies.Update(existingPolicy);
 			_context.SaveChanges();
 
 			// TODO: Send request to policy drop off point
