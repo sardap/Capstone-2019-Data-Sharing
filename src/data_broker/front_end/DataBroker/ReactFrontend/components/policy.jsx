@@ -8,7 +8,9 @@ import { connect } from "react-redux";
 import {
   saveNewPolicy,
   removePolicy,
-  editPolicy
+  editPolicy,
+  activatePolicy,
+  deactivatePolicy
 } from "../actions/policy-action";
 import moment from "moment";
 import * as _ from "lodash";
@@ -38,6 +40,15 @@ class Policy extends React.Component {
 
   onRemovePolicy() {
     this.props.removePolicy(this.props.policy.id);
+  }
+
+  onExcludedSelectionChange(e) {
+    const selectedOptions = Array.from(e.target.options)
+      .filter(o => o.selected)
+      .map(o => o.value);
+    this.setState({
+      policy: { ...this.state.policy, excluded: selectedOptions }
+    });
   }
 
   onPriceChange(e) {
@@ -130,6 +141,9 @@ class Policy extends React.Component {
             <PolicyExcludeBuyerInput
               mode={this.state.mode}
               excluded={policy.excluded}
+              onChange={e => {
+                this.onExcludedSelectionChange(e);
+              }}
             />
 
             <PolicyPriceInput
@@ -152,8 +166,12 @@ class Policy extends React.Component {
             <PolicyToggleButton
               mode={this.state.mode}
               active={policy.active}
-              onClick={() => {
-                this.setState({ enabled: !this.state.enabled });
+              disabled={this.props.policy.id === ""}
+              onActivate={() => {
+                this.props.activatePolicy(this.props.policy.id);
+              }}
+              onDeactivate={() => {
+                this.props.deactivatePolicy(this.props.policy.id);
               }}
             />
 
@@ -175,7 +193,9 @@ const mapDispatchToProps = dispatch => {
   return {
     saveNewPolicy: policy => dispatch(saveNewPolicy(policy)),
     editPolicy: policy => dispatch(editPolicy(policy)),
-    removePolicy: id => dispatch(removePolicy(id))
+    removePolicy: id => dispatch(removePolicy(id)),
+    activatePolicy: id => dispatch(activatePolicy(id)),
+    deactivatePolicy: id => dispatch(deactivatePolicy(id))
   };
 };
 

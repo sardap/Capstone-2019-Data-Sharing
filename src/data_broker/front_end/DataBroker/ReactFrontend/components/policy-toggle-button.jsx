@@ -11,17 +11,21 @@ export default class PolicyToggleButton extends React.PureComponent {
             restrictions which you specified here will be enforced.
           </small>
         </label>
-        <button
-          className={
-            "btn btn-block " +
-            (this.props.active ? "btn-danger" : "btn-success")
-          }
-          onClick={this.props.onClick}
-        >
-          {this.props.active
-            ? "Disable data sharing policy"
-            : "Activate data sharing policy"}
-        </button>
+        {this.props.active ? (
+          <button
+            className="btn btn-block btn-danger"
+            onClick={this.props.onDeactivate}
+          >
+            Disable data sharing policy
+          </button>
+        ) : (
+          <button
+            className="btn btn-block btn-success"
+            onClick={this.props.onActivate}
+          >
+            Activate data sharing policy
+          </button>
+        )}
       </div>
     ) : (
       <p>

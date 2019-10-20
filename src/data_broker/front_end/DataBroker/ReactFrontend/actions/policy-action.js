@@ -7,6 +7,7 @@ export const SAVE_NEW_POLICY_SUCCESS = "SAVE_NEW_POLICY_SUCCESS";
 export const SAVE_NEW_POLICY_FAILED = "SAVE_NEW_POLICY_FAILED";
 export const REMOVE_POLICY = "REMOVE_POLICY";
 export const ACTIVATE_POLICY = "ACTIVATE_POLICY";
+export const DEACTIVATE_POLICY = "DEACTIVATE_POLICY";
 export const EDIT_POLICY = "EDIT_POLICY";
 export const SHOW_TOAST = "SHOW_TOAST";
 
@@ -76,6 +77,47 @@ export const activatePolicyMessage = id => ({
   type: ACTIVATE_POLICY,
   id: id
 });
+export const activatePolicy = id => dispatch => {
+  dispatch(activatePolicyMessage());
+  return axios
+    .post(
+      `https://localhost:5001/api/ActivatePolicy`,
+      { id },
+      {
+        withCredentials: true
+      }
+    )
+    .then(response => {
+      if (response.status !== HttpStatus.OK || !response.data.success) {
+        dispatch(showToast("Fail to activate policy 😢"));
+      } else {
+        dispatch(fetchPolicies());
+      }
+    });
+};
+
+export const deactivatePolicyMessage = id => ({
+  type: DEACTIVATE_POLICY,
+  id: id
+});
+export const deactivatePolicy = id => dispatch => {
+  dispatch(deactivatePolicyMessage());
+  return axios
+    .post(
+      `https://localhost:5001/api/DeactivatePolicy`,
+      { id },
+      {
+        withCredentials: true
+      }
+    )
+    .then(response => {
+      if (response.status !== HttpStatus.OK || !response.data.success) {
+        dispatch(showToast("Fail to activate policy 😢"));
+      } else {
+        dispatch(fetchPolicies());
+      }
+    });
+};
 
 const editPolicyRequestMessage = () => ({
   type: EDIT_POLICY
