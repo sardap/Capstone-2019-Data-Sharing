@@ -7,7 +7,7 @@ class PolicyModeButtonGroup extends React.PureComponent {
         <button className="btn btn-primary" onClick={this.props.onSave}>
           Save
         </button>{" "}
-        <button className="btn btn-light" onClick={this.props.onSave}>
+        <button className="btn btn-light" onClick={this.props.onCancel}>
           Cancel
         </button>
       </>
@@ -16,7 +16,9 @@ class PolicyModeButtonGroup extends React.PureComponent {
         <button className="btn btn-info" onClick={this.props.onEdit}>
           Edit
         </button>{" "}
-        <button className="btn btn-danger">Remove</button>
+        <button className="btn btn-danger" onClick={this.props.onRemove}>
+          Remove
+        </button>
       </>
     );
   }

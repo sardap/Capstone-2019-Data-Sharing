@@ -15,6 +15,7 @@ export default class PolicyPriceInput extends React.PureComponent {
             step="0.01"
             value={this.props.price}
             onChange={this.props.onChange}
+            onInput={this.props.onChange}
             className="form-control dsp-edit"
           />
         </div>

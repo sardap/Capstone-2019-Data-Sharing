@@ -7,7 +7,12 @@ class PolicyList extends React.Component {
     return (
       <>
         {policies.map((p, i) => (
-          <Policy mode="READ" policy={p} key={p.id} index={i + 1} />
+          <Policy
+            mode={p.id === "" ? "EDIT" : "READ"}
+            policy={p}
+            key={p.id}
+            index={i + 1}
+          />
         ))}
       </>
     );

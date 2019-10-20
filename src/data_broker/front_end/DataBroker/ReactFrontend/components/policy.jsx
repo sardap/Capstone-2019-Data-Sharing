@@ -5,7 +5,13 @@ import PolicyToggleButton from "./policy-toggle-button";
 import PolicyPriceInput from "./policy-price-input";
 import PolicyExcludeBuyerInput from "./policy-exclude-buyer-input";
 import { connect } from "react-redux";
-import { addNewPolicy } from "../actions/policy-action";
+import {
+  saveNewPolicy,
+  removePolicy,
+  editPolicy
+} from "../actions/policy-action";
+import moment from "moment";
+import * as _ from "lodash";
 
 class Policy extends React.Component {
   constructor(props) {
@@ -17,18 +23,75 @@ class Policy extends React.Component {
   }
 
   onSavePolicy() {
-    this.setState({ mode: "READ" });
     if (this.props.policy.id === "") {
-      this.props.addNewPolicy(this.state.policy);
+      this.props.saveNewPolicy(this.state.policy);
+    } else {
+      this.props.editPolicy(this.state.policy);
     }
+    this.setState({ mode: "READ" });
+  }
+
+  onCancelPolicy() {
+    this.setState({ mode: "READ" });
+    this.setState({ policy: this.props.policy });
+  }
+
+  onRemovePolicy() {
+    this.props.removePolicy(this.props.policy.id);
   }
 
   onPriceChange(e) {
     this.setState({
-      policy: { ...this.state.policy, minPrice: e.target.value }
+      policy: { ...this.state.policy, minPrice: parseFloat(e.target.value) }
     });
-    console.log("STATE", this.state);
-    console.log("PROPS", this.props);
+  }
+
+  onStartDateChange(e) {
+    const input = moment(e.target.value);
+    const newStart = _.cloneDeep(this.state.policy.start).set({
+      date: input.date(),
+      month: input.month(),
+      year: input.year()
+    });
+    this.setState({
+      policy: { ...this.state.policy, start: newStart }
+    });
+  }
+
+  onStartTimeChange(e) {
+    const input = moment(e.target.value, "HH:mm");
+    const newStart = _.cloneDeep(this.state.policy.start).set({
+      hour: input.hour(),
+      minute: input.minute(),
+      second: input.second()
+    });
+    this.setState({
+      policy: { ...this.state.policy, start: newStart }
+    });
+  }
+
+  onEndDateChange(e) {
+    const input = moment(e.target.value);
+    const newEnd = _.cloneDeep(this.state.policy.end).set({
+      date: input.date(),
+      month: input.month(),
+      year: input.year()
+    });
+    this.setState({
+      policy: { ...this.state.policy, end: newEnd }
+    });
+  }
+
+  onEndTimeChange(e) {
+    const input = moment(e.target.value, "HH:mm");
+    const newEnd = _.cloneDeep(this.state.policy.end).set({
+      hour: input.hour(),
+      minute: input.minute(),
+      second: input.second()
+    });
+    this.setState({
+      policy: { ...this.state.policy, end: newEnd }
+    });
   }
 
   render() {
@@ -47,7 +110,11 @@ class Policy extends React.Component {
             >
               Data Sharing Policy {index}
             </button>
-            <div className="badge badge-pill badge-success float-right mt-1">
+            <div
+              className={`badge badge-pill badge-${
+                policy.active ? "success" : "danger"
+              } float-right mt-1`}
+            >
               {policy.active ? "Active" : "Disabled"}
             </div>
           </h4>
@@ -76,6 +143,10 @@ class Policy extends React.Component {
               mode={this.state.mode}
               start={policy.start}
               end={policy.end}
+              onStartDateChange={e => this.onStartDateChange(e)}
+              onStartTimeChange={e => this.onStartTimeChange(e)}
+              onEndDateChange={e => this.onEndDateChange(e)}
+              onEndTimeChange={e => this.onEndTimeChange(e)}
             />
 
             <PolicyToggleButton
@@ -90,6 +161,8 @@ class Policy extends React.Component {
               mode={this.state.mode}
               onSave={() => this.onSavePolicy()}
               onEdit={() => this.setState({ mode: "EDIT" })}
+              onCancel={() => this.onCancelPolicy()}
+              onRemove={() => this.onRemovePolicy()}
             />
           </div>
         </div>
@@ -100,7 +173,9 @@ class Policy extends React.Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    addNewPolicy: policy => dispatch(addNewPolicy(policy))
+    saveNewPolicy: policy => dispatch(saveNewPolicy(policy)),
+    editPolicy: policy => dispatch(editPolicy(policy)),
+    removePolicy: id => dispatch(removePolicy(id))
   };
 };
 

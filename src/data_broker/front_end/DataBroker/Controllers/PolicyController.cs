@@ -11,6 +11,7 @@ namespace DataBroker.Controllers
 	public class PolicyController : Controller
 	{
 		private readonly ApplicationDbContext _context;
+
 		public PolicyController(ApplicationDbContext context)
 		{
 			_context = context;
@@ -28,19 +29,12 @@ namespace DataBroker.Controllers
 
 		public class DspPoco
 		{
-			[JsonProperty("excluded")]
-			public string ExcludedBuyers { get; set; }
-			[JsonProperty("start")]
-			public string Start { get; set; }
-			[JsonProperty("end")]
-			public string End { get; set; }
-			[JsonProperty("min_price")]
-			public decimal MinPrice { get; set; }
-			[JsonProperty("active")]
-			public bool Active { get; set; }
-			
-			[JsonProperty("id")]
-			public Guid Id { get; }
+			[JsonProperty("excluded")] public string ExcludedBuyers { get; set; }
+			[JsonProperty("start")] public string Start { get; set; }
+			[JsonProperty("end")] public string End { get; set; }
+			[JsonProperty("min_price")] public decimal MinPrice { get; set; }
+			[JsonProperty("active")] public bool Active { get; set; }
+			[JsonProperty("id")] public string Id { get; set; }
 		}
 
 		[HttpPost("/api/AddPolicy")]
@@ -60,19 +54,19 @@ namespace DataBroker.Controllers
 			};
 			_context.DataSharingPolicies.Add(newPolicy);
 			_context.SaveChanges();
-			
+
 			// TODO: Send request to policy drop off point
-			
+
 			return Json(new {success = true, message = "Successfully added new policy!"});
 		}
-		
+
 		[HttpPost("/api/UpdatePolicy")]
 		public IActionResult Update(DspPoco policy)
 		{
 			var user = _context.ApplicationUsers.SingleOrDefault(z => z.Email.Equals(User.Identity.Name));
 			if (user == null) return Json(new {success = false, message = "Invalid user"});
 
-			var existingPolicy = _context.DataSharingPolicies.SingleOrDefault(p => p.Id.Equals(policy.Id));
+			var existingPolicy = _context.DataSharingPolicies.SingleOrDefault(p => p.Id.ToString().Equals(policy.Id));
 
 			if (existingPolicy == null) return Json(new {success = false, message = "Can't update policy"});
 
@@ -83,9 +77,27 @@ namespace DataBroker.Controllers
 
 			_context.DataSharingPolicies.Update(existingPolicy);
 			_context.SaveChanges();
-			
+
 			// TODO: Send request to policy drop off point
-			
+
+			return Json(new {success = true, message = "Successfully updated policy!"});
+		}
+
+		[HttpPost("/api/RemovePolicy")]
+		public IActionResult Remove(DspPoco policy)
+		{
+			var user = _context.ApplicationUsers.SingleOrDefault(z => z.Email.Equals(User.Identity.Name));
+			if (user == null) return Json(new {success = false, message = "Invalid user"});
+
+			var existingPolicy = _context.DataSharingPolicies.SingleOrDefault(p => p.Id.ToString().Equals(policy.Id));
+
+			if (existingPolicy == null) return Json(new {success = false, message = "Can't remove policy"});
+
+			_context.DataSharingPolicies.Remove(existingPolicy);
+			_context.SaveChanges();
+
+			// TODO: Send request to policy drop off point
+
 			return Json(new {success = true, message = "Successfully updated policy!"});
 		}
 	}

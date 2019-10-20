@@ -7,8 +7,10 @@ class PolicyAddition extends React.Component {
         <div className="card-body">
           <p className="card-text">
             <i className="fas fa-plus mr-2"></i>
-            <span id="add-dsp">Click here to add</span> a new data sharing
-            policy.
+            <span id="add-dsp" onClick={this.props.onClick}>
+              Click here to add
+            </span>{" "}
+            a new data sharing policy.
           </p>
         </div>
       </div>

@@ -2,6 +2,15 @@ import moment from "moment";
 
 export const REQUEST_POLICIES = "REQUEST_POLICIES";
 export const RECEIVE_POLICIES = "RECEIVE_POLICIES";
+export const ADD_POLICY = "ADD_POLICY";
+
+export const addPolicyMessage = policy => ({
+  type: ADD_POLICY,
+  policy
+});
+export const addPolicy = policy => dispatch => {
+  return dispatch(addPolicyMessage(policy));
+};
 
 export const requestPolicies = () => ({
   type: REQUEST_POLICIES
