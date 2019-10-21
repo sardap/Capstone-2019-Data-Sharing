@@ -27,7 +27,7 @@ services:
       - "7090:25565"
 
   deployer:
-    build: ../../BCF/BlockchainPolicyDeployer
+    image: capstonegroup30/policy_deployer:latest
     ports:
       - "6080:80"
       - "6443:443"
@@ -89,7 +89,7 @@ services:
       - FITBIT_API_CLIENT_SECRET=${FITBIT_API_CLIENT_SECRET}
 
   policy_gateway:
-    build: ../PolicyGateway
+    image: capstonegroup30/policy_gateway:latest
     ports:
       - "6010:5000"
     environment:
