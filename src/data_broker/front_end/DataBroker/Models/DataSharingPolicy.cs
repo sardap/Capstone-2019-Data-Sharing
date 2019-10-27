@@ -25,5 +25,7 @@ namespace DataBroker.Models
         public decimal MinPrice { get; set; }
         [JsonProperty("active")]
         public bool Active { get; set; }
+        [JsonProperty("verified")]
+        public bool Verified { get; set; }
     }
 }
