@@ -94,18 +94,24 @@ namespace DataBroker.Controllers
 			if (string.IsNullOrWhiteSpace(token))
 				return Json(new {success = false, message = "Unable to generate a policy creation token!"});
 
-			var newPolicy = new DataSharingPolicy
-			{
-				UserId = user.Id,
-				ExcludedBuyers = policy.ExcludedBuyers,
-				Start = DateTime.Parse(policy.Start),
-				End = DateTime.Parse(policy.End),
-				MinPrice = policy.MinPrice,
-				Active = policy.Active,
-				Verified = false
-			};
-			_context.DataSharingPolicies.Add(newPolicy);
-			_context.SaveChanges();
+            _context.UserTokenLinkings.Add(new UserTokenLinking
+            {
+                UserId = user.Id,
+                PolicyCreationToken = token
+            });
+
+			_context.DataSharingPolicies.Add(new DataSharingPolicy
+            {
+                UserId = user.Id,
+                ExcludedBuyers = policy.ExcludedBuyers,
+                Start = DateTime.Parse(policy.Start),
+                End = DateTime.Parse(policy.End),
+                MinPrice = policy.MinPrice,
+                Active = policy.Active,
+                Verified = false
+            });
+
+            _context.SaveChanges();
 
 			var url = $"https://{Secret.Instance.PolicyAuthorizationUrl}/" +
 			          json.ToString().Replace(Environment.NewLine, "").Replace(" ", "") + "/" + token;
