@@ -31,7 +31,7 @@ export const receivePolicies = json => ({
 
 export const fetchPolicies = () => dispatch => {
   dispatch(requestPolicies());
-  return fetch(`https://localhost:5001/api/GetAllPolicies`)
+  return fetch(`/api/GetAllPolicies`)
     .then(response => response.json())
     .then(json => dispatch(receivePolicies(json)));
 };
