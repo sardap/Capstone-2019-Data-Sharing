@@ -3,23 +3,29 @@ import {
   RECEIVE_POLICIES,
   ADD_POLICY
 } from "../actions/policy-list-action";
-import { SHOW_TOAST } from "../actions/policy-action";
+import { SHOW_ERROR_MODAL, HIDE_ERROR_MODAL } from "../actions/policy-action";
 
 export const policies = (
   state = {
     isFetching: false,
     policies: [],
-    showToast: false,
-    toastMessage: ""
+    showErrorModal: false,
+    errorModalMessage: ""
   },
   action
 ) => {
   switch (action.type) {
-    case SHOW_TOAST:
+    case SHOW_ERROR_MODAL:
       return {
         ...state,
-        showToast: true,
-        toastMessage: action.message
+        showErrorModal: true,
+        errorModalMessage: action.message
+      };
+    case HIDE_ERROR_MODAL:
+      return {
+        ...state,
+        showErrorModal: false,
+        errorModalMessage: ""
       };
     case ADD_POLICY:
       return {
