@@ -14,6 +14,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="RestSharp" Version="106.6.10" />
   </ItemGroup>
 
 
@@ -24,6 +25,9 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\lib\lodash\lodash.js" />
+    <_ContentIncludedByDefault Remove="Areas\Policy\Pages\Manage\_ViewImports.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Policy\Pages\_ViewImports.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Policy\Pages\_ViewStart.cshtml" />
   </ItemGroup>
 
 
