@@ -4,6 +4,8 @@ using DataBroker.Data;
 using DataBroker.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using RestSharp;
 
 namespace DataBroker.Controllers
 {
@@ -15,6 +17,21 @@ namespace DataBroker.Controllers
 		public PolicyController(ApplicationDbContext context)
 		{
 			_context = context;
+		}
+
+		[Route("/Policies")]
+		public IActionResult Index()
+		{
+			return View();
+		}
+		
+		[HttpPost]
+		[HttpGet]
+		[Route("/Policy/Authorization")]
+		public IActionResult Authorization(string url)
+		{
+			ViewBag.RedirectUrl = url;
+			return View();
 		}
 
 		[HttpGet("/api/GetAllPolicies")]
@@ -33,17 +50,79 @@ namespace DataBroker.Controllers
 			[JsonProperty("start")] public string Start { get; set; }
 			[JsonProperty("end")] public string End { get; set; }
 			[JsonProperty("min_price")] public decimal MinPrice { get; set; }
+			[JsonIgnore] private int MinPriceInCents => (int) MinPrice * 100;
 			[JsonProperty("active")] public bool Active { get; set; }
+			[JsonProperty("verified")] public bool Verified { get; set; }
 			[JsonProperty("id")] public string Id { get; set; }
+
+			public JObject ToJObject()
+			{
+				dynamic paramPolicy = new JObject();
+				paramPolicy.excluded_categories = new JArray(ExcludedBuyers.Split(",").Select((s, i) => i));
+				paramPolicy.min_price = MinPriceInCents; 
+				paramPolicy.time_period = new JObject();
+				paramPolicy.time_period.start = DateTime.Parse(Start).Ticks;
+				paramPolicy.time_period.end = DateTime.Parse(End).Ticks;
+				paramPolicy.active = new JArray(new[] {Active});
+				paramPolicy.wallet_id = new Guid().ToString();
+				paramPolicy.data_type = "test data";
+				dynamic reportLogElement = new JObject();
+				reportLogElement.data = "none";
+				reportLogElement.hash = "none";
+				paramPolicy.report_log = new JArray(new[] {reportLogElement});
+				return paramPolicy;
+			}
 		}
 
-		[HttpPost("/api/AddPolicy")]
-		public IActionResult Add(DspPoco policy)
+		private bool IsValid(JObject paramPolicy)
+		{
+			var client = new RestClient("http://136.186.108.17:30552/checkjson/" +
+			                            paramPolicy.ToString().Replace(Environment.NewLine, "").Replace(" ", ""));
+			var request = new RestRequest(Method.GET);
+			request.AddHeader("cache-control", "no-cache");
+			request.AddHeader("Connection", "keep-alive");
+			request.AddHeader("Accept-Encoding", "gzip, deflate");
+			request.AddHeader("Host", "136.186.108.17:30552");
+			request.AddHeader("Cache-Control", "no-cache");
+			request.AddHeader("Accept", "*/*");
+			var rawResponse = client.Execute(request);
+			if (rawResponse.Content.Contains("Wrong")) return false;
+			dynamic response = JsonConvert.DeserializeObject(rawResponse.Content);
+			return !response.GetType().ToString().Contains("Array");
+		}
+
+		private string RequestCreationToken()
+		{
+			var client = new RestClient("http://136.186.108.52:30164/bcc_policy_token_gateway/newtoken/broker0");
+			var request = new RestRequest(Method.GET);
+			request.AddHeader("cache-control", "no-cache");
+			request.AddHeader("Connection", "keep-alive");
+			request.AddHeader("Accept-Encoding", "gzip, deflate");
+			request.AddHeader("Host", "136.186.108.52:30164");
+			request.AddHeader("Cache-Control", "no-cache");
+			request.AddHeader("Accept", "*/*");
+			var rawResponse = client.Execute(request);
+			dynamic response = JsonConvert.DeserializeObject(rawResponse.Content);
+			return response.status == "success" ? response.policy_creation_token : string.Empty;
+		}
+		
+		[HttpPost("/api/ValidatePolicy")]
+		public IActionResult Validate(DspPoco policy)
 		{
 			var user = _context.ApplicationUsers.SingleOrDefault(z => z.Email.Equals(User.Identity.Name));
 			if (user == null) return Json(new {success = false, message = "Invalid user"});
 
-			// TODO: Link to Data Custodian
+			var json = policy.ToJObject();
+			if (!IsValid(json))
+			{
+				return Json(new {success = false, message = "Invalid policy, please check your policy again!"});
+			}
+
+			var token = RequestCreationToken();
+			if (string.IsNullOrWhiteSpace(token))
+			{
+				return Json(new {success = false, message = "Invalid policy, please check your policy again!"});
+			}
 
 			var newPolicy = new DataSharingPolicy
 			{
@@ -52,37 +131,14 @@ namespace DataBroker.Controllers
 				Start = DateTime.Parse(policy.Start),
 				End = DateTime.Parse(policy.End),
 				MinPrice = policy.MinPrice,
-				Active = policy.Active
+				Active = policy.Active,
+				Verified = false
 			};
 			_context.DataSharingPolicies.Add(newPolicy);
 			_context.SaveChanges();
 
-			// TODO: Send request to policy drop off point
-
-			return Json(new {success = true, message = "Successfully added new policy!"});
-		}
-
-		[HttpPost("/api/UpdatePolicy")]
-		public IActionResult Update(DspPoco policy)
-		{
-			var user = _context.ApplicationUsers.SingleOrDefault(z => z.Email.Equals(User.Identity.Name));
-			if (user == null) return Json(new {success = false, message = "Invalid user"});
-
-			var existingPolicy = _context.DataSharingPolicies.SingleOrDefault(p => p.Id.ToString().Equals(policy.Id));
-
-			if (existingPolicy == null) return Json(new {success = false, message = "Can't update policy"});
-
-			existingPolicy.ExcludedBuyers = policy.ExcludedBuyers;
-			existingPolicy.Start = DateTime.Parse(policy.Start);
-			existingPolicy.End = DateTime.Parse(policy.End);
-			existingPolicy.MinPrice = policy.MinPrice;
-
-			_context.DataSharingPolicies.Update(existingPolicy);
-			_context.SaveChanges();
-
-			// TODO: Send request to policy drop off point
-
-			return Json(new {success = true, message = "Successfully updated policy!"});
+			var url = "https://authorization.secretwaterfall.club/" + json.ToString().Replace(Environment.NewLine, "").Replace(" ", "") + "/" + token;
+			return Json(new {success = true, message = url});
 		}
 
 		[HttpPost("/api/RemovePolicy")]
@@ -97,8 +153,6 @@ namespace DataBroker.Controllers
 
 			_context.DataSharingPolicies.Remove(existingPolicy);
 			_context.SaveChanges();
-
-			// TODO: Send request to policy drop off point
 
 			return Json(new {success = true, message = "Successfully updated policy!"});
 		}
@@ -118,8 +172,6 @@ namespace DataBroker.Controllers
 			_context.DataSharingPolicies.Update(existingPolicy);
 			_context.SaveChanges();
 
-			// TODO: Send request to policy drop off point
-
 			return Json(new {success = true, message = "Successfully updated policy!"});
 		}
 
@@ -137,8 +189,6 @@ namespace DataBroker.Controllers
 
 			_context.DataSharingPolicies.Update(existingPolicy);
 			_context.SaveChanges();
-
-			// TODO: Send request to policy drop off point
 
 			return Json(new {success = true, message = "Successfully updated policy!"});
 		}
