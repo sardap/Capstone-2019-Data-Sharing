@@ -5,13 +5,7 @@ import PolicyToggleButton from "./policy-toggle-button";
 import PolicyPriceInput from "./policy-price-input";
 import PolicyExcludeBuyerInput from "./policy-exclude-buyer-input";
 import { connect } from "react-redux";
-import {
-  saveNewPolicy,
-  removePolicy,
-  editPolicy,
-  activatePolicy,
-  deactivatePolicy
-} from "../actions/policy-action";
+import { saveNewPolicy, removePolicy } from "../actions/policy-action";
 import moment from "moment";
 import * as _ from "lodash";
 
@@ -27,8 +21,6 @@ class Policy extends React.Component {
   onSavePolicy() {
     if (this.props.policy.id === "") {
       this.props.saveNewPolicy(this.state.policy);
-    } else {
-      this.props.editPolicy(this.state.policy);
     }
     this.setState({ mode: "READ" });
   }
@@ -105,9 +97,21 @@ class Policy extends React.Component {
     });
   }
 
+  activatePolicy() {
+    this.setState({
+      policy: { ...this.state.policy, active: true }
+    });
+  }
+
+  deactivatePolicy() {
+    this.setState({
+      policy: { ...this.state.policy, active: false }
+    });
+  }
+
   render() {
     const { index } = this.props;
-    const { policy } = this.state;
+    const { policy, mode } = this.state;
     return (
       <div className="card dsp-card mb-3" id={"dsp_" + index}>
         <div className="card-header" id={"heading_" + index}>
@@ -123,10 +127,14 @@ class Policy extends React.Component {
             </button>
             <div
               className={`badge badge-pill badge-${
-                policy.active ? "success" : "danger"
+                (policy.id === "" || policy.verified) && policy.active
+                  ? "success"
+                  : "danger"
               } float-right mt-1`}
             >
-              {policy.active ? "Active" : "Disabled"}
+              {(policy.id === "" || policy.verified) && policy.active
+                ? "Active"
+                : "Disabled"}
             </div>
           </h4>
         </div>
@@ -138,6 +146,15 @@ class Policy extends React.Component {
           data-parent={"#dsp_" + index}
         >
           <div className="card-body">
+            {!policy.verified && mode === "READ" ? (
+              <div className="alert alert-danger" role="alert">
+                Your data sharing policy is NOT <strong>VERIFIED</strong> and{" "}
+                therefore, it's currently inactive even if you have activated it{" "}
+                on creation.
+              </div>
+            ) : (
+              ""
+            )}
             <PolicyExcludeBuyerInput
               mode={this.state.mode}
               excluded={policy.excluded}
@@ -164,14 +181,13 @@ class Policy extends React.Component {
             />
 
             <PolicyToggleButton
-              mode={this.state.mode}
-              active={policy.active}
-              disabled={this.props.policy.id === ""}
+              mode={policy.id === "" ? "EDIT" : "READ"}
+              active={(policy.id === "" || policy.verified) && policy.active}
               onActivate={() => {
-                this.props.activatePolicy(this.props.policy.id);
+                this.activatePolicy();
               }}
               onDeactivate={() => {
-                this.props.deactivatePolicy(this.props.policy.id);
+                this.deactivatePolicy();
               }}
             />
 
@@ -192,10 +208,7 @@ class Policy extends React.Component {
 const mapDispatchToProps = dispatch => {
   return {
     saveNewPolicy: policy => dispatch(saveNewPolicy(policy)),
-    editPolicy: policy => dispatch(editPolicy(policy)),
-    removePolicy: id => dispatch(removePolicy(id)),
-    activatePolicy: id => dispatch(activatePolicy(id)),
-    deactivatePolicy: id => dispatch(deactivatePolicy(id))
+    removePolicy: id => dispatch(removePolicy(id))
   };
 };
 

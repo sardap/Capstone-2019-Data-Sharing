@@ -13,9 +13,6 @@ class PolicyModeButtonGroup extends React.PureComponent {
       </>
     ) : (
       <>
-        <button className="btn btn-info" onClick={this.props.onEdit}>
-          Edit
-        </button>{" "}
         <button className="btn btn-danger" onClick={this.props.onRemove}>
           Remove
         </button>

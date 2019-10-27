@@ -24,11 +24,12 @@ export const saveNewPolicy = p => dispatch => {
   const policy = {
     id: "",
     min_price: p.minPrice,
-    active: false,
+    active: p.active,
     start: p.start.format(),
     end: p.end.format(),
     excluded: p.excluded.join(",")
   };
+
   return axios
     .post(`https://localhost:5001/api/AddPolicy`, policy, {
       withCredentials: true
@@ -58,7 +59,7 @@ export const removePolicy = id => dispatch => {
   dispatch(removePolicyMessage());
   return axios
     .post(
-      `https://localhost:5001/api/RemovePolicy`,
+      `/api/RemovePolicy`,
       { id },
       {
         withCredentials: true
@@ -69,76 +70,6 @@ export const removePolicy = id => dispatch => {
         dispatch(showToast("Fail to remove policy 😢"));
       } else {
         dispatch(fetchPolicies());
-      }
-    });
-};
-
-export const activatePolicyMessage = id => ({
-  type: ACTIVATE_POLICY,
-  id: id
-});
-export const activatePolicy = id => dispatch => {
-  dispatch(activatePolicyMessage());
-  return axios
-    .post(
-      `https://localhost:5001/api/ActivatePolicy`,
-      { id },
-      {
-        withCredentials: true
-      }
-    )
-    .then(response => {
-      if (response.status !== HttpStatus.OK || !response.data.success) {
-        dispatch(showToast("Fail to activate policy 😢"));
-      } else {
-        dispatch(fetchPolicies());
-      }
-    });
-};
-
-export const deactivatePolicyMessage = id => ({
-  type: DEACTIVATE_POLICY,
-  id: id
-});
-export const deactivatePolicy = id => dispatch => {
-  dispatch(deactivatePolicyMessage());
-  return axios
-    .post(
-      `https://localhost:5001/api/DeactivatePolicy`,
-      { id },
-      {
-        withCredentials: true
-      }
-    )
-    .then(response => {
-      if (response.status !== HttpStatus.OK || !response.data.success) {
-        dispatch(showToast("Fail to activate policy 😢"));
-      } else {
-        dispatch(fetchPolicies());
-      }
-    });
-};
-
-const editPolicyRequestMessage = () => ({
-  type: EDIT_POLICY
-});
-export const editPolicy = p => dispatch => {
-  const policy = {
-    id: p.id,
-    min_price: p.minPrice,
-    active: false,
-    start: p.start.format(),
-    end: p.end.format(),
-    excluded: p.excluded.join(",")
-  };
-  dispatch(editPolicyRequestMessage());
-  return axios
-    .post(`https://localhost:5001/api/UpdatePolicy`, policy, {
-      withCredentials: true
-    })
-    .then(response => {
-      if (response.status !== HttpStatus.OK || !response.data.success) {
-        dispatch(showToast("Fail to update policy 😢"));
       }
     });
 };
