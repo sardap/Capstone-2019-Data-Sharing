@@ -7,7 +7,9 @@ module.exports = {
     contentBase: "../wwwroot/dist",
     hot: true
   },
-  entry: "./index.js",
+  entry: {
+    index: "./index.js"
+  },
   module: {
     rules: [
       {
@@ -20,7 +22,8 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, "../wwwroot/dist"),
-    filename: "dsp.bundle.js"
+    filename: "dsp.bundle.js",
+    chunkFilename: "[name].bundle.js"
   },
   resolve: {
     extensions: ["*", ".js", ".jsx"]
