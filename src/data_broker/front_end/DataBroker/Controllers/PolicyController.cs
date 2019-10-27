@@ -97,7 +97,8 @@ namespace DataBroker.Controllers
             _context.UserTokenLinkings.Add(new UserTokenLinking
             {
                 UserId = user.Id,
-                PolicyCreationToken = token
+                PolicyCreationToken = token,
+                PolicyBlockchainLocation = string.Empty
             });
 
 			_context.DataSharingPolicies.Add(new DataSharingPolicy
