@@ -27,16 +27,17 @@ export const saveNewPolicy = p => dispatch => {
     active: p.active,
     start: p.start.format(),
     end: p.end.format(),
-    excluded: p.excluded.join(",")
+    excluded: p.excluded.join(","),
+    verified: false
   };
 
   return axios
-    .post(`https://localhost:5001/api/AddPolicy`, policy, {
+    .post(`/api/ValidatePolicy`, policy, {
       withCredentials: true
     })
     .then(response => {
       if (response.status === HttpStatus.OK && response.data.success) {
-        dispatch(saveNewPolicySuccess());
+        window.location = response.data.message;
       } else {
         dispatch(showToast("Fail to add new policy 😢"));
       }

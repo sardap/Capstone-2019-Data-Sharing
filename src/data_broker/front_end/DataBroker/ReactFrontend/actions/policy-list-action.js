@@ -24,7 +24,8 @@ export const receivePolicies = json => ({
     minPrice: policy.min_price,
     start: moment(policy.start),
     end: moment(policy.end),
-    excluded: policy.excluded.split(",")
+    excluded: policy.excluded.split(","),
+    verified: policy.verified
   })) //todo
 });
 
