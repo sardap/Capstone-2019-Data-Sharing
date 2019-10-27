@@ -26,7 +26,7 @@ export const receivePolicies = json => ({
     end: moment(policy.end),
     excluded: policy.excluded.split(","),
     verified: policy.verified
-  })) //todo
+  }))
 });
 
 export const fetchPolicies = () => dispatch => {
