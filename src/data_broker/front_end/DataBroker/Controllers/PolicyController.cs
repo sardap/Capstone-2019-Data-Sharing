@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using DataBroker.Data;
 using DataBroker.Models;
+using DataBroker.Models.Transport;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -24,7 +25,7 @@ namespace DataBroker.Controllers
 		{
 			return View();
 		}
-		
+
 		[HttpPost]
 		[HttpGet]
 		[Route("/Policy/Authorization")]
@@ -42,36 +43,6 @@ namespace DataBroker.Controllers
 
 			var policies = _context.DataSharingPolicies.AsEnumerable().Where(z => z.UserId == user.Id).ToArray();
 			return Json(new {success = true, data = policies});
-		}
-
-		public class DspPoco
-		{
-			[JsonProperty("excluded")] public string ExcludedBuyers { get; set; }
-			[JsonProperty("start")] public string Start { get; set; }
-			[JsonProperty("end")] public string End { get; set; }
-			[JsonProperty("min_price")] public decimal MinPrice { get; set; }
-			[JsonIgnore] private int MinPriceInCents => (int) MinPrice * 100;
-			[JsonProperty("active")] public bool Active { get; set; }
-			[JsonProperty("verified")] public bool Verified { get; set; }
-			[JsonProperty("id")] public string Id { get; set; }
-
-			public JObject ToJObject()
-			{
-				dynamic paramPolicy = new JObject();
-				paramPolicy.excluded_categories = new JArray(ExcludedBuyers.Split(",").Select((s, i) => i));
-				paramPolicy.min_price = MinPriceInCents; 
-				paramPolicy.time_period = new JObject();
-				paramPolicy.time_period.start = DateTime.Parse(Start).Ticks;
-				paramPolicy.time_period.end = DateTime.Parse(End).Ticks;
-				paramPolicy.active = new JArray(new[] {Active});
-				paramPolicy.wallet_id = new Guid().ToString();
-				paramPolicy.data_type = "test data";
-				dynamic reportLogElement = new JObject();
-				reportLogElement.data = "none";
-				reportLogElement.hash = "none";
-				paramPolicy.report_log = new JArray(new[] {reportLogElement});
-				return paramPolicy;
-			}
 		}
 
 		private bool IsValid(JObject paramPolicy)
@@ -105,7 +76,7 @@ namespace DataBroker.Controllers
 			dynamic response = JsonConvert.DeserializeObject(rawResponse.Content);
 			return response.status == "success" ? response.policy_creation_token : string.Empty;
 		}
-		
+
 		[HttpPost("/api/ValidatePolicy")]
 		public IActionResult Validate(DspPoco policy)
 		{
@@ -137,7 +108,8 @@ namespace DataBroker.Controllers
 			_context.DataSharingPolicies.Add(newPolicy);
 			_context.SaveChanges();
 
-			var url = "https://authorization.secretwaterfall.club/" + json.ToString().Replace(Environment.NewLine, "").Replace(" ", "") + "/" + token;
+			var url = "https://authorization.secretwaterfall.club/" +
+			          json.ToString().Replace(Environment.NewLine, "").Replace(" ", "") + "/" + token;
 			return Json(new {success = true, message = url});
 		}
 
