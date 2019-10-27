@@ -45,55 +45,54 @@ namespace DataBroker.Controllers
 			return Json(new {success = true, data = policies});
 		}
 
-		private bool IsValid(JObject paramPolicy)
+		private IRestResponse Validate(JObject paramPolicy)
 		{
-			var client = new RestClient("http://136.186.108.17:30552/checkjson/" +
+			var host = $"{Secret.Instance.PolicyValidatorIp}:{Secret.Instance.PolicyValidatorPort}";
+			var client = new RestClient($"http://{host}/checkjson/" +
 			                            paramPolicy.ToString().Replace(Environment.NewLine, "").Replace(" ", ""));
 			var request = new RestRequest(Method.GET);
-			request.AddHeader("cache-control", "no-cache");
 			request.AddHeader("Connection", "keep-alive");
 			request.AddHeader("Accept-Encoding", "gzip, deflate");
-			request.AddHeader("Host", "136.186.108.17:30552");
+			request.AddHeader("Host", host);
 			request.AddHeader("Cache-Control", "no-cache");
 			request.AddHeader("Accept", "*/*");
 			var rawResponse = client.Execute(request);
-			if (rawResponse.Content.Contains("Wrong")) return false;
-			dynamic response = JsonConvert.DeserializeObject(rawResponse.Content);
-			return !response.GetType().ToString().Contains("Array");
+			return rawResponse;
 		}
 
 		private string RequestCreationToken()
 		{
-			var client = new RestClient("http://136.186.108.52:30164/bcc_policy_token_gateway/newtoken/broker0");
+			var host = $"{Secret.Instance.PolicyTokenGatewayIp}:{Secret.Instance.PolicyTokenGatewayPort}";
+			var client = new RestClient($"http://{host}/bcc_policy_token_gateway/newtoken/broker0");
 			var request = new RestRequest(Method.GET);
 			request.AddHeader("cache-control", "no-cache");
 			request.AddHeader("Connection", "keep-alive");
 			request.AddHeader("Accept-Encoding", "gzip, deflate");
-			request.AddHeader("Host", "136.186.108.52:30164");
+			request.AddHeader("Host", host);
 			request.AddHeader("Cache-Control", "no-cache");
 			request.AddHeader("Accept", "*/*");
+
 			var rawResponse = client.Execute(request);
+			if (!rawResponse.IsSuccessful) return string.Empty;
+
 			dynamic response = JsonConvert.DeserializeObject(rawResponse.Content);
 			return response.status == "success" ? response.policy_creation_token : string.Empty;
 		}
 
-		[HttpPost("/api/ValidatePolicy")]
-		public IActionResult Validate(DspPoco policy)
+		[HttpPost("/api/AddPolicy")]
+		public IActionResult Add(DspPoco policy)
 		{
 			var user = _context.ApplicationUsers.SingleOrDefault(z => z.Email.Equals(User.Identity.Name));
 			if (user == null) return Json(new {success = false, message = "Invalid user"});
 
 			var json = policy.ToJObject();
-			if (!IsValid(json))
-			{
-				return Json(new {success = false, message = "Invalid policy, please check your policy again!"});
-			}
+			var jsonValidationResult = Validate(json);
+			if (!jsonValidationResult.IsSuccessful)
+				return Json(new {success = false, message = jsonValidationResult.Content});
 
 			var token = RequestCreationToken();
 			if (string.IsNullOrWhiteSpace(token))
-			{
-				return Json(new {success = false, message = "Invalid policy, please check your policy again!"});
-			}
+				return Json(new {success = false, message = "Unable to generate a policy creation token!"});
 
 			var newPolicy = new DataSharingPolicy
 			{
@@ -108,7 +107,7 @@ namespace DataBroker.Controllers
 			_context.DataSharingPolicies.Add(newPolicy);
 			_context.SaveChanges();
 
-			var url = "https://authorization.secretwaterfall.club/" +
+			var url = $"https://{Secret.Instance.PolicyAuthorizationUrl}/" +
 			          json.ToString().Replace(Environment.NewLine, "").Replace(" ", "") + "/" + token;
 			return Json(new {success = true, message = url});
 		}
