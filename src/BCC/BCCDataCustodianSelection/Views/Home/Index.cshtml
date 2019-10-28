@@ -1,0 +1,19 @@
+﻿@model DataCustodianModel
+
+@{
+    ViewData["Title"] = "BCC";
+    if (ViewData["CreateInfo"] == null) 
+    {
+        ViewData["CreateInfo"] = new PolicyCreation();
+    }
+
+    var createInfo = ViewData["CreateInfo"] as PolicyCreation;
+
+}
+
+<form method="post" action="/Home/CustodianSelection?policy=@createInfo.Policy&policyToken=@createInfo.PolicyToken">
+    <label>Wallet ID</label>
+    <input asp-for="Input.Wallet_ID" class="form-control" />
+    <br />
+    <button type="submit">Submit</button>
+</form>

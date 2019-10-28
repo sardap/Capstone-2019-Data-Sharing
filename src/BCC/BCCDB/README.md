@@ -6,7 +6,7 @@ This com is under GPLv2 refer to the license file in this dir
 ## Docker Info
 
 ### Building Image
-No special build instructions
+You can use the docker compose file
 
 ### Startup Info
 Requires the following environment variables be set 
@@ -16,9 +16,20 @@ Requires the following environment variables be set
 * `MYSQL_DATABASE`
 * `PUID` Set to 1000
 * `PGID` Set to 1000
-* `SET_DEFAULT_BROKER` Will add 3 default test broker api keys
+
+can use docker compose file attached
+
+#### Inserting Default Data
+***WARNING!!!*** This is a bit funky but Make due.
+Each broker needs to be a "," separated with the following fields
+* `BrokerName,DropOffLocation,WalletAddress`
+Then Set the key to be `BROKER_(NUMBER)` starting at zero
+Example: `BROKER_0=Chains,nothingtolose.biz,f4b71d3e759cc6490dee67e6ff80e729`
+With the 2nd broker being 
+Example: `BROKER_1=sing,doyouhear.people,6f1642b2416d3bc66589f0c6ff40bb18`
 
 ## Accessing
+Can access via mysql 
 
 ## Testing component
 
