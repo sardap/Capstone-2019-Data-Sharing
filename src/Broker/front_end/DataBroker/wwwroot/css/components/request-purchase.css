@@ -1,0 +1,9 @@
+.request-view li {
+    list-style-type: none;
+}
+
+.request-view li:before {
+    content: '✔️';
+    margin-left: -37px;
+    margin-right: 4px;
+}

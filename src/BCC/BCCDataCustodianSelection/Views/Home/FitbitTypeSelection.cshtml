@@ -1,0 +1,22 @@
+@model DataCustodianModel
+
+@{
+    ViewData["Title"] = "BCC";
+    var createInfo = ViewData["CreateInfo"] as PolicyCreation;
+}
+
+<form method="post" action="/Home/Idle?policy=@createInfo.Policy&policyToken=@createInfo.PolicyToken&walletID=@createInfo.WalletID">
+    <label>Data type</label>
+    <div id="fitbit">
+        <select id="fitbitselect" class="form-control" asp-for="Input.DataType">
+            <option value="activeMinutes">Active minutes</option>
+            <option value="calories">Calories</option>
+            <option value="distance">Distance</option>
+            <option value="elevationGain">Elevation gain</option>
+            <option value="steps">Steps</option>
+            <option value="heartRate">Heart rate</option>
+        </select>
+    </div>
+    <br />
+    <button type="submit">Submit</button>
+</form>

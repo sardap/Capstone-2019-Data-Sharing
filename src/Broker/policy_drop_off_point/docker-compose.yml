@@ -1,0 +1,15 @@
+##The docker compose file is for setting up the components for testing purposes
+version: "3.3"
+#Services is the top level list of the services to be configured in the file
+services:
+  dropoff:
+    #Path to the dockerfile relative to the location of the docker-compose file
+    build: ./
+    ports:
+      - "7080:8080"
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_NAME=${DB_NAME}
+      - PORT=8080

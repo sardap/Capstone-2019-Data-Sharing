@@ -1,0 +1,15 @@
+version: '3'
+services:
+  bccdb:
+    build: .
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=mypass
+      - MYSQL_PASSWORD=mypass
+      - MYSQL_USER=user
+      - MYSQL_DATABASE=main
+      - PUID=1000
+      - PGID=1000
+      - SET_DEFAULT_BROKER=true
+      - BROKER_0=Chains,nothingtolose.biz,f4b71d3e759cc6490dee67e6ff80e729
