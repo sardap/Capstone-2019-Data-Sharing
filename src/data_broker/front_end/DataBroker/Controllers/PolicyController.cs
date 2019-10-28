@@ -48,6 +48,11 @@ namespace DataBroker.Controllers
 		private IRestResponse Validate(JObject paramPolicy)
 		{
 			var host = $"{Secret.Instance.PolicyValidatorIp}:{Secret.Instance.PolicyValidatorPort}";
+			// IMPORTANT:
+			// this is because AWS Elastic Beanstalk does not support environment variables in .NET Core
+			// remove this whole IF once the Data Broker is no longer on AWS EB
+			if (string.IsNullOrWhiteSpace(host)) host =  "136.186.108.17:30552";
+
 			var client = new RestClient($"http://{host}/checkjson/" +
 			                            paramPolicy.ToString().Replace(Environment.NewLine, "").Replace(" ", ""));
 			var request = new RestRequest(Method.GET);
@@ -63,6 +68,11 @@ namespace DataBroker.Controllers
 		private string RequestCreationToken()
 		{
 			var host = $"{Secret.Instance.PolicyTokenGatewayIp}:{Secret.Instance.PolicyTokenGatewayPort}";
+			// IMPORTANT:
+			// this is because AWS Elastic Beanstalk does not support environment variables in .NET Core
+			// remove this whole IF once the Data Broker is no longer on AWS EB
+			if (string.IsNullOrWhiteSpace(host)) host =  "136.186.108.52:30164";
+
 			var client = new RestClient($"http://{host}/bcc_policy_token_gateway/newtoken/broker0");
 			var request = new RestRequest(Method.GET);
 			request.AddHeader("cache-control", "no-cache");
@@ -114,7 +124,13 @@ namespace DataBroker.Controllers
 
             _context.SaveChanges();
 
-			var url = $"https://{Secret.Instance.PolicyAuthorizationUrl}/" +
+			var host = Secret.Instance.PolicyAuthorizationUrl;
+			// IMPORTANT:
+			// this is because AWS Elastic Beanstalk does not support environment variables in .NET Core
+			// remove this whole IF once the Data Broker is no longer on AWS EB
+			if (string.IsNullOrWhiteSpace(host)) host =  "authorization.secretwaterfall.club";
+
+			var url = $"{host}" +
 			          json.ToString().Replace(Environment.NewLine, "").Replace(" ", "") + "/" + token;
 			return Json(new {success = true, message = url});
 		}
