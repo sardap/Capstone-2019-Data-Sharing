@@ -1,7 +1,6 @@
 import * as axios from "axios";
 import * as HttpStatus from "http-status-codes";
 import { fetchPolicies } from "./policy-list-action";
-import $ from "jquery";
 
 export const SAVE_NEW_POLICY = "SAVE_NEW_POLICY";
 export const SAVE_NEW_POLICY_SUCCESS = "SAVE_NEW_POLICY_SUCCESS";
@@ -19,7 +18,7 @@ export const showErrorModalMessage = message => ({
 });
 export const showErrorModal = message => dispatch => {
   dispatch(showErrorModalMessage(message));
-  $("#policyResultModal").modal("show");
+  $("#policyResultModal").modal("show"); // eslint-disable-line
 };
 
 export const hideErrorModalMessage = () => ({
@@ -27,7 +26,7 @@ export const hideErrorModalMessage = () => ({
 });
 export const hideErrorModal = message => dispatch => {
   dispatch(hideErrorModalMessage(message));
-  $("#policyResultModal").modal("hide");
+  $("#policyResultModal").modal("hide"); // eslint-disable-line
 };
 
 export const saveNewPolicyRequestMessage = () => ({
@@ -58,6 +57,9 @@ export const saveNewPolicy = p => dispatch => {
           .replace(/\[|\]/g, "");
         dispatch(saveNewPolicyFailed(sanitisedMessage));
       }
+    })
+    .catch(err => {
+      dispatch(saveNewPolicyFailed("Server error!"));
     });
 };
 
