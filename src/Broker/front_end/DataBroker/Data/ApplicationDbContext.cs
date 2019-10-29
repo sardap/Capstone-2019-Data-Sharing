@@ -17,5 +17,7 @@ namespace DataBroker.Data
 
 		public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<MedicalCondition> MedicalConditions { get; set; }
-	}
+        public DbSet<DataSharingPolicy> DataSharingPolicies { get; set; }
+        public DbSet<UserTokenLinking> UserTokenLinkings { get; set; }
+    }
 }
