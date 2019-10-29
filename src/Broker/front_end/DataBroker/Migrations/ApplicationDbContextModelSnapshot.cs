@@ -86,6 +86,30 @@ namespace DataBroker.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("DataBroker.Models.DataSharingPolicy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("Active");
+
+                    b.Property<DateTime>("End");
+
+                    b.Property<string>("ExcludedBuyers");
+
+                    b.Property<decimal>("MinPrice");
+
+                    b.Property<DateTime>("Start");
+
+                    b.Property<Guid>("UserId");
+
+                    b.Property<bool>("Verified");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DataSharingPolicies");
+                });
+
             modelBuilder.Entity("DataBroker.Models.MedicalCondition", b =>
                 {
                     b.Property<Guid>("Id")
@@ -108,6 +132,24 @@ namespace DataBroker.Migrations
                     b.HasIndex("ApplicationUserId");
 
                     b.ToTable("MedicalConditions");
+                });
+
+            modelBuilder.Entity("DataBroker.Models.UserTokenLinking", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("PolicyBlockchainLocation")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("PolicyCreationToken")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<Guid>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserTokenLinkings");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>

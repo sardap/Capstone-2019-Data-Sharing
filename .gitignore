@@ -461,3 +461,4 @@ dmypy.json
 # End of https://www.gitignore.io/api/python
 
 src/BCF/Fetcher/Fetcher/secrets.json
+src/data_broker/front_end/DataBroker/ReactFrontend/stats.json
