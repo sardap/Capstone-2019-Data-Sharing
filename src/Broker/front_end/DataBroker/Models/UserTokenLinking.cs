@@ -9,6 +9,7 @@ namespace DataBroker.Models
 		[Key]
 		public Guid Id { get; set; }
 		public Guid UserId { get; set; }
+		public Guid PolicyId { get; set; }
 		[Column(TypeName = "varchar(100)")]
 		public string PolicyCreationToken { get; set; }
 		[Column(TypeName = "varchar(100)")]
