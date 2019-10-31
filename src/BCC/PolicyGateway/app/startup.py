@@ -9,6 +9,23 @@ import os
 import re
 import mysql.connector
 import time
+from logging.config import dictConfig
+
+dictConfig({
+    'version': 1,
+    'formatters': {'default': {
+        'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+    }},
+    'handlers': {'wsgi': {
+        'class': 'logging.StreamHandler',
+        'formatter': 'default'
+    }},
+    'root': {
+        'level': 'DEBUG',
+        'handlers': ['wsgi']
+    }
+})
+
 
 _deployer_ip = os.environ['DEPLOYER_IP']
 _fetcher_ip = os.environ['FETCHER_IP']
@@ -132,7 +149,7 @@ def deploy_policy(json_policy, wallet_id, broker_wallet_id):
     
     response = requests.request("POST", url, data=payload, headers=headers)
            
-    _app.logger.info(response.text)
+    _app.logger.info("Deployer response {}".format(response.text))
     print(response.text, flush=True)
     return response.text
     
@@ -198,6 +215,7 @@ def add_policy():
         _app.logger.info("Test Fetch successful")
 
     broker_wallet_id, drop_off_location, broker_id = get_broker_info(broker_api_key)
+    _app.logger.info("Broker Info Gotten Broker_wallet:{} drop_off:{} broker_id:{}".format(broker_wallet_id, drop_off_location, broker_id))
 
     dep_response_text = deploy_policy(body['json_policy'], body['wallet_id'], broker_wallet_id)
     _app.logger.info("Policy Deployed on blockchain")
