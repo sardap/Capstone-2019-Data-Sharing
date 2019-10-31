@@ -41,13 +41,6 @@ namespace BlockchainPolicyDeployer.Controllers
 		public IActionResult Post(RequestBody requestBody)
 		{
 			var jsonPolicyStr = CleanPolicy(requestBody.JsonPolicy);
-
-			if(!ValidPolicy(jsonPolicyStr, requestBody.WalletID))
-			{
-				return BadRequest();
-			}
-
-			Console.WriteLine("Policy Valid");
 			
 			var stream = Utility.RandomString(MAX_STREAM_NAME_LENGTH);
 
@@ -69,11 +62,6 @@ namespace BlockchainPolicyDeployer.Controllers
 		private bool ValidPolicy(string jsonPolicyStr, string walletID)
 		{
 			dynamic policyWalletID = JsonConvert.DeserializeObject(jsonPolicyStr);
-
-			if (walletID != policyWalletID.wallet_ID.Value)
-			{
-				return false;
-			}
 
 			// Check policy valid
 			var url = Paths.Instance.VaildatorPort == null ? Paths.Instance.VaildatorIP : Paths.Instance.VaildatorIP + ":" + Paths.Instance.VaildatorPort;
