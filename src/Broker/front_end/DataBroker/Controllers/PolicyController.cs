@@ -136,13 +136,13 @@ namespace DataBroker.Controllers
 			return Json(new {success = true, message = url});
 		}
 
-		[HttpPost("/api/RemovePolicy")]
-		public IActionResult Remove(DspPoco policy)
+		[HttpPost("/api/RemovePolicy/{id}")]
+		public IActionResult Remove(string id)
 		{
 			var user = _context.ApplicationUsers.SingleOrDefault(z => z.Email.Equals(User.Identity.Name));
 			if (user == null) return Json(new {success = false, message = "Invalid user"});
 
-			var existingPolicy = _context.DataSharingPolicies.SingleOrDefault(p => p.Id.ToString().Equals(policy.Id));
+			var existingPolicy = _context.DataSharingPolicies.SingleOrDefault(p => p.Id.ToString().Equals(id));
 
 			if (existingPolicy == null) return Json(new {success = false, message = "Can't remove policy"});
 
