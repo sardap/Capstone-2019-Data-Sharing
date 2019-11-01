@@ -31,6 +31,7 @@ async function add_new_linking_entry_to_user(token, location) {
       };
     } else {
       let row_to_update = rows[rows.length - 1];
+
       await pool
         .request()
         .input("Id", mssql.UniqueIdentifier, row_to_update.Id)
@@ -38,6 +39,13 @@ async function add_new_linking_entry_to_user(token, location) {
         .query(
           `UPDATE UserTokenLinkings SET PolicyBlockchainLocation = @Location WHERE Id = @Id;`
         );
+
+      const rawResponse = await fetch(
+        process.env.BROKER_URL + "/api/VerifyPolicy/" + policy_creation_token,
+        { method: "POST" }
+      );
+      const response = await rawResponse.json();
+      if (!response.data.success) throw "Unable to verify policy";
 
       result = {
         result: "success",
