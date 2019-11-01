@@ -165,6 +165,7 @@ namespace DataBroker.Controllers
 			if (existingPolicy == null) return Json(new {success = false, message = "Can't verify policy"});
 
 			existingPolicy.Verified = true;
+            _context.SaveChanges();
 
 			return Json(new {success = true, message = "Successfully verified policy!"});
 		}
