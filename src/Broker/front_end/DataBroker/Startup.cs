@@ -67,8 +67,9 @@ namespace DataBroker
 			else
 			{
 				app.UseExceptionHandler("/Home/Error");
-				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-				app.UseHsts();
+                // app.UseDeveloperExceptionPage(); // uncomment this to see error report on AWS
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
 			}
 
 			app.UseHttpsRedirection();

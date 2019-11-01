@@ -88,13 +88,9 @@ export const removePolicyMessage = id => ({
 export const removePolicy = id => dispatch => {
   dispatch(removePolicyMessage());
   return axios
-    .post(
-      `/api/RemovePolicy`,
-      { id },
-      {
-        withCredentials: true
-      }
-    )
+    .post(`/api/RemovePolicy/${id}`, {
+      withCredentials: true
+    })
     .then(response => {
       if (response.status !== HttpStatus.OK || !response.data.success) {
         dispatch(showErrorModal("Fail to remove policy 😢"));
