@@ -51,7 +51,7 @@ namespace DataBroker.Controllers
 			// IMPORTANT:
 			// this is because AWS Elastic Beanstalk does not support environment variables in .NET Core
 			// remove this whole IF once the Data Broker is no longer on AWS EB
-			if (string.IsNullOrWhiteSpace(host)) host = "136.186.108.17:30552";
+			if (string.IsNullOrWhiteSpace(host.Replace(":", string.Empty))) host = "136.186.108.17:30552";
 
 			var client = new RestClient($"http://{host}/checkjson/" +
 			                            paramPolicy.ToString().Replace(Environment.NewLine, "").Replace(" ", ""));
@@ -68,10 +68,10 @@ namespace DataBroker.Controllers
 		private string RequestCreationToken()
 		{
 			var host = $"{Secret.Instance.PolicyTokenGatewayIp}:{Secret.Instance.PolicyTokenGatewayPort}";
-			// IMPORTANT:
-			// this is because AWS Elastic Beanstalk does not support environment variables in .NET Core
-			// remove this whole IF once the Data Broker is no longer on AWS EB
-			if (string.IsNullOrWhiteSpace(host)) host = "136.186.108.52:30164";
+            // IMPORTANT:
+            // this is because AWS Elastic Beanstalk does not support environment variables in .NET Core
+            // remove this whole IF once the Data Broker is no longer on AWS EB
+            if (string.IsNullOrWhiteSpace(host.Replace(":", string.Empty))) host = "136.186.108.52:30164";
 
 			var client = new RestClient($"http://{host}/bcc_policy_token_gateway/newtoken/broker0");
 			var request = new RestRequest(Method.GET);
