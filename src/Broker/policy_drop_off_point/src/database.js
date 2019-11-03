@@ -1,5 +1,6 @@
 import * as mssql from "mssql";
 import dotenv from "dotenv";
+import * as axios from "axios";
 
 dotenv.config();
 const { DB_NAME, DB_USER, DB_PASS, DB_HOST } = process.env;
@@ -40,11 +41,10 @@ async function add_new_linking_entry_to_user(token, location) {
           `UPDATE UserTokenLinkings SET PolicyBlockchainLocation = @Location WHERE Id = @Id;`
         );
 
-      const rawResponse = await fetch(
-        process.env.BROKER_URL + "/api/VerifyPolicy/" + policy_creation_token,
-        { method: "POST" }
+      const response = await axios.post(
+        process.env.BROKER_URL + "/api/VerifyPolicy/" + token
       );
-      const response = await rawResponse.json();
+
       if (!response.data.success) throw "Unable to verify policy";
 
       result = {
