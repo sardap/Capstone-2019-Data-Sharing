@@ -42,7 +42,7 @@ async function add_new_linking_entry_to_user(token, location) {
         );
 
       const response = await axios.post(
-        process.env.BROKER_URL + "/api/VerifyPolicy/" + policy_creation_token
+        process.env.BROKER_URL + "/api/VerifyPolicy/" + token
       );
 
       if (!response.data.success) throw "Unable to verify policy";
